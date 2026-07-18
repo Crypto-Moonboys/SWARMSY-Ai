@@ -105,6 +105,14 @@ function workspaceEndpoints(app) {
           return;
         }
 
+        if (isCanonicalSparkyWorkspace(currWorkspace) && Object.keys(data).length) {
+          response.status(403).json({
+            success: false,
+            error: "SPARKY is a protected fixed workspace.",
+          });
+          return;
+        }
+
         await Workspace.trackChange(currWorkspace, data, user);
         const { workspace, message } = await Workspace.update(
           currWorkspace.id,

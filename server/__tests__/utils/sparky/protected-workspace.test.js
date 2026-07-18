@@ -22,6 +22,12 @@ describe("SPARKY fixed workspace protection", () => {
     expect(workspaceModel).toContain("OR:");
 
     expect(workspacesEndpoint).toContain("await ensureSparkyWorkspace();");
+    expect(workspacesEndpoint).toContain('"/workspace/:slug/update"');
+    expect(workspacesEndpoint).toContain(
+      "isCanonicalSparkyWorkspace(currWorkspace)"
+    );
+    expect(workspacesEndpoint).toContain("Object.keys(data).length");
+    expect(workspacesEndpoint).not.toContain('slug === "sparky"');
     expect(workspacesEndpoint).toContain("isCanonicalSparkyWorkspace(workspace)");
     expect(workspacesEndpoint).toContain("SPARKY is a protected fixed workspace.");
     expect(workspacesEndpoint).toContain('"/workspaces"');

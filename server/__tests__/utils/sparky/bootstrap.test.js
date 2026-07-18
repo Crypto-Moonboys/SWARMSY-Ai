@@ -23,6 +23,7 @@ const {
 } = require("../../../utils/sparky");
 
 afterEach(() => {
+  jest.clearAllMocks();
   jest.restoreAllMocks();
 });
 
