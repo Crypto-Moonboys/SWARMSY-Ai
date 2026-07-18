@@ -24,6 +24,7 @@ const {
   SPARKY_SYSTEM_PROMPT_PATH,
   SPARKY_CORE_PACK_DIR,
   getSparkySystemPrompt,
+  getSparkyCanonicalSystemPrompt,
   getSparkyCorePackCatalog,
   getSparkyStarterSuggestedMessages,
   getSparkyWorkspaceTemplate,
@@ -165,7 +166,7 @@ describe("SPARKY bootstrap foundation", () => {
       id: 456,
       name: SPARKY_WORKSPACE_NAME,
       slug: SPARKY_WORKSPACE_SLUG,
-      openAiPrompt: getSparkySystemPrompt(),
+      openAiPrompt: getSparkyCanonicalSystemPrompt(),
       chatMode: "automatic",
     };
 

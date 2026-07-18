@@ -17,6 +17,16 @@ const SPARKY_SYSTEM_PROMPT_PATH = path.join(
   "sparky-system-prompt.md"
 );
 
+const SPARKY_STARTER_PROMPT_BLOCK = [
+  "When the user does not know what to prompt, offer simple starter directions instead of forcing a project.",
+  "Use these first-run prompts when they fit:",
+  "",
+  "- Help me shape my project idea",
+  "- Build my project identity",
+  "- Turn this idea into an action plan",
+  "",
+];
+
 const SPARKY_STARTER_SUGGESTED_MESSAGES = [
   {
     heading: "",
@@ -85,6 +95,20 @@ function getSparkySystemPrompt() {
   return readMarkdownFile(SPARKY_SYSTEM_PROMPT_PATH);
 }
 
+function normalizeSparkySystemPrompt(prompt = "") {
+  return String(prompt)
+    .replace(
+      SPARKY_STARTER_PROMPT_BLOCK.join("\n"),
+      ""
+    )
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+function getSparkyCanonicalSystemPrompt() {
+  return normalizeSparkySystemPrompt(getSparkySystemPrompt());
+}
+
 function getSparkyCorePackCatalog() {
   return SPARKY_CORE_PACKS.map((pack) => {
     const absolutePath = path.join(SPARKY_CORE_PACK_DIR, pack.filename);
@@ -128,7 +152,8 @@ function isCanonicalSparkyWorkspace(workspace = null) {
   if (!workspace || workspace.slug !== SPARKY_WORKSPACE_SLUG) return false;
   return (
     String(workspace.name || "").trim() === SPARKY_WORKSPACE_NAME &&
-    String(workspace.openAiPrompt || "").trim() === getSparkySystemPrompt()
+    normalizeSparkySystemPrompt(workspace.openAiPrompt) ===
+      getSparkyCanonicalSystemPrompt()
   );
 }
 
@@ -200,6 +225,8 @@ module.exports = {
   SPARKY_SYSTEM_PROMPT_PATH,
   SPARKY_CORE_PACKS,
   getSparkySystemPrompt,
+  normalizeSparkySystemPrompt,
+  getSparkyCanonicalSystemPrompt,
   getSparkyCorePackCatalog,
   getSparkyStarterSuggestedMessages,
   getSparkyWorkspaceTemplate,
