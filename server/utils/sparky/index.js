@@ -99,6 +99,10 @@ function getSparkyBootstrapConfig() {
   };
 }
 
+function isSparkyWorkspaceSlug(slug) {
+  return String(slug || "").trim().toLowerCase() === SPARKY_WORKSPACE_SLUG;
+}
+
 async function ensureSparkyWorkspace() {
   const { Workspace } = require("../../models/workspace");
   const template = getSparkyWorkspaceTemplate();
@@ -141,5 +145,6 @@ module.exports = {
   getSparkyCorePackCatalog,
   getSparkyWorkspaceTemplate,
   getSparkyBootstrapConfig,
+  isSparkyWorkspaceSlug,
   ensureSparkyWorkspace,
 };

@@ -42,6 +42,10 @@ const { workspaceParsedFilesEndpoints } = require("./workspacesParsedFiles");
 const {
   workspaceDeletionProtection,
 } = require("../utils/middleware/workspaceDeletionProtection");
+const {
+  ensureSparkyWorkspace,
+  isSparkyWorkspaceSlug,
+} = require("../utils/sparky");
 
 function workspaceEndpoints(app) {
   if (!app) return;
@@ -88,6 +92,7 @@ function workspaceEndpoints(app) {
     [validatedRequest, flexUserRoleValid([ROLES.admin, ROLES.manager])],
     async (request, response) => {
       try {
+        await ensureSparkyWorkspace();
         const user = await userFromSession(request, response);
         const { slug = null } = request.params;
         const data = reqBody(request);
@@ -282,6 +287,13 @@ function workspaceEndpoints(app) {
     async (request, response) => {
       try {
         const { slug = "" } = request.params;
+        if (isSparkyWorkspaceSlug(slug)) {
+          response.status(403).json({
+            success: false,
+            error: "SPARKY is a protected fixed workspace.",
+          });
+          return;
+        }
         const user = await userFromSession(request, response);
         const VectorDb = getVectorDbClass();
         const workspace = multiUserMode(response)
@@ -365,6 +377,7 @@ function workspaceEndpoints(app) {
     [validatedRequest, flexUserRoleValid([ROLES.all])],
     async (request, response) => {
       try {
+        await ensureSparkyWorkspace();
         const user = await userFromSession(request, response);
         const workspaces = multiUserMode(response)
           ? await Workspace.whereWithUser(user)

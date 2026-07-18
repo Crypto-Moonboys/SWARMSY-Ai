@@ -21,6 +21,10 @@ const { getModelTag } = require("../../utils");
 const {
   workspaceDeletionProtection,
 } = require("../../../utils/middleware/workspaceDeletionProtection");
+const {
+  ensureSparkyWorkspace,
+  isSparkyWorkspaceSlug,
+} = require("../../../utils/sparky");
 
 function apiWorkspaceEndpoints(app) {
   if (!app) return;
@@ -141,6 +145,7 @@ function apiWorkspaceEndpoints(app) {
     }
     */
     try {
+      await ensureSparkyWorkspace();
       const workspaces = await Workspace._findMany({
         where: {},
         include: {
@@ -246,6 +251,13 @@ function apiWorkspaceEndpoints(app) {
     */
       try {
         const { slug = "" } = request.params;
+        if (isSparkyWorkspaceSlug(slug)) {
+          response.status(403).json({
+            success: false,
+            error: "SPARKY is a protected fixed workspace.",
+          });
+          return;
+        }
         const VectorDb = getVectorDbClass();
         const workspace = await Workspace.get({ slug: String(slug) });
 

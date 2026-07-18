@@ -39,6 +39,10 @@ async function getTargetWorkspace() {
   }
 
   const workspaces = await Workspace.all();
+  const sparkyWorkspace = workspaces.find(
+    (workspace) => workspace.slug === "sparky"
+  );
+  if (sparkyWorkspace) return sparkyWorkspace;
   return workspaces.length > 0 ? workspaces[0] : null;
 }
 

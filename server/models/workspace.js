@@ -7,6 +7,7 @@ const { v4: uuidv4 } = require("uuid");
 const { User } = require("./user");
 const { PromptHistory } = require("./promptHistory");
 const { SystemSettings } = require("./systemSettings");
+const { SPARKY_WORKSPACE_SLUG } = require("../utils/sparky");
 
 function isNullOrNaN(value) {
   if (value === null) return true;
@@ -386,6 +387,8 @@ const Workspace = {
 
   delete: async function (clause = {}) {
     try {
+      const workspace = await this.get(clause);
+      if (workspace?.slug === SPARKY_WORKSPACE_SLUG) return false;
       await prisma.workspaces.delete({
         where: clause,
       });
