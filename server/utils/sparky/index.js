@@ -19,14 +19,15 @@ const SPARKY_SYSTEM_PROMPT_PATH = path.join(
   "sparky-system-prompt.md"
 );
 
-const SPARKY_STARTER_PROMPT_BLOCK = [
-  "When the user does not know what to prompt, offer simple starter directions instead of forcing a project.",
-  "Use these first-run prompts when they fit:",
-  "",
-  "- Help me shape my project idea",
-  "- Build my project identity",
-  "- Turn this idea into an action plan",
-  "",
+const SPARKY_PROMPT_IDENTITY_LINES = [
+  "You are SPARKY, the guided project-manager layer inside AnythingLLM.",
+  "Your mission is to help users who do not know what to prompt yet by turning uncertainty into clear direction.",
+  "When the user is only chatting, respond normally and keep the conversation natural.",
+  "When the user is building something, help them move through three core layers:",
+  "Stay separate from the user's rough ideas until they are approved.",
+  "Use the selected AnythingLLM workspace model, tools, retrieval, and settings underneath you.",
+  "Do not replace normal AnythingLLM behavior.",
+  "Help the user discover, shape, and act on unique identities, projects, brands, characters, businesses, campaigns, and creative plans.",
 ];
 
 const SPARKY_STARTER_SUGGESTED_MESSAGES = [
@@ -101,13 +102,20 @@ function getSparkySystemPrompt() {
 
 function normalizeSparkySystemPrompt(prompt = "") {
   return String(prompt)
-    .replace(SPARKY_STARTER_PROMPT_BLOCK.join("\n"), "")
+    .replace(/\r\n/g, "\n")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
 }
 
 function getSparkyCanonicalSystemPrompt() {
-  return normalizeSparkySystemPrompt(getSparkySystemPrompt());
+  return SPARKY_PROMPT_IDENTITY_LINES.join("\n");
+}
+
+function promptHasSparkyCoreIdentity(prompt = "") {
+  const normalizedPrompt = normalizeSparkySystemPrompt(prompt);
+  return SPARKY_PROMPT_IDENTITY_LINES.every((line) =>
+    normalizedPrompt.includes(line)
+  );
 }
 
 function getSparkyCorePackCatalog() {
@@ -157,8 +165,7 @@ function isCanonicalSparkyWorkspace(workspace = null) {
   if (!workspace || workspace.slug !== SPARKY_WORKSPACE_SLUG) return false;
   return (
     String(workspace.name || "").trim() === SPARKY_WORKSPACE_NAME &&
-    normalizeSparkySystemPrompt(workspace.openAiPrompt) ===
-      getSparkyCanonicalSystemPrompt()
+    promptHasSparkyCoreIdentity(workspace.openAiPrompt)
   );
 }
 
@@ -232,6 +239,7 @@ module.exports = {
   getSparkySystemPrompt,
   normalizeSparkySystemPrompt,
   getSparkyCanonicalSystemPrompt,
+  promptHasSparkyCoreIdentity,
   getSparkyCorePackCatalog,
   getSparkyStarterSuggestedMessages,
   getSparkyWorkspaceTemplate,
