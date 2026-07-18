@@ -1,15 +1,22 @@
 const fs = require("fs");
 const path = require("path");
+const { Workspace } = require("../../../models/workspace");
 
 const {
   SPARKY_WORKSPACE_NAME,
   SPARKY_WORKSPACE_SLUG,
   SPARKY_SYSTEM_PROMPT_PATH,
+  SPARKY_CORE_PACK_DIR,
   getSparkySystemPrompt,
   getSparkyCorePackCatalog,
   getSparkyWorkspaceTemplate,
   getSparkyBootstrapConfig,
+  ensureSparkyWorkspace,
 } = require("../../../utils/sparky");
+
+afterEach(() => {
+  jest.restoreAllMocks();
+});
 
 describe("SPARKY bootstrap foundation", () => {
   it("keeps the product lock doc in place", () => {
@@ -22,6 +29,15 @@ describe("SPARKY bootstrap foundation", () => {
 
   it("keeps the SPARKY system prompt on disk", () => {
     expect(fs.existsSync(SPARKY_SYSTEM_PROMPT_PATH)).toBe(true);
+    expect(SPARKY_SYSTEM_PROMPT_PATH).toContain(
+      path.join("server", "sparky", "packs", "core")
+    );
+    expect(SPARKY_SYSTEM_PROMPT_PATH).not.toContain(
+      path.join("server", "storage")
+    );
+    expect(SPARKY_CORE_PACK_DIR).toContain(
+      path.join("server", "sparky", "packs", "core")
+    );
     expect(getSparkySystemPrompt()).toContain("You are SPARKY");
     expect(getSparkySystemPrompt()).toContain("Action Confirmation");
   });
@@ -81,5 +97,59 @@ describe("SPARKY bootstrap foundation", () => {
     expect(workspaceApiSource).toContain('app.get("/v1/workspaces"');
     expect(workspaceApiSource).toContain("Workspace._findMany");
     expect(workspaceApiSource).not.toContain("SPARKY_WORKSPACE_SLUG");
+  });
+
+  it("creates SPARKY only when missing", async () => {
+    const createdWorkspace = {
+      id: 123,
+      name: SPARKY_WORKSPACE_NAME,
+      slug: SPARKY_WORKSPACE_SLUG,
+    };
+
+    const getSpy = jest.spyOn(Workspace, "get").mockResolvedValue(null);
+    const newSpy = jest.spyOn(Workspace, "new").mockResolvedValue({
+      workspace: createdWorkspace,
+      message: null,
+    });
+
+    const result = await ensureSparkyWorkspace();
+
+    expect(getSpy).toHaveBeenCalledWith({ slug: SPARKY_WORKSPACE_SLUG });
+    expect(newSpy).toHaveBeenCalledWith(
+      SPARKY_WORKSPACE_NAME,
+      null,
+      expect.objectContaining({
+        chatMode: "automatic",
+        openAiPrompt: getSparkySystemPrompt(),
+      })
+    );
+    expect(result.workspace).toEqual(createdWorkspace);
+    expect(result.collision).toBe(false);
+    expect(result.created).toBe(true);
+  });
+
+  it("does not overwrite an existing SPARKY workspace", async () => {
+    const existingWorkspace = {
+      id: 456,
+      name: "User SPARKY",
+      slug: SPARKY_WORKSPACE_SLUG,
+      openAiPrompt: "user prompt",
+      chatMode: "chat",
+    };
+
+    const getSpy = jest.spyOn(Workspace, "get").mockResolvedValue(existingWorkspace);
+    const newSpy = jest.spyOn(Workspace, "new").mockResolvedValue({
+      workspace: null,
+      message: "should not be used",
+    });
+
+    const result = await ensureSparkyWorkspace();
+
+    expect(getSpy).toHaveBeenCalledWith({ slug: SPARKY_WORKSPACE_SLUG });
+    expect(newSpy).not.toHaveBeenCalled();
+    expect(result.workspace).toBe(existingWorkspace);
+    expect(result.collision).toBe(true);
+    expect(result.created).toBe(false);
+    expect(result.message).toContain("leaving existing workspace untouched");
   });
 });

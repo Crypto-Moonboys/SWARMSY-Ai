@@ -43,3 +43,4 @@ Implementation note:
 - The SPARKY core packs exist as local markdown files.
 - If they are not auto-ingested yet, the app must say so clearly.
 - The bootstrap layer should never pretend unloaded markdown files are already live runtime context.
+- Future PRs need a proper reserved/protected SPARKY identity strategy so a user-created workspace cannot silently take the `sparky` slug.

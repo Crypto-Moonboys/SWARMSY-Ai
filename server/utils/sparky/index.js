@@ -7,7 +7,6 @@ const SPARKY_CORE_PACK_DIR = path.join(
   __dirname,
   "..",
   "..",
-  "storage",
   "sparky",
   "packs",
   "core"
@@ -103,21 +102,33 @@ function getSparkyBootstrapConfig() {
 async function ensureSparkyWorkspace() {
   const { Workspace } = require("../../models/workspace");
   const template = getSparkyWorkspaceTemplate();
+  const existingWorkspace = await Workspace.get({ slug: template.slug });
 
-  return await Workspace.upsert(
-    { slug: template.slug },
-    {
-      name: template.name,
-      slug: template.slug,
-      chatMode: template.chatMode,
-      openAiPrompt: template.openAiPrompt,
-    },
-    {
-      name: template.name,
-      chatMode: template.chatMode,
-      openAiPrompt: template.openAiPrompt,
-    }
-  );
+  if (existingWorkspace) {
+    return {
+      workspace: existingWorkspace,
+      error: "sparky_workspace_slug_collision",
+      collision: true,
+      created: false,
+      message:
+        "SPARKY workspace slug already exists; leaving existing workspace untouched.",
+    };
+  }
+
+  // TODO: reserve/protect the SPARKY slug so user-created workspaces cannot
+  // collide with this identity in future releases.
+  const { workspace, message } = await Workspace.new(template.name, null, {
+    chatMode: template.chatMode,
+    openAiPrompt: template.openAiPrompt,
+  });
+
+  return {
+    workspace,
+    error: message,
+    collision: false,
+    created: !!workspace,
+    message,
+  };
 }
 
 module.exports = {
