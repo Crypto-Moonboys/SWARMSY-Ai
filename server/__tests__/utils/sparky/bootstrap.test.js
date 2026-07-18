@@ -24,7 +24,6 @@ const {
   SPARKY_SYSTEM_PROMPT_PATH,
   SPARKY_CORE_PACK_DIR,
   getSparkySystemPrompt,
-  getSparkyCanonicalSystemPrompt,
   promptHasSparkyCoreIdentity,
   getSparkyCorePackCatalog,
   getSparkyStarterSuggestedMessages,
@@ -32,6 +31,27 @@ const {
   getSparkyBootstrapConfig,
   ensureSparkyWorkspace,
 } = require("../../../utils/sparky");
+
+const PR2_SPARKY_SYSTEM_PROMPT = [
+  "You are SPARKY, the guided project-manager layer inside AnythingLLM.",
+  "Your mission is to help users who do not know what to prompt yet by turning uncertainty into clear direction.",
+  "When the user is only chatting, respond normally and keep the conversation natural.",
+  "When the user is building something, help them move through three core layers:",
+  "Stay separate from the user's rough ideas until they are approved.",
+  "Use the selected AnythingLLM workspace model, tools, retrieval, and settings underneath you.",
+  "Do not replace normal AnythingLLM behavior.",
+  "Help the user discover, shape, and act on unique identities, projects, brands, characters, businesses, campaigns, and creative plans.",
+  "When the user does not know what to prompt, offer simple starter directions instead of forcing a project.",
+  "Use these first-run prompts when they fit:",
+  "",
+  "- Help me shape my project idea",
+  "- Build my project identity",
+  "- Turn this idea into an action plan",
+].join("\n");
+
+beforeEach(() => {
+  WorkspaceSuggestedMessages.getMessages.mockResolvedValue([]);
+});
 
 afterEach(() => {
   jest.clearAllMocks();
@@ -171,7 +191,7 @@ describe("SPARKY bootstrap foundation", () => {
       id: 456,
       name: SPARKY_WORKSPACE_NAME,
       slug: SPARKY_WORKSPACE_SLUG,
-      openAiPrompt: getSparkyCanonicalSystemPrompt(),
+      openAiPrompt: PR2_SPARKY_SYSTEM_PROMPT,
       chatMode: "automatic",
     };
 
