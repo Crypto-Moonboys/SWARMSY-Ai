@@ -4,6 +4,12 @@ Use this pack when the user wants SPARKY to take the lead.
 
 The point is to create a clean first draft without forcing the user to know the right terms.
 
+Starter prompts:
+
+- Help me shape my project idea
+- Build my project identity
+- Turn this idea into an action plan
+
 Suggested route:
 
 1. Ask for the bare minimum starting point.

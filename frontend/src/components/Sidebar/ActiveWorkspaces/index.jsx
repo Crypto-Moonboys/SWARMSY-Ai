@@ -119,9 +119,7 @@ export default function ActiveWorkspaces() {
         >
           <div className="flex min-w-0 items-center gap-x-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-cyan-400/15 text-cyan-200">
-              <span className="text-[11px] font-black tracking-[0.2em]">
-                S
-              </span>
+              <span className="text-[11px] font-black tracking-[0.2em]">S</span>
             </div>
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold">
@@ -186,7 +184,7 @@ export default function ActiveWorkspaces() {
                               </div>
                               <div
                                 data-tooltip-id="workspace-name"
-                                data-tooltip-content={workspace.name}
+                                data-tooltip-content={workspace.slug}
                                 className="flex items-center space-x-2 overflow-hidden flex-grow"
                               >
                                 <div className="w-[130px] overflow-hidden">
@@ -226,9 +224,7 @@ export default function ActiveWorkspaces() {
                                       e.stopPropagation();
                                       navigate(
                                         isInWorkspaceSettings
-                                          ? paths.workspace.chat(
-                                              workspace.slug
-                                            )
+                                          ? paths.workspace.chat(workspace.slug)
                                           : paths.workspace.settings.generalAppearance(
                                               workspace.slug
                                             )
