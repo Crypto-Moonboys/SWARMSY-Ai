@@ -47,6 +47,13 @@ const SPARKY_STARTER_SUGGESTED_MESSAGES = [
 
 const SPARKY_CORE_PACKS = [
   {
+    id: "og-sparky-contract",
+    filename: "og-sparky-contract.md",
+    title: "OG SPARKY Contract",
+    summary:
+      "The original SWARMSY/SPARKY product contract without old runtime carryover.",
+  },
+  {
     id: "project-manager-protocol",
     filename: "project-manager-protocol.md",
     title: "Project Manager Protocol",
