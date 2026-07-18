@@ -7,6 +7,7 @@ const eagerLoadContextWindows = require("./eagerLoadContextWindows");
 const markOnboarded = require("./markOnboarded");
 const { PushNotifications } = require("../PushNotifications");
 const { TelegramBotService } = require("../telegramBot");
+const { ensureSparkyWorkspace } = require("../sparky");
 
 // Testing SSL? You can make a self signed certificate and point the ENVs to that location
 // make a directory in server called 'sslcert' - cd into it
@@ -31,14 +32,7 @@ function bootSSL(app, port = 3001) {
 
     server
       .listen(port, async () => {
-        await markOnboarded();
-        await setupTelemetry();
-        new CommunicationKey(true);
-        new EncryptionManager();
-        new BackgroundService().boot();
-        await eagerLoadContextWindows();
-        await PushNotifications.setupPushNotificationService();
-        await TelegramBotService.bootIfActive();
+        await runBootSequence();
         console.log(`Primary server in HTTPS mode listening on port ${port}`);
       })
       .on("error", catchSigTerms);
@@ -64,19 +58,26 @@ function bootHTTP(app, port = 3001) {
 
   app
     .listen(port, async () => {
-      await markOnboarded();
-      await setupTelemetry();
-      new CommunicationKey(true);
-      new EncryptionManager();
-      new BackgroundService().boot();
-      await eagerLoadContextWindows();
-      await PushNotifications.setupPushNotificationService();
-      await TelegramBotService.bootIfActive();
+      await runBootSequence();
       console.log(`Primary server in HTTP mode listening on port ${port}`);
     })
     .on("error", catchSigTerms);
 
   return { app, server: null };
+}
+
+async function runBootSequence() {
+  await markOnboarded();
+  await setupTelemetry();
+  new CommunicationKey(true);
+  new EncryptionManager();
+  new BackgroundService().boot();
+  await ensureSparkyWorkspace().catch((error) => {
+    console.error("Failed to ensure SPARKY workspace exists:", error.message);
+  });
+  await eagerLoadContextWindows();
+  await PushNotifications.setupPushNotificationService();
+  await TelegramBotService.bootIfActive();
 }
 
 function catchSigTerms() {
