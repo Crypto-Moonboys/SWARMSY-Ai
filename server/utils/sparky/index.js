@@ -1,6 +1,8 @@
 const fs = require("fs");
 const path = require("path");
-const { WorkspaceSuggestedMessages } = require("../../models/workspacesSuggestedMessages");
+const {
+  WorkspaceSuggestedMessages,
+} = require("../../models/workspacesSuggestedMessages");
 
 const SPARKY_WORKSPACE_NAME = "SPARKY";
 const SPARKY_WORKSPACE_SLUG = "sparky";
@@ -97,10 +99,7 @@ function getSparkySystemPrompt() {
 
 function normalizeSparkySystemPrompt(prompt = "") {
   return String(prompt)
-    .replace(
-      SPARKY_STARTER_PROMPT_BLOCK.join("\n"),
-      ""
-    )
+    .replace(SPARKY_STARTER_PROMPT_BLOCK.join("\n"), "")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
 }
@@ -145,7 +144,9 @@ function getSparkyBootstrapConfig() {
 }
 
 function isSparkyWorkspaceSlug(slug) {
-  return String(slug || "").trim().toLowerCase() === SPARKY_WORKSPACE_SLUG;
+  return (
+    String(slug || "").trim().toLowerCase() === SPARKY_WORKSPACE_SLUG
+  );
 }
 
 function isCanonicalSparkyWorkspace(workspace = null) {

@@ -58,7 +58,9 @@ describe("SPARKY bootstrap foundation", () => {
       path.join("server", "sparky", "packs", "core")
     );
     expect(getSparkySystemPrompt()).toContain("You are SPARKY");
-    expect(getSparkySystemPrompt()).toContain("Action Confirmation");
+    expect(getSparkySystemPrompt()).toContain(
+      "Use these first-run prompts when they fit:"
+    );
     expect(getSparkySystemPrompt()).toContain("Do not force every chat into a project");
   });
 
