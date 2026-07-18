@@ -1,6 +1,15 @@
 const fs = require("fs");
 const path = require("path");
+
+jest.mock("../../../models/workspacesSuggestedMessages", () => ({
+  WorkspaceSuggestedMessages: {
+    getMessages: jest.fn(),
+    saveAll: jest.fn(),
+  },
+}));
+
 const { Workspace } = require("../../../models/workspace");
+const { WorkspaceSuggestedMessages } = require("../../../models/workspacesSuggestedMessages");
 
 const {
   SPARKY_WORKSPACE_NAME,
@@ -9,12 +18,14 @@ const {
   SPARKY_CORE_PACK_DIR,
   getSparkySystemPrompt,
   getSparkyCorePackCatalog,
+  getSparkyStarterSuggestedMessages,
   getSparkyWorkspaceTemplate,
   getSparkyBootstrapConfig,
   ensureSparkyWorkspace,
 } = require("../../../utils/sparky");
 
 afterEach(() => {
+  jest.clearAllMocks();
   jest.restoreAllMocks();
 });
 
@@ -40,6 +51,7 @@ describe("SPARKY bootstrap foundation", () => {
     );
     expect(getSparkySystemPrompt()).toContain("You are SPARKY");
     expect(getSparkySystemPrompt()).toContain("Action Confirmation");
+    expect(getSparkySystemPrompt()).toContain("Do not force every chat into a project");
   });
 
   it("keeps the core packs on disk and discoverable", () => {
@@ -60,6 +72,7 @@ describe("SPARKY bootstrap foundation", () => {
   it("exposes a fixed SPARKY workspace template with the system prompt attached", () => {
     const template = getSparkyWorkspaceTemplate();
     const bootstrap = getSparkyBootstrapConfig();
+    const starterPrompts = getSparkyStarterSuggestedMessages();
 
     expect(template.name).toBe(SPARKY_WORKSPACE_NAME);
     expect(template.slug).toBe(SPARKY_WORKSPACE_SLUG);
@@ -70,6 +83,12 @@ describe("SPARKY bootstrap foundation", () => {
       getSparkySystemPrompt()
     );
     expect(bootstrap.corePacks).toHaveLength(7);
+    expect(bootstrap.starterSuggestedMessages).toEqual(starterPrompts);
+    expect(starterPrompts).toEqual([
+      { heading: "", message: "Help me shape my project idea" },
+      { heading: "", message: "Build my project identity" },
+      { heading: "", message: "Turn this idea into an action plan" },
+    ]);
   });
 
   it("leaves normal AnythingLLM workspace support intact", () => {
@@ -106,11 +125,13 @@ describe("SPARKY bootstrap foundation", () => {
       slug: SPARKY_WORKSPACE_SLUG,
     };
 
+    WorkspaceSuggestedMessages.getMessages.mockResolvedValue([]);
     const getSpy = jest.spyOn(Workspace, "get").mockResolvedValue(null);
     const newSpy = jest.spyOn(Workspace, "new").mockResolvedValue({
       workspace: createdWorkspace,
       message: null,
     });
+    const saveAllSpy = jest.spyOn(WorkspaceSuggestedMessages, "saveAll").mockResolvedValue();
 
     const result = await ensureSparkyWorkspace();
 
@@ -123,12 +144,47 @@ describe("SPARKY bootstrap foundation", () => {
         openAiPrompt: getSparkySystemPrompt(),
       })
     );
+    expect(saveAllSpy).toHaveBeenCalledWith(
+      getSparkyStarterSuggestedMessages(),
+      SPARKY_WORKSPACE_SLUG
+    );
     expect(result.workspace).toEqual(createdWorkspace);
     expect(result.collision).toBe(false);
     expect(result.created).toBe(true);
   });
 
-  it("does not overwrite an existing SPARKY workspace", async () => {
+  it("seeds starter prompts for an existing bootstrapped SPARKY workspace", async () => {
+    const existingWorkspace = {
+      id: 456,
+      name: SPARKY_WORKSPACE_NAME,
+      slug: SPARKY_WORKSPACE_SLUG,
+      openAiPrompt: getSparkySystemPrompt(),
+      chatMode: "automatic",
+    };
+
+    WorkspaceSuggestedMessages.getMessages.mockResolvedValue([]);
+    const getSpy = jest.spyOn(Workspace, "get").mockResolvedValue(existingWorkspace);
+    const newSpy = jest.spyOn(Workspace, "new").mockResolvedValue({
+      workspace: null,
+      message: "should not be used",
+    });
+    const saveAllSpy = jest.spyOn(WorkspaceSuggestedMessages, "saveAll").mockResolvedValue();
+
+    const result = await ensureSparkyWorkspace();
+
+    expect(getSpy).toHaveBeenCalledWith({ slug: SPARKY_WORKSPACE_SLUG });
+    expect(newSpy).not.toHaveBeenCalled();
+    expect(saveAllSpy).toHaveBeenCalledWith(
+      getSparkyStarterSuggestedMessages(),
+      SPARKY_WORKSPACE_SLUG
+    );
+    expect(result.workspace).toBe(existingWorkspace);
+    expect(result.collision).toBe(false);
+    expect(result.created).toBe(false);
+    expect(result.message).toContain("already bootstrapped");
+  });
+
+  it("does not overwrite a user-created SPARKY collision", async () => {
     const existingWorkspace = {
       id: 456,
       name: "User SPARKY",
@@ -137,16 +193,19 @@ describe("SPARKY bootstrap foundation", () => {
       chatMode: "chat",
     };
 
+    WorkspaceSuggestedMessages.getMessages.mockResolvedValue([]);
     const getSpy = jest.spyOn(Workspace, "get").mockResolvedValue(existingWorkspace);
     const newSpy = jest.spyOn(Workspace, "new").mockResolvedValue({
       workspace: null,
       message: "should not be used",
     });
+    const saveAllSpy = jest.spyOn(WorkspaceSuggestedMessages, "saveAll").mockResolvedValue();
 
     const result = await ensureSparkyWorkspace();
 
     expect(getSpy).toHaveBeenCalledWith({ slug: SPARKY_WORKSPACE_SLUG });
     expect(newSpy).not.toHaveBeenCalled();
+    expect(saveAllSpy).not.toHaveBeenCalled();
     expect(result.workspace).toBe(existingWorkspace);
     expect(result.collision).toBe(true);
     expect(result.created).toBe(false);

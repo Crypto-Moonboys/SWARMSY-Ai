@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { WorkspaceSuggestedMessages } = require("../../models/workspacesSuggestedMessages");
 
 const SPARKY_WORKSPACE_NAME = "SPARKY";
 const SPARKY_WORKSPACE_SLUG = "sparky";
@@ -15,6 +16,21 @@ const SPARKY_SYSTEM_PROMPT_PATH = path.join(
   SPARKY_CORE_PACK_DIR,
   "sparky-system-prompt.md"
 );
+
+const SPARKY_STARTER_SUGGESTED_MESSAGES = [
+  {
+    heading: "",
+    message: "Help me shape my project idea",
+  },
+  {
+    heading: "",
+    message: "Build my project identity",
+  },
+  {
+    heading: "",
+    message: "Turn this idea into an action plan",
+  },
+];
 
 const SPARKY_CORE_PACKS = [
   {
@@ -82,6 +98,10 @@ function getSparkyCorePackCatalog() {
   });
 }
 
+function getSparkyStarterSuggestedMessages() {
+  return SPARKY_STARTER_SUGGESTED_MESSAGES.map((message) => ({ ...message }));
+}
+
 function getSparkyWorkspaceTemplate() {
   return {
     name: SPARKY_WORKSPACE_NAME,
@@ -95,8 +115,32 @@ function getSparkyBootstrapConfig() {
   return {
     workspaceTemplate: getSparkyWorkspaceTemplate(),
     corePacks: getSparkyCorePackCatalog(),
+    starterSuggestedMessages: getSparkyStarterSuggestedMessages(),
     systemPromptPath: SPARKY_SYSTEM_PROMPT_PATH,
   };
+}
+
+function isCanonicalSparkyWorkspace(workspace = null) {
+  if (!workspace || workspace.slug !== SPARKY_WORKSPACE_SLUG) return false;
+  return (
+    String(workspace.name || "").trim() === SPARKY_WORKSPACE_NAME &&
+    String(workspace.openAiPrompt || "").trim() === getSparkySystemPrompt()
+  );
+}
+
+async function seedSparkyStarterSuggestedMessages(workspace = null) {
+  if (!isCanonicalSparkyWorkspace(workspace)) return false;
+
+  const existingMessages = await WorkspaceSuggestedMessages.getMessages(
+    SPARKY_WORKSPACE_SLUG
+  );
+  if (existingMessages.length > 0) return false;
+
+  await WorkspaceSuggestedMessages.saveAll(
+    getSparkyStarterSuggestedMessages(),
+    SPARKY_WORKSPACE_SLUG
+  );
+  return true;
 }
 
 async function ensureSparkyWorkspace() {
@@ -105,6 +149,7 @@ async function ensureSparkyWorkspace() {
   const existingWorkspace = await Workspace.get({ slug: template.slug });
 
   if (existingWorkspace) {
+    await seedSparkyStarterSuggestedMessages(existingWorkspace);
     return {
       workspace: existingWorkspace,
       error: "sparky_workspace_slug_collision",
@@ -121,6 +166,8 @@ async function ensureSparkyWorkspace() {
     chatMode: template.chatMode,
     openAiPrompt: template.openAiPrompt,
   });
+
+  await seedSparkyStarterSuggestedMessages(workspace);
 
   return {
     workspace,
@@ -139,7 +186,10 @@ module.exports = {
   SPARKY_CORE_PACKS,
   getSparkySystemPrompt,
   getSparkyCorePackCatalog,
+  getSparkyStarterSuggestedMessages,
   getSparkyWorkspaceTemplate,
   getSparkyBootstrapConfig,
+  isCanonicalSparkyWorkspace,
+  seedSparkyStarterSuggestedMessages,
   ensureSparkyWorkspace,
 };
