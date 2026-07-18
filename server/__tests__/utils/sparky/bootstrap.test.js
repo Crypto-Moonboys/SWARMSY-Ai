@@ -13,6 +13,7 @@ const { Workspace } = require("../../../models/workspace");
 const {
   SPARKY_WORKSPACE_NAME,
   SPARKY_WORKSPACE_SLUG,
+  SPARKY_WORKSPACE_METADATA,
   SPARKY_SYSTEM_PROMPT_PATH,
   SPARKY_CORE_PACK_DIR,
   getSparkySystemPrompt,
@@ -73,9 +74,13 @@ describe("SPARKY bootstrap foundation", () => {
     expect(template.slug).toBe(SPARKY_WORKSPACE_SLUG);
     expect(template.chatMode).toBe("automatic");
     expect(template.openAiPrompt).toBe(getSparkySystemPrompt());
+    expect(template.metadata).toBe(SPARKY_WORKSPACE_METADATA);
 
     expect(bootstrap.workspaceTemplate.openAiPrompt).toBe(
       getSparkySystemPrompt()
+    );
+    expect(bootstrap.workspaceTemplate.metadata).toBe(
+      SPARKY_WORKSPACE_METADATA
     );
     expect(bootstrap.corePacks).toHaveLength(7);
   });
@@ -131,6 +136,7 @@ describe("SPARKY bootstrap foundation", () => {
       expect.objectContaining({
         chatMode: "automatic",
         openAiPrompt: getSparkySystemPrompt(),
+        metadata: SPARKY_WORKSPACE_METADATA,
       })
     );
     expect(result.workspace).toEqual(createdWorkspace);
@@ -145,6 +151,7 @@ describe("SPARKY bootstrap foundation", () => {
       slug: SPARKY_WORKSPACE_SLUG,
       openAiPrompt: "user prompt",
       chatMode: "chat",
+      metadata: null,
     };
 
     Workspace.get.mockResolvedValue(existingWorkspace);

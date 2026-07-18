@@ -14,6 +14,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import showToast from "@/utils/toast";
 import { LAST_VISITED_WORKSPACE } from "@/utils/constants";
 import { safeJsonParse } from "@/utils/request";
+import { isCanonicalSparkyWorkspace } from "@/utils/sparky";
 
 export default function ActiveWorkspaces() {
   const navigate = useNavigate();
@@ -26,9 +27,10 @@ export default function ActiveWorkspaces() {
   const isInWorkspaceSettings = !!useMatch("/workspace/:slug/settings/:tab");
   const isHomePage = !!useMatch("/");
   const sparkyWorkspace =
-    workspaces.find((workspace) => workspace.slug === "sparky") || null;
+    workspaces.find((workspace) => isCanonicalSparkyWorkspace(workspace)) ||
+    null;
   const otherWorkspaces = workspaces.filter(
-    (workspace) => workspace.slug !== "sparky"
+    (workspace) => !isCanonicalSparkyWorkspace(workspace)
   );
 
   useEffect(() => {
@@ -60,16 +62,22 @@ export default function ActiveWorkspaces() {
    * @param {number} endIndex - the index to move the workspace to
    */
   function reorderWorkspaces(startIndex, endIndex) {
-    const reorderedWorkspaces = Array.from(workspaces);
+    const reorderedWorkspaces = Array.from(otherWorkspaces);
     const [removed] = reorderedWorkspaces.splice(startIndex, 1);
     reorderedWorkspaces.splice(endIndex, 0, removed);
-    setWorkspaces(reorderedWorkspaces);
+    setWorkspaces(
+      sparkyWorkspace
+        ? [sparkyWorkspace, ...reorderedWorkspaces]
+        : reorderedWorkspaces
+    );
     const success = Workspace.storeWorkspaceOrder(
       reorderedWorkspaces.map((w) => w.id)
     );
     if (!success) {
       showToast("Failed to reorder workspaces", "error");
-      Workspace.all().then((workspaces) => setWorkspaces(workspaces));
+      Workspace.all().then((workspaces) =>
+        setWorkspaces(Workspace.orderWorkspaces(workspaces))
+      );
     }
   }
 
@@ -84,9 +92,12 @@ export default function ActiveWorkspaces() {
     const lastVisited = safeJsonParse(
       localStorage.getItem(LAST_VISITED_WORKSPACE)
     );
+    const lastVisitedWorkspace = lastVisited?.slug
+      ? workspaces.find((ws) => ws.slug === lastVisited.slug)
+      : null;
     if (
-      lastVisited?.slug &&
-      lastVisited.slug !== "sparky" &&
+      lastVisitedWorkspace &&
+      !isCanonicalSparkyWorkspace(lastVisitedWorkspace) &&
       otherWorkspaces.some((ws) => ws.slug === lastVisited.slug)
     )
       return lastVisited.slug;

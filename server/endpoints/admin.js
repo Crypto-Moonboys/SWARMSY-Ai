@@ -33,7 +33,7 @@ const {
 } = require("../utils/middleware/workspaceDeletionProtection");
 const {
   ensureSparkyWorkspace,
-  isSparkyWorkspaceSlug,
+  isCanonicalSparkyWorkspace,
 } = require("../utils/sparky");
 
 function adminEndpoints(app) {
@@ -313,7 +313,7 @@ function adminEndpoints(app) {
           response.sendStatus(404).end();
           return;
         }
-        if (isSparkyWorkspaceSlug(workspace.slug)) {
+        if (isCanonicalSparkyWorkspace(workspace)) {
           response.status(403).json({
             success: false,
             error: "SPARKY is a protected fixed workspace.",

@@ -14,21 +14,26 @@ describe("SPARKY fixed workspace protection", () => {
     const sparkyUtil = read("server/utils/sparky/index.js");
     const sparkyPrompt = read("server/sparky/packs/core/sparky-system-prompt.md");
 
-    expect(workspaceModel).toContain("SPARKY_WORKSPACE_SLUG");
-    expect(workspaceModel).toContain("slug: SPARKY_WORKSPACE_SLUG");
+    expect(workspaceModel).toContain("SPARKY_WORKSPACE_METADATA");
+    expect(workspaceModel).toContain("isCanonicalSparkyWorkspace");
     expect(workspaceModel).toContain("workspace_users");
-    expect(workspaceModel).toContain("slug: SPARKY_WORKSPACE_SLUG");
+    expect(workspaceModel).toContain("metadata: SPARKY_WORKSPACE_METADATA");
     expect(workspaceModel).toContain("OR:");
 
     expect(workspacesEndpoint).toContain("await ensureSparkyWorkspace();");
+    expect(workspacesEndpoint).toContain("isCanonicalSparkyWorkspace(workspace)");
     expect(workspacesEndpoint).toContain("SPARKY is a protected fixed workspace.");
     expect(workspacesEndpoint).toContain('"/workspaces"');
 
     expect(apiWorkspaceEndpoint).toContain("await ensureSparkyWorkspace();");
+    expect(apiWorkspaceEndpoint).toContain(
+      "isCanonicalSparkyWorkspace(workspace)"
+    );
     expect(apiWorkspaceEndpoint).toContain('"/v1/workspaces"');
     expect(apiWorkspaceEndpoint).toContain("SPARKY is a protected fixed workspace.");
 
     expect(adminEndpoint).toContain("await ensureSparkyWorkspace();");
+    expect(adminEndpoint).toContain("isCanonicalSparkyWorkspace(workspace)");
     expect(adminEndpoint).toContain('"/admin/workspaces"');
     expect(adminEndpoint).toContain("SPARKY is a protected fixed workspace.");
 
@@ -42,13 +47,14 @@ describe("SPARKY fixed workspace protection", () => {
     const homePage = read("frontend/src/pages/Main/Home/index.jsx");
     const generalAppearance = read("frontend/src/pages/WorkspaceSettings/GeneralAppearance/index.jsx");
     const workspaceRow = read("frontend/src/pages/Admin/Workspaces/WorkspaceRow/index.jsx");
-    const workspaceModel = read("frontend/src/models/workspace.js");
+    const sparkyHelper = read("frontend/src/utils/sparky.js");
 
     expect(activeWorkspaces).toContain("Continue with SPARKY");
-    expect(activeWorkspaces).toContain('workspace.slug !== "sparky"');
-    expect(homePage).toContain('workspace.slug === "sparky"');
-    expect(generalAppearance).toContain('workspace.slug !== "sparky"');
-    expect(workspaceRow).toContain('workspace.slug !== "sparky"');
-    expect(workspaceModel).not.toContain("sparkyIndex");
+    expect(activeWorkspaces).toContain("isCanonicalSparkyWorkspace(workspace)");
+    expect(activeWorkspaces).toContain("reorderedWorkspaces.map((w) => w.id)");
+    expect(homePage).toContain("isCanonicalSparkyWorkspace(workspace)");
+    expect(generalAppearance).toContain("isCanonicalSparkyWorkspace(workspace)");
+    expect(workspaceRow).toContain("isCanonicalSparkyWorkspace(workspace)");
+    expect(sparkyHelper).toContain("SPARKY_WORKSPACE_METADATA");
   });
 });

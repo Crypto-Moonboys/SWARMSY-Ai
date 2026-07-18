@@ -23,7 +23,7 @@ const {
 } = require("../../../utils/middleware/workspaceDeletionProtection");
 const {
   ensureSparkyWorkspace,
-  isSparkyWorkspaceSlug,
+  isCanonicalSparkyWorkspace,
 } = require("../../../utils/sparky");
 
 function apiWorkspaceEndpoints(app) {
@@ -251,18 +251,19 @@ function apiWorkspaceEndpoints(app) {
     */
       try {
         const { slug = "" } = request.params;
-        if (isSparkyWorkspaceSlug(slug)) {
-          response.status(403).json({
-            success: false,
-            error: "SPARKY is a protected fixed workspace.",
-          });
-          return;
-        }
         const VectorDb = getVectorDbClass();
         const workspace = await Workspace.get({ slug: String(slug) });
 
         if (!workspace) {
           response.sendStatus(400).end();
+          return;
+        }
+
+        if (isCanonicalSparkyWorkspace(workspace)) {
+          response.status(403).json({
+            success: false,
+            error: "SPARKY is a protected fixed workspace.",
+          });
           return;
         }
 

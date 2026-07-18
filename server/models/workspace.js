@@ -7,7 +7,11 @@ const { v4: uuidv4 } = require("uuid");
 const { User } = require("./user");
 const { PromptHistory } = require("./promptHistory");
 const { SystemSettings } = require("./systemSettings");
-const { SPARKY_WORKSPACE_SLUG } = require("../utils/sparky");
+const {
+  SPARKY_WORKSPACE_SLUG,
+  SPARKY_WORKSPACE_METADATA,
+  isCanonicalSparkyWorkspace,
+} = require("../utils/sparky");
 
 function isNullOrNaN(value) {
   if (value === null) return true;
@@ -214,13 +218,22 @@ const Workspace = {
     }
 
     try {
+      const createData = {
+        name: this.validations.name(name),
+        chatMode: "automatic",
+        ...this.validateFields(additionalFields),
+        slug,
+      };
+
+      if (additionalFields.metadata !== undefined) {
+        createData.metadata =
+          typeof additionalFields.metadata === "string"
+            ? additionalFields.metadata
+            : JSON.stringify(additionalFields.metadata);
+      }
+
       const workspace = await prisma.workspaces.create({
-        data: {
-          name: this.validations.name(name),
-          chatMode: "automatic",
-          ...this.validateFields(additionalFields),
-          slug,
-        },
+        data: createData,
       });
 
       // If created with a user then we need to create the relationship as well.
@@ -292,7 +305,7 @@ const Workspace = {
 
   getWithUser: async function (user = null, clause = {}) {
     const requestedWorkspace = await this.get(clause);
-    if (requestedWorkspace?.slug === SPARKY_WORKSPACE_SLUG) {
+    if (isCanonicalSparkyWorkspace(requestedWorkspace)) {
       return requestedWorkspace;
     }
 
@@ -314,7 +327,7 @@ const Workspace = {
                   },
                 },
                 {
-                  slug: SPARKY_WORKSPACE_SLUG,
+                  metadata: SPARKY_WORKSPACE_METADATA,
                 },
               ],
             },
@@ -404,7 +417,7 @@ const Workspace = {
   delete: async function (clause = {}) {
     try {
       const workspace = await this.get(clause);
-      if (workspace?.slug === SPARKY_WORKSPACE_SLUG) return false;
+      if (isCanonicalSparkyWorkspace(workspace)) return false;
       await prisma.workspaces.delete({
         where: clause,
       });
@@ -453,7 +466,7 @@ const Workspace = {
                   },
                 },
                 {
-                  slug: SPARKY_WORKSPACE_SLUG,
+                  metadata: SPARKY_WORKSPACE_METADATA,
                 },
               ],
             },

@@ -3,6 +3,9 @@ const path = require("path");
 
 const SPARKY_WORKSPACE_NAME = "SPARKY";
 const SPARKY_WORKSPACE_SLUG = "sparky";
+const SPARKY_WORKSPACE_METADATA = JSON.stringify({
+  sparky: { canonical: true },
+});
 const SPARKY_CORE_PACK_DIR = path.join(
   __dirname,
   "..",
@@ -65,6 +68,16 @@ function readMarkdownFile(filePath) {
   return fs.readFileSync(filePath, "utf8").trim();
 }
 
+function parseJson(value, fallback = {}) {
+  if (value === null || value === undefined) return fallback;
+  if (typeof value === "object") return value;
+  try {
+    return JSON.parse(String(value));
+  } catch {
+    return fallback;
+  }
+}
+
 function getSparkySystemPrompt() {
   return readMarkdownFile(SPARKY_SYSTEM_PROMPT_PATH);
 }
@@ -88,6 +101,7 @@ function getSparkyWorkspaceTemplate() {
     slug: SPARKY_WORKSPACE_SLUG,
     chatMode: "automatic",
     openAiPrompt: getSparkySystemPrompt(),
+    metadata: SPARKY_WORKSPACE_METADATA,
   };
 }
 
@@ -101,6 +115,12 @@ function getSparkyBootstrapConfig() {
 
 function isSparkyWorkspaceSlug(slug) {
   return String(slug || "").trim().toLowerCase() === SPARKY_WORKSPACE_SLUG;
+}
+
+function isCanonicalSparkyWorkspace(workspace = null) {
+  if (!workspace || workspace.slug !== SPARKY_WORKSPACE_SLUG) return false;
+  const metadata = parseJson(workspace.metadata, {});
+  return metadata?.sparky?.canonical === true;
 }
 
 async function ensureSparkyWorkspace() {
@@ -124,6 +144,7 @@ async function ensureSparkyWorkspace() {
   const { workspace, message } = await Workspace.new(template.name, null, {
     chatMode: template.chatMode,
     openAiPrompt: template.openAiPrompt,
+    metadata: template.metadata,
   });
 
   return {
@@ -138,6 +159,7 @@ async function ensureSparkyWorkspace() {
 module.exports = {
   SPARKY_WORKSPACE_NAME,
   SPARKY_WORKSPACE_SLUG,
+  SPARKY_WORKSPACE_METADATA,
   SPARKY_CORE_PACK_DIR,
   SPARKY_SYSTEM_PROMPT_PATH,
   SPARKY_CORE_PACKS,
@@ -146,5 +168,6 @@ module.exports = {
   getSparkyWorkspaceTemplate,
   getSparkyBootstrapConfig,
   isSparkyWorkspaceSlug,
+  isCanonicalSparkyWorkspace,
   ensureSparkyWorkspace,
 };

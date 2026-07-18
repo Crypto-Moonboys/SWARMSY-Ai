@@ -44,7 +44,7 @@ const {
 } = require("../utils/middleware/workspaceDeletionProtection");
 const {
   ensureSparkyWorkspace,
-  isSparkyWorkspaceSlug,
+  isCanonicalSparkyWorkspace,
 } = require("../utils/sparky");
 
 function workspaceEndpoints(app) {
@@ -287,13 +287,6 @@ function workspaceEndpoints(app) {
     async (request, response) => {
       try {
         const { slug = "" } = request.params;
-        if (isSparkyWorkspaceSlug(slug)) {
-          response.status(403).json({
-            success: false,
-            error: "SPARKY is a protected fixed workspace.",
-          });
-          return;
-        }
         const user = await userFromSession(request, response);
         const VectorDb = getVectorDbClass();
         const workspace = multiUserMode(response)
@@ -302,6 +295,14 @@ function workspaceEndpoints(app) {
 
         if (!workspace) {
           response.sendStatus(400).end();
+          return;
+        }
+
+        if (isCanonicalSparkyWorkspace(workspace)) {
+          response.status(403).json({
+            success: false,
+            error: "SPARKY is a protected fixed workspace.",
+          });
           return;
         }
 
