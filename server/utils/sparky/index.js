@@ -55,13 +55,15 @@ const SPARKY_CORE_PACKS = [
     id: "identity-questionnaire",
     filename: "identity-questionnaire.md",
     title: "Identity Questionnaire",
-    summary: "Starter intake for identity, project, brand, and alter ego discovery.",
+    summary:
+      "Starter intake for identity, project, brand, and alter ego discovery.",
   },
   {
     id: "do-it-for-me-prompts",
     filename: "do-it-for-me-prompts.md",
     title: "Do It For Me Prompts",
-    summary: "A guided route for users who want SPARKY to shape the first draft.",
+    summary:
+      "A guided route for users who want SPARKY to shape the first draft.",
   },
   {
     id: "approved-decisions",
@@ -145,7 +147,9 @@ function getSparkyBootstrapConfig() {
 
 function isSparkyWorkspaceSlug(slug) {
   return (
-    String(slug || "").trim().toLowerCase() === SPARKY_WORKSPACE_SLUG
+    String(slug || "")
+      .trim()
+      .toLowerCase() === SPARKY_WORKSPACE_SLUG
   );
 }
 

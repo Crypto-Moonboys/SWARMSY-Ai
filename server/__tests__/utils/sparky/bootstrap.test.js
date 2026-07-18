@@ -133,6 +133,8 @@ describe("SPARKY bootstrap foundation", () => {
       id: 123,
       name: SPARKY_WORKSPACE_NAME,
       slug: SPARKY_WORKSPACE_SLUG,
+      openAiPrompt: getSparkySystemPrompt(),
+      chatMode: "automatic",
     };
 
     WorkspaceSuggestedMessages.getMessages.mockResolvedValue([]);
