@@ -1,6 +1,13 @@
 const fs = require("fs");
 const path = require("path");
 
+jest.mock("../../../models/workspace", () => ({
+  Workspace: {
+    get: jest.fn(),
+    new: jest.fn(),
+  },
+}));
+
 jest.mock("../../../models/workspacesSuggestedMessages", () => ({
   WorkspaceSuggestedMessages: {
     getMessages: jest.fn(),
@@ -126,17 +133,17 @@ describe("SPARKY bootstrap foundation", () => {
     };
 
     WorkspaceSuggestedMessages.getMessages.mockResolvedValue([]);
-    const getSpy = jest.spyOn(Workspace, "get").mockResolvedValue(null);
-    const newSpy = jest.spyOn(Workspace, "new").mockResolvedValue({
+    Workspace.get.mockResolvedValue(null);
+    Workspace.new.mockResolvedValue({
       workspace: createdWorkspace,
       message: null,
     });
-    const saveAllSpy = jest.spyOn(WorkspaceSuggestedMessages, "saveAll").mockResolvedValue();
+    WorkspaceSuggestedMessages.saveAll.mockResolvedValue();
 
     const result = await ensureSparkyWorkspace();
 
-    expect(getSpy).toHaveBeenCalledWith({ slug: SPARKY_WORKSPACE_SLUG });
-    expect(newSpy).toHaveBeenCalledWith(
+    expect(Workspace.get).toHaveBeenCalledWith({ slug: SPARKY_WORKSPACE_SLUG });
+    expect(Workspace.new).toHaveBeenCalledWith(
       SPARKY_WORKSPACE_NAME,
       null,
       expect.objectContaining({
@@ -144,7 +151,7 @@ describe("SPARKY bootstrap foundation", () => {
         openAiPrompt: getSparkySystemPrompt(),
       })
     );
-    expect(saveAllSpy).toHaveBeenCalledWith(
+    expect(WorkspaceSuggestedMessages.saveAll).toHaveBeenCalledWith(
       getSparkyStarterSuggestedMessages(),
       SPARKY_WORKSPACE_SLUG
     );
@@ -153,7 +160,7 @@ describe("SPARKY bootstrap foundation", () => {
     expect(result.created).toBe(true);
   });
 
-  it("seeds starter prompts for an existing bootstrapped SPARKY workspace", async () => {
+  it("recognizes the PR #1 SPARKY workspace as canonical on upgrade", async () => {
     const existingWorkspace = {
       id: 456,
       name: SPARKY_WORKSPACE_NAME,
@@ -162,19 +169,18 @@ describe("SPARKY bootstrap foundation", () => {
       chatMode: "automatic",
     };
 
-    WorkspaceSuggestedMessages.getMessages.mockResolvedValue([]);
-    const getSpy = jest.spyOn(Workspace, "get").mockResolvedValue(existingWorkspace);
-    const newSpy = jest.spyOn(Workspace, "new").mockResolvedValue({
+    Workspace.get.mockResolvedValue(existingWorkspace);
+    Workspace.new.mockResolvedValue({
       workspace: null,
       message: "should not be used",
     });
-    const saveAllSpy = jest.spyOn(WorkspaceSuggestedMessages, "saveAll").mockResolvedValue();
+    WorkspaceSuggestedMessages.saveAll.mockResolvedValue();
 
     const result = await ensureSparkyWorkspace();
 
-    expect(getSpy).toHaveBeenCalledWith({ slug: SPARKY_WORKSPACE_SLUG });
-    expect(newSpy).not.toHaveBeenCalled();
-    expect(saveAllSpy).toHaveBeenCalledWith(
+    expect(Workspace.get).toHaveBeenCalledWith({ slug: SPARKY_WORKSPACE_SLUG });
+    expect(Workspace.new).not.toHaveBeenCalled();
+    expect(WorkspaceSuggestedMessages.saveAll).toHaveBeenCalledWith(
       getSparkyStarterSuggestedMessages(),
       SPARKY_WORKSPACE_SLUG
     );
@@ -186,26 +192,25 @@ describe("SPARKY bootstrap foundation", () => {
 
   it("does not overwrite a user-created SPARKY collision", async () => {
     const existingWorkspace = {
-      id: 456,
+      id: 789,
       name: "User SPARKY",
       slug: SPARKY_WORKSPACE_SLUG,
       openAiPrompt: "user prompt",
       chatMode: "chat",
     };
 
-    WorkspaceSuggestedMessages.getMessages.mockResolvedValue([]);
-    const getSpy = jest.spyOn(Workspace, "get").mockResolvedValue(existingWorkspace);
-    const newSpy = jest.spyOn(Workspace, "new").mockResolvedValue({
+    Workspace.get.mockResolvedValue(existingWorkspace);
+    Workspace.new.mockResolvedValue({
       workspace: null,
       message: "should not be used",
     });
-    const saveAllSpy = jest.spyOn(WorkspaceSuggestedMessages, "saveAll").mockResolvedValue();
+    WorkspaceSuggestedMessages.saveAll.mockResolvedValue();
 
     const result = await ensureSparkyWorkspace();
 
-    expect(getSpy).toHaveBeenCalledWith({ slug: SPARKY_WORKSPACE_SLUG });
-    expect(newSpy).not.toHaveBeenCalled();
-    expect(saveAllSpy).not.toHaveBeenCalled();
+    expect(Workspace.get).toHaveBeenCalledWith({ slug: SPARKY_WORKSPACE_SLUG });
+    expect(Workspace.new).not.toHaveBeenCalled();
+    expect(WorkspaceSuggestedMessages.saveAll).not.toHaveBeenCalled();
     expect(result.workspace).toBe(existingWorkspace);
     expect(result.collision).toBe(true);
     expect(result.created).toBe(false);

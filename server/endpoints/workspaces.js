@@ -42,6 +42,10 @@ const { workspaceParsedFilesEndpoints } = require("./workspacesParsedFiles");
 const {
   workspaceDeletionProtection,
 } = require("../utils/middleware/workspaceDeletionProtection");
+const {
+  ensureSparkyWorkspace,
+  isCanonicalSparkyWorkspace,
+} = require("../utils/sparky");
 
 function workspaceEndpoints(app) {
   if (!app) return;
@@ -88,6 +92,7 @@ function workspaceEndpoints(app) {
     [validatedRequest, flexUserRoleValid([ROLES.admin, ROLES.manager])],
     async (request, response) => {
       try {
+        await ensureSparkyWorkspace();
         const user = await userFromSession(request, response);
         const { slug = null } = request.params;
         const data = reqBody(request);
@@ -97,6 +102,14 @@ function workspaceEndpoints(app) {
 
         if (!currWorkspace) {
           response.sendStatus(400).end();
+          return;
+        }
+
+        if (isCanonicalSparkyWorkspace(currWorkspace) && Object.keys(data).length) {
+          response.status(403).json({
+            success: false,
+            error: "SPARKY is a protected fixed workspace.",
+          });
           return;
         }
 
@@ -293,6 +306,14 @@ function workspaceEndpoints(app) {
           return;
         }
 
+        if (isCanonicalSparkyWorkspace(workspace)) {
+          response.status(403).json({
+            success: false,
+            error: "SPARKY is a protected fixed workspace.",
+          });
+          return;
+        }
+
         await WorkspaceChats.delete({ workspaceId: Number(workspace.id) });
         await DocumentVectors.deleteForWorkspace(workspace.id);
         await Document.delete({ workspaceId: Number(workspace.id) });
@@ -365,6 +386,7 @@ function workspaceEndpoints(app) {
     [validatedRequest, flexUserRoleValid([ROLES.all])],
     async (request, response) => {
       try {
+        await ensureSparkyWorkspace();
         const user = await userFromSession(request, response);
         const workspaces = multiUserMode(response)
           ? await Workspace.whereWithUser(user)
