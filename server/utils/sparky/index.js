@@ -99,10 +99,32 @@ function getSparkyBootstrapConfig() {
   };
 }
 
+function isSparkyWorkspaceSlug(slug) {
+  return String(slug || "").trim().toLowerCase() === SPARKY_WORKSPACE_SLUG;
+}
+
+function isCanonicalSparkyWorkspace(workspace = null) {
+  if (!workspace || workspace.slug !== SPARKY_WORKSPACE_SLUG) return false;
+  return (
+    String(workspace.name || "").trim() === SPARKY_WORKSPACE_NAME &&
+    String(workspace.openAiPrompt || "").trim() === getSparkySystemPrompt()
+  );
+}
+
 async function ensureSparkyWorkspace() {
   const { Workspace } = require("../../models/workspace");
   const template = getSparkyWorkspaceTemplate();
   const existingWorkspace = await Workspace.get({ slug: template.slug });
+
+  if (isCanonicalSparkyWorkspace(existingWorkspace)) {
+    return {
+      workspace: existingWorkspace,
+      error: null,
+      collision: false,
+      created: false,
+      message: "SPARKY workspace is already bootstrapped.",
+    };
+  }
 
   if (existingWorkspace) {
     return {
@@ -141,5 +163,7 @@ module.exports = {
   getSparkyCorePackCatalog,
   getSparkyWorkspaceTemplate,
   getSparkyBootstrapConfig,
+  isSparkyWorkspaceSlug,
+  isCanonicalSparkyWorkspace,
   ensureSparkyWorkspace,
 };

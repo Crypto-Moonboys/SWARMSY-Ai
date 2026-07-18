@@ -21,6 +21,10 @@ const { getModelTag } = require("../../utils");
 const {
   workspaceDeletionProtection,
 } = require("../../../utils/middleware/workspaceDeletionProtection");
+const {
+  ensureSparkyWorkspace,
+  isCanonicalSparkyWorkspace,
+} = require("../../../utils/sparky");
 
 function apiWorkspaceEndpoints(app) {
   if (!app) return;
@@ -141,6 +145,7 @@ function apiWorkspaceEndpoints(app) {
     }
     */
     try {
+      await ensureSparkyWorkspace();
       const workspaces = await Workspace._findMany({
         where: {},
         include: {
@@ -254,6 +259,14 @@ function apiWorkspaceEndpoints(app) {
           return;
         }
 
+        if (isCanonicalSparkyWorkspace(workspace)) {
+          response.status(403).json({
+            success: false,
+            error: "SPARKY is a protected fixed workspace.",
+          });
+          return;
+        }
+
         const workspaceId = Number(workspace.id);
         await WorkspaceChats.delete({ workspaceId: workspaceId });
         await DocumentVectors.deleteForWorkspace(workspaceId);
@@ -339,6 +352,14 @@ function apiWorkspaceEndpoints(app) {
 
         if (!currWorkspace) {
           response.sendStatus(400).end();
+          return;
+        }
+
+        if (isCanonicalSparkyWorkspace(currWorkspace)) {
+          response.status(403).json({
+            success: false,
+            error: "SPARKY is a protected fixed workspace.",
+          });
           return;
         }
 

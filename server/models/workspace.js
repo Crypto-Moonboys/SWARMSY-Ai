@@ -7,10 +7,39 @@ const { v4: uuidv4 } = require("uuid");
 const { User } = require("./user");
 const { PromptHistory } = require("./promptHistory");
 const { SystemSettings } = require("./systemSettings");
+const {
+  SPARKY_WORKSPACE_SLUG,
+  getSparkySystemPrompt,
+  isCanonicalSparkyWorkspace,
+} = require("../utils/sparky");
 
 function isNullOrNaN(value) {
   if (value === null) return true;
   return isNaN(value);
+}
+
+function attachSparkyCanonicalFlag(workspace = null) {
+  if (!workspace) return workspace;
+  return {
+    ...workspace,
+    isCanonicalSparky: isCanonicalSparkyWorkspace(workspace),
+  };
+}
+
+function attachSparkyCanonicalFlagList(workspaces = []) {
+  return workspaces.map((workspace) => attachSparkyCanonicalFlag(workspace));
+}
+
+async function enrichWorkspaceForUser(workspace = null) {
+  if (!workspace) return null;
+  return {
+    ...attachSparkyCanonicalFlag(workspace),
+    documents: await Document.forWorkspace(workspace.id),
+    contextWindow: Workspace._getContextWindow(workspace),
+    currentContextTokenCount: await Workspace._getCurrentContextTokenCount(
+      workspace.id
+    ),
+  };
 }
 
 /**
@@ -213,20 +242,22 @@ const Workspace = {
     }
 
     try {
+      const createData = {
+        name: this.validations.name(name),
+        chatMode: "automatic",
+        ...this.validateFields(additionalFields),
+        slug,
+      };
+
       const workspace = await prisma.workspaces.create({
-        data: {
-          name: this.validations.name(name),
-          chatMode: "automatic",
-          ...this.validateFields(additionalFields),
-          slug,
-        },
+        data: createData,
       });
 
       // If created with a user then we need to create the relationship as well.
       // If creating with an admin User it wont change anything because admins can
       // view all workspaces anyway.
       if (!!creatorId) await WorkspaceUser.create(creatorId, workspace.id);
-      return { workspace, message: null };
+      return { workspace: attachSparkyCanonicalFlag(workspace), message: null };
     } catch (error) {
       console.error(error.message);
       return { workspace: null, message: error.message };
@@ -290,18 +321,43 @@ const Workspace = {
   },
 
   getWithUser: async function (user = null, clause = {}) {
+    const requestedWorkspace = await this.get(clause);
+    if (isCanonicalSparkyWorkspace(requestedWorkspace)) {
+      const canonicalWorkspace = await prisma.workspaces.findFirst({
+        where: clause,
+        include: {
+          workspace_users: true,
+          documents: true,
+        },
+      });
+      return await enrichWorkspaceForUser(canonicalWorkspace);
+    }
+
     if ([ROLES.admin, ROLES.manager].includes(user.role))
-      return this.get(clause);
+      return requestedWorkspace;
 
     try {
       const workspace = await prisma.workspaces.findFirst({
         where: {
-          ...clause,
-          workspace_users: {
-            some: {
-              user_id: user?.id,
+          AND: [
+            clause,
+            {
+              OR: [
+                {
+                  workspace_users: {
+                    some: {
+                      user_id: user?.id,
+                    },
+                  },
+                },
+                {
+                  slug: SPARKY_WORKSPACE_SLUG,
+                  name: "SPARKY",
+                  openAiPrompt: getSparkySystemPrompt(),
+                },
+              ],
             },
-          },
+          ],
         },
         include: {
           workspace_users: true,
@@ -311,14 +367,7 @@ const Workspace = {
 
       if (!workspace) return null;
 
-      return {
-        ...workspace,
-        documents: await Document.forWorkspace(workspace.id),
-        contextWindow: this._getContextWindow(workspace),
-        currentContextTokenCount: await this._getCurrentContextTokenCount(
-          workspace.id
-        ),
-      };
+      return await enrichWorkspaceForUser(workspace);
     } catch (error) {
       console.error(error.message);
       return null;
@@ -372,7 +421,7 @@ const Workspace = {
 
       if (!workspace) return null;
       return {
-        ...workspace,
+        ...attachSparkyCanonicalFlag(workspace),
         contextWindow: this._getContextWindow(workspace),
         currentContextTokenCount: await this._getCurrentContextTokenCount(
           workspace.id
@@ -386,6 +435,8 @@ const Workspace = {
 
   delete: async function (clause = {}) {
     try {
+      const workspace = await this.get(clause);
+      if (isCanonicalSparkyWorkspace(workspace)) return false;
       await prisma.workspaces.delete({
         where: clause,
       });
@@ -403,7 +454,7 @@ const Workspace = {
         ...(limit !== null ? { take: limit } : {}),
         ...(orderBy !== null ? { orderBy } : {}),
       });
-      return results;
+      return attachSparkyCanonicalFlagList(results);
     } catch (error) {
       console.error(error.message);
       return [];
@@ -422,17 +473,30 @@ const Workspace = {
     try {
       const workspaces = await prisma.workspaces.findMany({
         where: {
-          ...clause,
-          workspace_users: {
-            some: {
-              user_id: user.id,
+          AND: [
+            clause,
+            {
+              OR: [
+                {
+                  workspace_users: {
+                    some: {
+                      user_id: user.id,
+                    },
+                  },
+                },
+                {
+                  slug: SPARKY_WORKSPACE_SLUG,
+                  name: "SPARKY",
+                  openAiPrompt: getSparkySystemPrompt(),
+                },
+              ],
             },
-          },
+          ],
         },
         ...(limit !== null ? { take: limit } : {}),
         ...(orderBy !== null ? { orderBy } : {}),
       });
-      return workspaces;
+      return attachSparkyCanonicalFlagList(workspaces);
     } catch (error) {
       console.error(error.message);
       return [];
@@ -564,7 +628,7 @@ const Workspace = {
   _findMany: async function (prismaQuery = {}) {
     try {
       const results = await prisma.workspaces.findMany(prismaQuery);
-      return results;
+      return attachSparkyCanonicalFlagList(results);
     } catch (error) {
       console.error(error.message);
       return null;
@@ -579,7 +643,7 @@ const Workspace = {
   _findFirst: async function (prismaQuery = {}) {
     try {
       const results = await prisma.workspaces.findFirst(prismaQuery);
-      return results;
+      return attachSparkyCanonicalFlag(results);
     } catch (error) {
       console.error(error.message);
       return null;

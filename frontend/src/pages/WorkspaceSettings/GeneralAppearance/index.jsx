@@ -6,6 +6,7 @@ import WorkspaceName from "./WorkspaceName";
 import SuggestedChatMessages from "./SuggestedChatMessages";
 import DeleteWorkspace from "./DeleteWorkspace";
 import CTAButton from "@/components/lib/CTAButton";
+import { isCanonicalSparkyWorkspace } from "@/utils/sparky";
 
 export default function GeneralInfo({ slug, deletionProtected = false }) {
   const [workspace, setWorkspace] = useState(null);
@@ -64,7 +65,10 @@ export default function GeneralInfo({ slug, deletionProtected = false }) {
         />
       </form>
       <SuggestedChatMessages slug={workspace.slug} />
-      <DeleteWorkspace workspace={workspace} visible={!deletionProtected} />
+      <DeleteWorkspace
+        workspace={workspace}
+        visible={!deletionProtected && !isCanonicalSparkyWorkspace(workspace)}
+      />
     </div>
   );
 }

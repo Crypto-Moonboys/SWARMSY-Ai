@@ -31,6 +31,10 @@ const {
 const {
   workspaceDeletionProtection,
 } = require("../utils/middleware/workspaceDeletionProtection");
+const {
+  ensureSparkyWorkspace,
+  isCanonicalSparkyWorkspace,
+} = require("../utils/sparky");
 
 function adminEndpoints(app) {
   if (!app) return;
@@ -230,6 +234,7 @@ function adminEndpoints(app) {
     [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
     async (_request, response) => {
       try {
+        await ensureSparkyWorkspace();
         const workspaces = await Workspace.whereWithUsers();
         response.status(200).json({ workspaces });
       } catch (e) {
@@ -306,6 +311,13 @@ function adminEndpoints(app) {
         const workspace = await Workspace.get({ id: Number(id) });
         if (!workspace) {
           response.sendStatus(404).end();
+          return;
+        }
+        if (isCanonicalSparkyWorkspace(workspace)) {
+          response.status(403).json({
+            success: false,
+            error: "SPARKY is a protected fixed workspace.",
+          });
           return;
         }
 

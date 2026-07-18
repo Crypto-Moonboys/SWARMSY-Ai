@@ -2,6 +2,7 @@ import { useRef } from "react";
 import Admin from "@/models/admin";
 import paths from "@/utils/paths";
 import { LinkSimple, Trash } from "@phosphor-icons/react";
+import { isCanonicalSparkyWorkspace } from "@/utils/sparky";
 
 export default function WorkspaceRow({
   workspace,
@@ -19,6 +20,7 @@ export default function WorkspaceRow({
     rowRef?.current?.remove();
     await Admin.deleteWorkspace(workspace.id);
   };
+  const canDelete = !deletionProtected && !isCanonicalSparkyWorkspace(workspace);
 
   return (
     <>
@@ -49,7 +51,7 @@ export default function WorkspaceRow({
         </td>
         <td className="px-6">{workspace.createdAt}</td>
         <td className="px-6">
-          {!deletionProtected && (
+          {canDelete && (
             <button
               onClick={handleDelete}
               className="text-xs font-medium text-white/80 light:text-black/80 hover:light:text-red-500 hover:text-red-300 rounded-lg px-2 py-1 hover:bg-white hover:light:bg-red-50 hover:bg-opacity-10"

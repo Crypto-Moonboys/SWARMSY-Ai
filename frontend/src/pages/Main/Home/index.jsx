@@ -28,6 +28,7 @@ import WorkspaceModelPicker from "@/components/WorkspaceChat/ChatContainer/Works
 import { ChatTooltips } from "@/components/WorkspaceChat/ChatContainer/ChatTooltips";
 import { ChatSidebarProvider } from "@/components/WorkspaceChat/ChatContainer/ChatSidebar";
 import MemoriesSidebar from "@/components/WorkspaceChat/ChatContainer/MemoriesSidebar";
+import { isCanonicalSparkyWorkspace } from "@/utils/sparky";
 
 async function getTargetWorkspace() {
   const lastVisited = safeJsonParse(
@@ -39,6 +40,10 @@ async function getTargetWorkspace() {
   }
 
   const workspaces = await Workspace.all();
+  const sparkyWorkspace = workspaces.find((workspace) =>
+    isCanonicalSparkyWorkspace(workspace)
+  );
+  if (sparkyWorkspace) return sparkyWorkspace;
   return workspaces.length > 0 ? workspaces[0] : null;
 }
 

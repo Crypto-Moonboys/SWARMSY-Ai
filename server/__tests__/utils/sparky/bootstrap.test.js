@@ -1,5 +1,13 @@
 const fs = require("fs");
 const path = require("path");
+
+jest.mock("../../../models/workspace", () => ({
+  Workspace: {
+    get: jest.fn(),
+    new: jest.fn(),
+  },
+}));
+
 const { Workspace } = require("../../../models/workspace");
 
 const {
@@ -15,6 +23,7 @@ const {
 } = require("../../../utils/sparky");
 
 afterEach(() => {
+  jest.clearAllMocks();
   jest.restoreAllMocks();
 });
 
@@ -65,10 +74,11 @@ describe("SPARKY bootstrap foundation", () => {
     expect(template.slug).toBe(SPARKY_WORKSPACE_SLUG);
     expect(template.chatMode).toBe("automatic");
     expect(template.openAiPrompt).toBe(getSparkySystemPrompt());
-
+    expect(template).not.toHaveProperty("metadata");
     expect(bootstrap.workspaceTemplate.openAiPrompt).toBe(
       getSparkySystemPrompt()
     );
+    expect(bootstrap.workspaceTemplate).not.toHaveProperty("metadata");
     expect(bootstrap.corePacks).toHaveLength(7);
   });
 
@@ -106,16 +116,18 @@ describe("SPARKY bootstrap foundation", () => {
       slug: SPARKY_WORKSPACE_SLUG,
     };
 
-    const getSpy = jest.spyOn(Workspace, "get").mockResolvedValue(null);
-    const newSpy = jest.spyOn(Workspace, "new").mockResolvedValue({
+    Workspace.get.mockResolvedValue(null);
+    Workspace.new.mockResolvedValue({
       workspace: createdWorkspace,
       message: null,
     });
 
     const result = await ensureSparkyWorkspace();
 
-    expect(getSpy).toHaveBeenCalledWith({ slug: SPARKY_WORKSPACE_SLUG });
-    expect(newSpy).toHaveBeenCalledWith(
+    expect(Workspace.get).toHaveBeenCalledWith({
+      slug: SPARKY_WORKSPACE_SLUG,
+    });
+    expect(Workspace.new).toHaveBeenCalledWith(
       SPARKY_WORKSPACE_NAME,
       null,
       expect.objectContaining({
@@ -128,25 +140,46 @@ describe("SPARKY bootstrap foundation", () => {
     expect(result.created).toBe(true);
   });
 
-  it("does not overwrite an existing SPARKY workspace", async () => {
+  it("recognizes the PR #1 SPARKY workspace as canonical on upgrade", async () => {
     const existingWorkspace = {
       id: 456,
+      name: SPARKY_WORKSPACE_NAME,
+      slug: SPARKY_WORKSPACE_SLUG,
+      openAiPrompt: getSparkySystemPrompt(),
+      chatMode: "automatic",
+    };
+
+    Workspace.get.mockResolvedValue(existingWorkspace);
+
+    const result = await ensureSparkyWorkspace();
+
+    expect(Workspace.get).toHaveBeenCalledWith({
+      slug: SPARKY_WORKSPACE_SLUG,
+    });
+    expect(Workspace.new).not.toHaveBeenCalled();
+    expect(result.workspace).toBe(existingWorkspace);
+    expect(result.collision).toBe(false);
+    expect(result.created).toBe(false);
+    expect(result.message).toContain("already bootstrapped");
+  });
+
+  it("does not overwrite a user-created sparky collision", async () => {
+    const existingWorkspace = {
+      id: 789,
       name: "User SPARKY",
       slug: SPARKY_WORKSPACE_SLUG,
       openAiPrompt: "user prompt",
       chatMode: "chat",
     };
 
-    const getSpy = jest.spyOn(Workspace, "get").mockResolvedValue(existingWorkspace);
-    const newSpy = jest.spyOn(Workspace, "new").mockResolvedValue({
-      workspace: null,
-      message: "should not be used",
-    });
+    Workspace.get.mockResolvedValue(existingWorkspace);
 
     const result = await ensureSparkyWorkspace();
 
-    expect(getSpy).toHaveBeenCalledWith({ slug: SPARKY_WORKSPACE_SLUG });
-    expect(newSpy).not.toHaveBeenCalled();
+    expect(Workspace.get).toHaveBeenCalledWith({
+      slug: SPARKY_WORKSPACE_SLUG,
+    });
+    expect(Workspace.new).not.toHaveBeenCalled();
     expect(result.workspace).toBe(existingWorkspace);
     expect(result.collision).toBe(true);
     expect(result.created).toBe(false);
