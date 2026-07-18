@@ -184,7 +184,7 @@ export default function ActiveWorkspaces() {
                               </div>
                               <div
                                 data-tooltip-id="workspace-name"
-                            data-tooltip-content={workspace.slug}
+                                data-tooltip-content={workspace.slug}
                                 className="flex items-center space-x-2 overflow-hidden flex-grow"
                               >
                                 <div className="w-[130px] overflow-hidden">
@@ -224,9 +224,7 @@ export default function ActiveWorkspaces() {
                                       e.stopPropagation();
                                       navigate(
                                         isInWorkspaceSettings
-                                          ? paths.workspace.chat(
-                                              workspace.slug
-                                            )
+                                          ? paths.workspace.chat(workspace.slug)
                                           : paths.workspace.settings.generalAppearance(
                                               workspace.slug
                                             )
