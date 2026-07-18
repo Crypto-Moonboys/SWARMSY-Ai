@@ -30,6 +30,18 @@ function attachSparkyCanonicalFlagList(workspaces = []) {
   return workspaces.map((workspace) => attachSparkyCanonicalFlag(workspace));
 }
 
+async function enrichWorkspaceForUser(workspace = null) {
+  if (!workspace) return null;
+  return {
+    ...attachSparkyCanonicalFlag(workspace),
+    documents: await Document.forWorkspace(workspace.id),
+    contextWindow: Workspace._getContextWindow(workspace),
+    currentContextTokenCount: await Workspace._getCurrentContextTokenCount(
+      workspace.id
+    ),
+  };
+}
+
 /**
  * @typedef {Object} Workspace
  * @property {number} id - The ID of the workspace
@@ -311,7 +323,14 @@ const Workspace = {
   getWithUser: async function (user = null, clause = {}) {
     const requestedWorkspace = await this.get(clause);
     if (isCanonicalSparkyWorkspace(requestedWorkspace)) {
-      return requestedWorkspace;
+      const canonicalWorkspace = await prisma.workspaces.findFirst({
+        where: clause,
+        include: {
+          workspace_users: true,
+          documents: true,
+        },
+      });
+      return await enrichWorkspaceForUser(canonicalWorkspace);
     }
 
     if ([ROLES.admin, ROLES.manager].includes(user.role))
@@ -348,14 +367,7 @@ const Workspace = {
 
       if (!workspace) return null;
 
-      return {
-        ...attachSparkyCanonicalFlag(workspace),
-        documents: await Document.forWorkspace(workspace.id),
-        contextWindow: this._getContextWindow(workspace),
-        currentContextTokenCount: await this._getCurrentContextTokenCount(
-          workspace.id
-        ),
-      };
+      return await enrichWorkspaceForUser(workspace);
     } catch (error) {
       console.error(error.message);
       return null;
