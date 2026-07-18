@@ -1,4 +1,4 @@
-jest.mock("../../../utils/prisma", () => ({
+jest.mock("../../utils/prisma", () => ({
   workspaces: {
     findFirst: jest.fn(),
     findMany: jest.fn(),
@@ -6,16 +6,16 @@ jest.mock("../../../utils/prisma", () => ({
   },
 }));
 
-jest.mock("../../../models/documents", () => ({
+jest.mock("../../models/documents", () => ({
   Document: {
     forWorkspace: jest.fn(),
   },
 }));
 
-const prisma = require("../../../utils/prisma");
-const { Document } = require("../../../models/documents");
-const { Workspace } = require("../../../models/workspace");
-const { getSparkySystemPrompt } = require("../../../utils/sparky");
+const prisma = require("../../utils/prisma");
+const { Document } = require("../../models/documents");
+const { Workspace } = require("../../models/workspace");
+const { getSparkySystemPrompt } = require("../../utils/sparky");
 
 describe("SPARKY canonical visibility", () => {
   beforeEach(() => {

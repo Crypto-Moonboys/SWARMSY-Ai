@@ -36,6 +36,12 @@ describe("SPARKY fixed workspace protection", () => {
     expect(apiWorkspaceEndpoint).toContain(
       "isCanonicalSparkyWorkspace(workspace)"
     );
+    expect(apiWorkspaceEndpoint).toContain(
+      '"/v1/workspace/:slug/update"'
+    );
+    expect(apiWorkspaceEndpoint).toContain(
+      "isCanonicalSparkyWorkspace(currWorkspace)"
+    );
     expect(apiWorkspaceEndpoint).toContain('"/v1/workspaces"');
     expect(apiWorkspaceEndpoint).toContain("SPARKY is a protected fixed workspace.");
 
