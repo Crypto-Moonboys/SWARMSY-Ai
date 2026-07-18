@@ -1,5 +1,13 @@
 const fs = require("fs");
 const path = require("path");
+
+jest.mock("../../../models/workspace", () => ({
+  Workspace: {
+    get: jest.fn(),
+    new: jest.fn(),
+  },
+}));
+
 const { Workspace } = require("../../../models/workspace");
 
 const {
@@ -106,16 +114,18 @@ describe("SPARKY bootstrap foundation", () => {
       slug: SPARKY_WORKSPACE_SLUG,
     };
 
-    const getSpy = jest.spyOn(Workspace, "get").mockResolvedValue(null);
-    const newSpy = jest.spyOn(Workspace, "new").mockResolvedValue({
+    Workspace.get.mockResolvedValue(null);
+    Workspace.new.mockResolvedValue({
       workspace: createdWorkspace,
       message: null,
     });
 
     const result = await ensureSparkyWorkspace();
 
-    expect(getSpy).toHaveBeenCalledWith({ slug: SPARKY_WORKSPACE_SLUG });
-    expect(newSpy).toHaveBeenCalledWith(
+    expect(Workspace.get).toHaveBeenCalledWith({
+      slug: SPARKY_WORKSPACE_SLUG,
+    });
+    expect(Workspace.new).toHaveBeenCalledWith(
       SPARKY_WORKSPACE_NAME,
       null,
       expect.objectContaining({
@@ -137,16 +147,14 @@ describe("SPARKY bootstrap foundation", () => {
       chatMode: "chat",
     };
 
-    const getSpy = jest.spyOn(Workspace, "get").mockResolvedValue(existingWorkspace);
-    const newSpy = jest.spyOn(Workspace, "new").mockResolvedValue({
-      workspace: null,
-      message: "should not be used",
-    });
+    Workspace.get.mockResolvedValue(existingWorkspace);
 
     const result = await ensureSparkyWorkspace();
 
-    expect(getSpy).toHaveBeenCalledWith({ slug: SPARKY_WORKSPACE_SLUG });
-    expect(newSpy).not.toHaveBeenCalled();
+    expect(Workspace.get).toHaveBeenCalledWith({
+      slug: SPARKY_WORKSPACE_SLUG,
+    });
+    expect(Workspace.new).not.toHaveBeenCalled();
     expect(result.workspace).toBe(existingWorkspace);
     expect(result.collision).toBe(true);
     expect(result.created).toBe(false);

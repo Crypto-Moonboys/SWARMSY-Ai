@@ -291,18 +291,34 @@ const Workspace = {
   },
 
   getWithUser: async function (user = null, clause = {}) {
+    const requestedWorkspace = await this.get(clause);
+    if (requestedWorkspace?.slug === SPARKY_WORKSPACE_SLUG) {
+      return requestedWorkspace;
+    }
+
     if ([ROLES.admin, ROLES.manager].includes(user.role))
-      return this.get(clause);
+      return requestedWorkspace;
 
     try {
       const workspace = await prisma.workspaces.findFirst({
         where: {
-          ...clause,
-          workspace_users: {
-            some: {
-              user_id: user?.id,
+          AND: [
+            clause,
+            {
+              OR: [
+                {
+                  workspace_users: {
+                    some: {
+                      user_id: user?.id,
+                    },
+                  },
+                },
+                {
+                  slug: SPARKY_WORKSPACE_SLUG,
+                },
+              ],
             },
-          },
+          ],
         },
         include: {
           workspace_users: true,
@@ -425,12 +441,23 @@ const Workspace = {
     try {
       const workspaces = await prisma.workspaces.findMany({
         where: {
-          ...clause,
-          workspace_users: {
-            some: {
-              user_id: user.id,
+          AND: [
+            clause,
+            {
+              OR: [
+                {
+                  workspace_users: {
+                    some: {
+                      user_id: user.id,
+                    },
+                  },
+                },
+                {
+                  slug: SPARKY_WORKSPACE_SLUG,
+                },
+              ],
             },
-          },
+          ],
         },
         ...(limit !== null ? { take: limit } : {}),
         ...(orderBy !== null ? { orderBy } : {}),

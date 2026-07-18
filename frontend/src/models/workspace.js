@@ -574,13 +574,6 @@ const Workspace = {
         workspaceOrderPreference.indexOf(a.id) -
         workspaceOrderPreference.indexOf(b.id)
     );
-    const sparkyIndex = orderedWorkspaces.findIndex(
-      (workspace) => workspace.slug === "sparky"
-    );
-    if (sparkyIndex > 0) {
-      const [sparkyWorkspace] = orderedWorkspaces.splice(sparkyIndex, 1);
-      orderedWorkspaces.unshift(sparkyWorkspace);
-    }
     return orderedWorkspaces;
   },
 

@@ -27,7 +27,9 @@ export default function ActiveWorkspaces() {
   const isHomePage = !!useMatch("/");
   const sparkyWorkspace =
     workspaces.find((workspace) => workspace.slug === "sparky") || null;
-  const otherWorkspaces = workspaces;
+  const otherWorkspaces = workspaces.filter(
+    (workspace) => workspace.slug !== "sparky"
+  );
 
   useEffect(() => {
     async function getWorkspaces() {
@@ -84,10 +86,11 @@ export default function ActiveWorkspaces() {
     );
     if (
       lastVisited?.slug &&
-      workspaces.some((ws) => ws.slug === lastVisited.slug)
+      lastVisited.slug !== "sparky" &&
+      otherWorkspaces.some((ws) => ws.slug === lastVisited.slug)
     )
       return lastVisited.slug;
-    return workspaces[0]?.slug ?? null;
+    return otherWorkspaces[0]?.slug ?? null;
   })();
 
   return (
