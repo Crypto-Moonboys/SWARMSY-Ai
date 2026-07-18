@@ -13,7 +13,6 @@ const { Workspace } = require("../../../models/workspace");
 const {
   SPARKY_WORKSPACE_NAME,
   SPARKY_WORKSPACE_SLUG,
-  SPARKY_WORKSPACE_METADATA,
   SPARKY_SYSTEM_PROMPT_PATH,
   SPARKY_CORE_PACK_DIR,
   getSparkySystemPrompt,
@@ -74,14 +73,11 @@ describe("SPARKY bootstrap foundation", () => {
     expect(template.slug).toBe(SPARKY_WORKSPACE_SLUG);
     expect(template.chatMode).toBe("automatic");
     expect(template.openAiPrompt).toBe(getSparkySystemPrompt());
-    expect(template.metadata).toBe(SPARKY_WORKSPACE_METADATA);
-
+    expect(template).not.toHaveProperty("metadata");
     expect(bootstrap.workspaceTemplate.openAiPrompt).toBe(
       getSparkySystemPrompt()
     );
-    expect(bootstrap.workspaceTemplate.metadata).toBe(
-      SPARKY_WORKSPACE_METADATA
-    );
+    expect(bootstrap.workspaceTemplate).not.toHaveProperty("metadata");
     expect(bootstrap.corePacks).toHaveLength(7);
   });
 
@@ -136,7 +132,6 @@ describe("SPARKY bootstrap foundation", () => {
       expect.objectContaining({
         chatMode: "automatic",
         openAiPrompt: getSparkySystemPrompt(),
-        metadata: SPARKY_WORKSPACE_METADATA,
       })
     );
     expect(result.workspace).toEqual(createdWorkspace);
@@ -144,14 +139,36 @@ describe("SPARKY bootstrap foundation", () => {
     expect(result.created).toBe(true);
   });
 
-  it("does not overwrite an existing SPARKY workspace", async () => {
+  it("recognizes the PR #1 SPARKY workspace as canonical on upgrade", async () => {
     const existingWorkspace = {
       id: 456,
+      name: SPARKY_WORKSPACE_NAME,
+      slug: SPARKY_WORKSPACE_SLUG,
+      openAiPrompt: getSparkySystemPrompt(),
+      chatMode: "automatic",
+    };
+
+    Workspace.get.mockResolvedValue(existingWorkspace);
+
+    const result = await ensureSparkyWorkspace();
+
+    expect(Workspace.get).toHaveBeenCalledWith({
+      slug: SPARKY_WORKSPACE_SLUG,
+    });
+    expect(Workspace.new).not.toHaveBeenCalled();
+    expect(result.workspace).toBe(existingWorkspace);
+    expect(result.collision).toBe(false);
+    expect(result.created).toBe(false);
+    expect(result.message).toContain("already bootstrapped");
+  });
+
+  it("does not overwrite a user-created sparky collision", async () => {
+    const existingWorkspace = {
+      id: 789,
       name: "User SPARKY",
       slug: SPARKY_WORKSPACE_SLUG,
       openAiPrompt: "user prompt",
       chatMode: "chat",
-      metadata: null,
     };
 
     Workspace.get.mockResolvedValue(existingWorkspace);

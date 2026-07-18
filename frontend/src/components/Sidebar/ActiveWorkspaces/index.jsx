@@ -65,11 +65,16 @@ export default function ActiveWorkspaces() {
     const reorderedWorkspaces = Array.from(otherWorkspaces);
     const [removed] = reorderedWorkspaces.splice(startIndex, 1);
     reorderedWorkspaces.splice(endIndex, 0, removed);
-    setWorkspaces(
-      sparkyWorkspace
-        ? [sparkyWorkspace, ...reorderedWorkspaces]
-        : reorderedWorkspaces
-    );
+    const nextWorkspaces = [];
+    let normalIndex = 0;
+    for (const workspace of workspaces) {
+      if (isCanonicalSparkyWorkspace(workspace)) {
+        nextWorkspaces.push(workspace);
+        continue;
+      }
+      nextWorkspaces.push(reorderedWorkspaces[normalIndex++]);
+    }
+    setWorkspaces(nextWorkspaces);
     const success = Workspace.storeWorkspaceOrder(
       reorderedWorkspaces.map((w) => w.id)
     );

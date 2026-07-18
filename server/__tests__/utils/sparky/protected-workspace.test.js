@@ -14,10 +14,11 @@ describe("SPARKY fixed workspace protection", () => {
     const sparkyUtil = read("server/utils/sparky/index.js");
     const sparkyPrompt = read("server/sparky/packs/core/sparky-system-prompt.md");
 
-    expect(workspaceModel).toContain("SPARKY_WORKSPACE_METADATA");
     expect(workspaceModel).toContain("isCanonicalSparkyWorkspace");
     expect(workspaceModel).toContain("workspace_users");
-    expect(workspaceModel).toContain("metadata: SPARKY_WORKSPACE_METADATA");
+    expect(workspaceModel).toContain("name: \"SPARKY\"");
+    expect(workspaceModel).toContain("openAiPrompt: getSparkySystemPrompt()");
+    expect(workspaceModel).not.toContain("SPARKY_WORKSPACE_METADATA");
     expect(workspaceModel).toContain("OR:");
 
     expect(workspacesEndpoint).toContain("await ensureSparkyWorkspace();");
@@ -39,6 +40,7 @@ describe("SPARKY fixed workspace protection", () => {
 
     expect(sparkyUtil).toContain('path.join(__dirname, "..", "..", "sparky"');
     expect(sparkyUtil).not.toContain('path.join(__dirname, "..", "..", "storage"');
+    expect(sparkyUtil).not.toContain("SPARKY_WORKSPACE_METADATA");
     expect(sparkyPrompt).toContain("You are SPARKY");
   });
 
@@ -55,6 +57,7 @@ describe("SPARKY fixed workspace protection", () => {
     expect(homePage).toContain("isCanonicalSparkyWorkspace(workspace)");
     expect(generalAppearance).toContain("isCanonicalSparkyWorkspace(workspace)");
     expect(workspaceRow).toContain("isCanonicalSparkyWorkspace(workspace)");
-    expect(sparkyHelper).toContain("SPARKY_WORKSPACE_METADATA");
+    expect(sparkyHelper).toContain("workspace?.isCanonicalSparky === true");
+    expect(sparkyHelper).not.toContain("metadata");
   });
 });

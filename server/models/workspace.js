@@ -9,13 +9,25 @@ const { PromptHistory } = require("./promptHistory");
 const { SystemSettings } = require("./systemSettings");
 const {
   SPARKY_WORKSPACE_SLUG,
-  SPARKY_WORKSPACE_METADATA,
+  getSparkySystemPrompt,
   isCanonicalSparkyWorkspace,
 } = require("../utils/sparky");
 
 function isNullOrNaN(value) {
   if (value === null) return true;
   return isNaN(value);
+}
+
+function attachSparkyCanonicalFlag(workspace = null) {
+  if (!workspace) return workspace;
+  return {
+    ...workspace,
+    isCanonicalSparky: isCanonicalSparkyWorkspace(workspace),
+  };
+}
+
+function attachSparkyCanonicalFlagList(workspaces = []) {
+  return workspaces.map((workspace) => attachSparkyCanonicalFlag(workspace));
 }
 
 /**
@@ -225,13 +237,6 @@ const Workspace = {
         slug,
       };
 
-      if (additionalFields.metadata !== undefined) {
-        createData.metadata =
-          typeof additionalFields.metadata === "string"
-            ? additionalFields.metadata
-            : JSON.stringify(additionalFields.metadata);
-      }
-
       const workspace = await prisma.workspaces.create({
         data: createData,
       });
@@ -240,7 +245,7 @@ const Workspace = {
       // If creating with an admin User it wont change anything because admins can
       // view all workspaces anyway.
       if (!!creatorId) await WorkspaceUser.create(creatorId, workspace.id);
-      return { workspace, message: null };
+      return { workspace: attachSparkyCanonicalFlag(workspace), message: null };
     } catch (error) {
       console.error(error.message);
       return { workspace: null, message: error.message };
@@ -327,7 +332,9 @@ const Workspace = {
                   },
                 },
                 {
-                  metadata: SPARKY_WORKSPACE_METADATA,
+                  slug: SPARKY_WORKSPACE_SLUG,
+                  name: "SPARKY",
+                  openAiPrompt: getSparkySystemPrompt(),
                 },
               ],
             },
@@ -342,7 +349,7 @@ const Workspace = {
       if (!workspace) return null;
 
       return {
-        ...workspace,
+        ...attachSparkyCanonicalFlag(workspace),
         documents: await Document.forWorkspace(workspace.id),
         contextWindow: this._getContextWindow(workspace),
         currentContextTokenCount: await this._getCurrentContextTokenCount(
@@ -402,7 +409,7 @@ const Workspace = {
 
       if (!workspace) return null;
       return {
-        ...workspace,
+        ...attachSparkyCanonicalFlag(workspace),
         contextWindow: this._getContextWindow(workspace),
         currentContextTokenCount: await this._getCurrentContextTokenCount(
           workspace.id
@@ -435,7 +442,7 @@ const Workspace = {
         ...(limit !== null ? { take: limit } : {}),
         ...(orderBy !== null ? { orderBy } : {}),
       });
-      return results;
+      return attachSparkyCanonicalFlagList(results);
     } catch (error) {
       console.error(error.message);
       return [];
@@ -466,7 +473,9 @@ const Workspace = {
                   },
                 },
                 {
-                  metadata: SPARKY_WORKSPACE_METADATA,
+                  slug: SPARKY_WORKSPACE_SLUG,
+                  name: "SPARKY",
+                  openAiPrompt: getSparkySystemPrompt(),
                 },
               ],
             },
@@ -475,7 +484,7 @@ const Workspace = {
         ...(limit !== null ? { take: limit } : {}),
         ...(orderBy !== null ? { orderBy } : {}),
       });
-      return workspaces;
+      return attachSparkyCanonicalFlagList(workspaces);
     } catch (error) {
       console.error(error.message);
       return [];
@@ -607,7 +616,7 @@ const Workspace = {
   _findMany: async function (prismaQuery = {}) {
     try {
       const results = await prisma.workspaces.findMany(prismaQuery);
-      return results;
+      return attachSparkyCanonicalFlagList(results);
     } catch (error) {
       console.error(error.message);
       return null;
@@ -622,7 +631,7 @@ const Workspace = {
   _findFirst: async function (prismaQuery = {}) {
     try {
       const results = await prisma.workspaces.findFirst(prismaQuery);
-      return results;
+      return attachSparkyCanonicalFlag(results);
     } catch (error) {
       console.error(error.message);
       return null;
