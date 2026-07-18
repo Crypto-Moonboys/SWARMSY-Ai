@@ -83,13 +83,16 @@ describe("SPARKY bootstrap foundation", () => {
       "Use these first-run prompts when they fit:"
     );
     expect(getSparkySystemPrompt()).toContain("Do not force every chat into a project");
+    expect(getSparkySystemPrompt()).toContain("SPARKY carries the real score");
+    expect(getSparkySystemPrompt()).toContain("MESSAGE: what people should remember");
   });
 
   it("keeps the core packs on disk and discoverable", () => {
     const packs = getSparkyCorePackCatalog();
-    expect(packs).toHaveLength(7);
+    expect(packs).toHaveLength(8);
     expect(packs.every((pack) => pack.exists)).toBe(true);
     expect(packs.map((pack) => pack.filename)).toEqual([
+      "og-sparky-contract.md",
       "project-manager-protocol.md",
       "identity-questionnaire.md",
       "do-it-for-me-prompts.md",
@@ -113,7 +116,7 @@ describe("SPARKY bootstrap foundation", () => {
     expect(bootstrap.workspaceTemplate.openAiPrompt).toBe(
       getSparkySystemPrompt()
     );
-    expect(bootstrap.corePacks).toHaveLength(7);
+    expect(bootstrap.corePacks).toHaveLength(8);
     expect(bootstrap.starterSuggestedMessages).toEqual(starterPrompts);
     expect(starterPrompts).toEqual([
       { heading: "", message: "Help me shape my project idea" },
