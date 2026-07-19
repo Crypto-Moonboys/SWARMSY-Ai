@@ -93,9 +93,7 @@ async function recentChatHistory({
 async function chatPrompt(workspace, user = null, opts = {}) {
   const { SystemSettings } = require("../../models/systemSettings");
   const { promptWithMemories } = require("../memories");
-  const {
-    getApprovedSparkyTruthsPromptSection,
-  } = require("../sparky/truths");
+  const { getApprovedSparkyTruthsPromptSection } = require("../sparky/truths");
   const basePrompt =
     workspace?.openAiPrompt ?? SystemSettings.saneDefaultSystemPrompt;
   const systemPrompt = await SystemPromptVariables.expandSystemPromptVariables(
