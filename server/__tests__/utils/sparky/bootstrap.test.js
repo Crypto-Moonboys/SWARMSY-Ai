@@ -83,9 +83,13 @@ describe("SPARKY bootstrap foundation", () => {
     expect(getSparkySystemPrompt()).toContain(
       "Use these first-run prompts when they fit:"
     );
-    expect(getSparkySystemPrompt()).toContain("Do not force every chat into a project");
+    expect(getSparkySystemPrompt()).toContain(
+      "Do not force every chat into a project"
+    );
     expect(getSparkySystemPrompt()).toContain("SPARKY carries the real score");
-    expect(getSparkySystemPrompt()).toContain("MESSAGE: what people should remember");
+    expect(getSparkySystemPrompt()).toContain(
+      "MESSAGE: what people should remember"
+    );
   });
 
   it("keeps the core packs on disk and discoverable", () => {
