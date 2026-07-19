@@ -91,24 +91,33 @@ export default function ActiveWorkspaces() {
     reorderWorkspaces(result.source.index, result.destination.index);
   };
 
-  // When on the home page, resolve which workspace should be virtually active
+  const lastVisited = isHomePage
+    ? safeJsonParse(localStorage.getItem(LAST_VISITED_WORKSPACE))
+    : null;
+  const lastVisitedWorkspace = lastVisited?.slug
+    ? workspaces.find((ws) => ws.slug === lastVisited.slug)
+    : null;
+  const isSparkyVirtuallyActive =
+    isHomePage &&
+    !!sparkyWorkspace &&
+    (!lastVisited?.slug ||
+      isCanonicalSparkyWorkspace(lastVisitedWorkspace) ||
+      !lastVisitedWorkspace);
+
+  // When on the home page, resolve which normal workspace should be virtually active.
   const virtualActiveSlug = (() => {
-    if (!isHomePage || workspaces.length === 0) return null;
-    const lastVisited = safeJsonParse(
-      localStorage.getItem(LAST_VISITED_WORKSPACE)
-    );
-    const lastVisitedWorkspace = lastVisited?.slug
-      ? workspaces.find((ws) => ws.slug === lastVisited.slug)
-      : null;
+    if (!isHomePage || workspaces.length === 0 || isSparkyVirtuallyActive)
+      return null;
     if (
       lastVisitedWorkspace &&
       !isCanonicalSparkyWorkspace(lastVisitedWorkspace) &&
       otherWorkspaces.some((ws) => ws.slug === lastVisited.slug)
     )
       return lastVisited.slug;
-    return otherWorkspaces[0]?.slug ?? null;
+    return sparkyWorkspace ? null : otherWorkspaces[0]?.slug ?? null;
   })();
-  const isSparkyActive = sparkyWorkspace?.slug === slug;
+  const isSparkyActive =
+    sparkyWorkspace?.slug === slug || isSparkyVirtuallyActive;
 
   return (
     <div className="flex flex-col gap-y-3">
@@ -141,6 +150,7 @@ export default function ActiveWorkspaces() {
             <ThreadContainer
               workspace={sparkyWorkspace}
               isActive={isSparkyActive}
+              isVirtualThread={isSparkyVirtuallyActive}
             />
           )}
         </div>
