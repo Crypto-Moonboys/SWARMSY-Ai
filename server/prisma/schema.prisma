@@ -87,6 +87,7 @@ model users {
   desktop_mobile_devices       desktop_mobile_devices[]
   workspace_parsed_files       workspace_parsed_files[]
   memories                     memories[]
+  sparky_truths                sparky_truths[]
 }
 
 model recovery_codes {
@@ -143,6 +144,7 @@ model workspaces {
   workspace_users              workspace_users[]
   documents                    workspace_documents[]
   workspace_suggested_messages workspace_suggested_messages[]
+  sparky_truths                sparky_truths[]
   embed_configs                embed_configs[]
   threads                      workspace_threads[]
   workspace_agent_invocations  workspace_agent_invocations[]
