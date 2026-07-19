@@ -206,10 +206,12 @@ async function refreshSparkySystemPrompt(Workspace, workspace = null) {
     openAiPrompt: getSparkySystemPrompt(),
   });
 
-  return updatedWorkspace || {
-    ...workspace,
-    openAiPrompt: getSparkySystemPrompt(),
-  };
+  return (
+    updatedWorkspace || {
+      ...workspace,
+      openAiPrompt: getSparkySystemPrompt(),
+    }
+  );
 }
 
 async function ensureSparkyWorkspace() {
