@@ -114,7 +114,7 @@ export default function ActiveWorkspaces() {
       otherWorkspaces.some((ws) => ws.slug === lastVisited.slug)
     )
       return lastVisited.slug;
-    return sparkyWorkspace ? null : otherWorkspaces[0]?.slug ?? null;
+    return sparkyWorkspace ? null : (otherWorkspaces[0]?.slug ?? null);
   })();
   const isSparkyActive =
     sparkyWorkspace?.slug === slug || isSparkyVirtuallyActive;
