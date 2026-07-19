@@ -87,6 +87,7 @@ model users {
   desktop_mobile_devices       desktop_mobile_devices[]
   workspace_parsed_files       workspace_parsed_files[]
   memories                     memories[]
+  sparky_truths                sparky_truths[]
 }
 
 model recovery_codes {
@@ -143,6 +144,7 @@ model workspaces {
   workspace_users              workspace_users[]
   documents                    workspace_documents[]
   workspace_suggested_messages workspace_suggested_messages[]
+  sparky_truths                sparky_truths[]
   embed_configs                embed_configs[]
   threads                      workspace_threads[]
   workspace_agent_invocations  workspace_agent_invocations[]
@@ -177,6 +179,22 @@ model workspace_suggested_messages {
   workspace     workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   @@index([workspaceId])
+}
+
+model sparky_truths {
+  id            Int        @id @default(autoincrement())
+  workspaceId   Int
+  userId        Int?
+  truth         String
+  archived      Boolean    @default(false)
+  createdAt     DateTime   @default(now())
+  lastUpdatedAt DateTime   @default(now())
+  workspace     workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user          users?     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([workspaceId])
+  @@index([userId])
+  @@index([workspaceId, userId, archived])
 }
 
 model workspace_chats {

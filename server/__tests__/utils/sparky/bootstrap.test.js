@@ -106,6 +106,19 @@ describe("SPARKY bootstrap foundation", () => {
       "tasks-and-schedule.md",
       "proof-review.md",
     ]);
+    expect(
+      fs.readFileSync(
+        path.join(
+          process.cwd(),
+          "server",
+          "sparky",
+          "packs",
+          "core",
+          "approved-decisions.md"
+        ),
+        "utf8"
+      )
+    ).toContain("Suggestions are drafts, not truth.");
   });
 
   it("exposes a fixed SPARKY workspace template with the system prompt attached", () => {

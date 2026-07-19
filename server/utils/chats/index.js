@@ -86,12 +86,14 @@ async function recentChatHistory({
  * Also does variable substitution on the prompt if there are any defined variables.
  * @param {Object|null} workspace - the workspace object
  * @param {Object|null} user - the user object
- * @param {{prompt?: string, rawHistory?: object[]}} [opts] - current user message + chat history, used for reranking injected memories
+ * @param {{prompt?: string, rawHistory?: object[]}} [opts] - current user
+ * message + chat history, used for reranking injected memories
  * @returns {Promise<string>}
  */
 async function chatPrompt(workspace, user = null, opts = {}) {
   const { SystemSettings } = require("../../models/systemSettings");
   const { promptWithMemories } = require("../memories");
+  const { getApprovedSparkyTruthsPromptSection } = require("../sparky/truths");
   const basePrompt =
     workspace?.openAiPrompt ?? SystemSettings.saneDefaultSystemPrompt;
   const systemPrompt = await SystemPromptVariables.expandSystemPromptVariables(
@@ -99,8 +101,15 @@ async function chatPrompt(workspace, user = null, opts = {}) {
     user?.id,
     workspace?.id
   );
+  const sparkyTruthsPrompt = await getApprovedSparkyTruthsPromptSection(
+    workspace,
+    user
+  );
+  const enrichedSystemPrompt = sparkyTruthsPrompt
+    ? `${systemPrompt}\n\n${sparkyTruthsPrompt}`
+    : systemPrompt;
   return promptWithMemories({
-    systemPrompt,
+    systemPrompt: enrichedSystemPrompt,
     userId: user?.id ?? null,
     workspaceId: workspace?.id,
     prompt: opts.prompt ?? "",
