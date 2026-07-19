@@ -91,46 +91,69 @@ export default function ActiveWorkspaces() {
     reorderWorkspaces(result.source.index, result.destination.index);
   };
 
-  // When on the home page, resolve which workspace should be virtually active
+  const lastVisited = isHomePage
+    ? safeJsonParse(localStorage.getItem(LAST_VISITED_WORKSPACE))
+    : null;
+  const lastVisitedWorkspace = lastVisited?.slug
+    ? workspaces.find((ws) => ws.slug === lastVisited.slug)
+    : null;
+  const isSparkyVirtuallyActive =
+    isHomePage &&
+    !!sparkyWorkspace &&
+    (!lastVisited?.slug ||
+      isCanonicalSparkyWorkspace(lastVisitedWorkspace) ||
+      !lastVisitedWorkspace);
+
+  // When on the home page, resolve which normal workspace should be virtually active.
   const virtualActiveSlug = (() => {
-    if (!isHomePage || workspaces.length === 0) return null;
-    const lastVisited = safeJsonParse(
-      localStorage.getItem(LAST_VISITED_WORKSPACE)
-    );
-    const lastVisitedWorkspace = lastVisited?.slug
-      ? workspaces.find((ws) => ws.slug === lastVisited.slug)
-      : null;
+    if (!isHomePage || workspaces.length === 0 || isSparkyVirtuallyActive)
+      return null;
     if (
       lastVisitedWorkspace &&
       !isCanonicalSparkyWorkspace(lastVisitedWorkspace) &&
       otherWorkspaces.some((ws) => ws.slug === lastVisited.slug)
     )
       return lastVisited.slug;
-    return otherWorkspaces[0]?.slug ?? null;
+    return sparkyWorkspace ? null : (otherWorkspaces[0]?.slug ?? null);
   })();
+  const isSparkyActive =
+    sparkyWorkspace?.slug === slug || isSparkyVirtuallyActive;
 
   return (
     <div className="flex flex-col gap-y-3">
       {sparkyWorkspace && (
-        <Link
-          to={paths.workspace.chat(sparkyWorkspace.slug)}
-          aria-current={slug === sparkyWorkspace.slug ? "page" : ""}
-          className="flex items-center justify-between rounded-[10px] border border-cyan-400/40 bg-cyan-500/10 px-3 py-3 text-white transition-colors hover:bg-cyan-500/15"
-        >
-          <div className="flex min-w-0 items-center gap-x-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-cyan-400/15 text-cyan-200">
-              <span className="text-[11px] font-black tracking-[0.2em]">S</span>
+        <div className="flex flex-col w-full">
+          <Link
+            to={paths.workspace.chat(sparkyWorkspace.slug)}
+            aria-current={isSparkyActive ? "page" : ""}
+            className={`flex items-center justify-between rounded-[10px] border border-cyan-400/40 bg-cyan-500/10 px-3 py-3 text-white transition-colors hover:bg-cyan-500/15 ${
+              isSparkyActive ? "ring-1 ring-cyan-300/60" : ""
+            }`}
+          >
+            <div className="flex min-w-0 items-center gap-x-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-cyan-400/15 text-cyan-200">
+                <span className="text-[11px] font-black tracking-[0.2em]">
+                  S
+                </span>
+              </div>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold">
+                  Continue with SPARKY
+                </p>
+                <p className="truncate text-[11px] text-cyan-100/70">
+                  Fixed guided workspace for identity and project direction
+                </p>
+              </div>
             </div>
-            <div className="min-w-0">
-              <p className="truncate text-sm font-semibold">
-                Continue with SPARKY
-              </p>
-              <p className="truncate text-[11px] text-cyan-100/70">
-                Fixed guided workspace for identity and project direction
-              </p>
-            </div>
-          </div>
-        </Link>
+          </Link>
+          {isSparkyActive && (
+            <ThreadContainer
+              workspace={sparkyWorkspace}
+              isActive={isSparkyActive}
+              isVirtualThread={isSparkyVirtuallyActive}
+            />
+          )}
+        </div>
       )}
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="workspaces">
