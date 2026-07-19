@@ -1,3 +1,32 @@
+jest.mock(
+  "uuid",
+  () => ({
+    v4: jest.fn(() => "test-chat-id"),
+  }),
+  { virtual: true }
+);
+
+jest.mock("../../../models/workspaceChats", () => ({
+  WorkspaceChats: {
+    where: jest.fn(),
+  },
+}));
+
+jest.mock("../../../utils/chats/commands/reset", () => ({
+  resetMemory: jest.fn(),
+}));
+
+jest.mock("../../../utils/helpers/chat/responses", () => ({
+  convertToPromptHistory: jest.fn((history) => history),
+}));
+
+jest.mock("../../../models/slashCommandsPresets", () => ({
+  SlashCommandPresets: {
+    getUserPresets: jest.fn(async () => []),
+    where: jest.fn(async () => []),
+  },
+}));
+
 jest.mock("../../../utils/memories", () => ({
   promptWithMemories: jest.fn(async ({ systemPrompt }) => systemPrompt),
 }));
@@ -5,6 +34,12 @@ jest.mock("../../../utils/memories", () => ({
 jest.mock("../../../models/systemPromptVariables", () => ({
   SystemPromptVariables: {
     expandSystemPromptVariables: jest.fn(async (prompt) => prompt),
+  },
+}));
+
+jest.mock("../../../models/systemSettings", () => ({
+  SystemSettings: {
+    saneDefaultSystemPrompt: "Default AnythingLLM system prompt.",
   },
 }));
 

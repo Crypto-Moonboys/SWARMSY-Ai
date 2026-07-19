@@ -7,6 +7,13 @@ jest.mock("../../../models/sparkyTruths", () => ({
   },
 }));
 
+jest.mock("../../../models/workspacesSuggestedMessages", () => ({
+  WorkspaceSuggestedMessages: {
+    getMessages: jest.fn(),
+    saveAll: jest.fn(),
+  },
+}));
+
 const { SparkyTruths } = require("../../../models/sparkyTruths");
 const {
   SPARKY_WORKSPACE_NAME,
