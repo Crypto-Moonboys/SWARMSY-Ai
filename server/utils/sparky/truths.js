@@ -48,7 +48,11 @@ async function listApprovedSparkyTruths(workspace = null, user = null) {
   };
 }
 
-async function createApprovedSparkyTruth(workspace = null, user = null, body = {}) {
+async function createApprovedSparkyTruth(
+  workspace = null,
+  user = null,
+  body = {}
+) {
   const forbidden = requireCanonicalSparkyWorkspace(workspace);
   if (forbidden) return forbidden;
 

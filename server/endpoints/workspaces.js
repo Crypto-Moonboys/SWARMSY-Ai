@@ -110,7 +110,10 @@ function workspaceEndpoints(app) {
           return;
         }
 
-        if (isCanonicalSparkyWorkspace(currWorkspace) && Object.keys(data).length) {
+        if (
+          isCanonicalSparkyWorkspace(currWorkspace) &&
+          Object.keys(data).length
+        ) {
           response.status(403).json({
             success: false,
             error: "SPARKY is a protected fixed workspace.",
