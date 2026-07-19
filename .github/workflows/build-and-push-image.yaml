@@ -11,6 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 on:
+  workflow_dispatch:
   push:
     branches: ['master'] # master branch only. Do not modify.
     paths-ignore:
