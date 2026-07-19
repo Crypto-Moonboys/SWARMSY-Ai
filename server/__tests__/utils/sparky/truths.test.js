@@ -15,6 +15,7 @@ const {
 } = require("../../../utils/sparky");
 const {
   listApprovedSparkyTruths,
+  getApprovedSparkyTruthsPromptSection,
   createApprovedSparkyTruth,
   archiveApprovedSparkyTruth,
   SPARKY_TRUTH_PROTECTION_ERROR,
@@ -147,5 +148,46 @@ describe("SPARKY truths", () => {
       "The project uses a neon cat brand."
     );
     expect(archiveResult.truth.archived).toBe(true);
+  });
+
+  it("formats approved truths for prompt injection", async () => {
+    SparkyTruths.where.mockResolvedValue([
+      {
+        id: 11,
+        workspaceId: canonicalWorkspace.id,
+        userId: 7,
+        truth: "The project is a neon cat brand.",
+        archived: false,
+      },
+      {
+        id: 12,
+        workspaceId: canonicalWorkspace.id,
+        userId: 7,
+        truth: "The voice is sharp and playful.",
+        archived: false,
+      },
+    ]);
+
+    const promptSection = await getApprovedSparkyTruthsPromptSection(
+      canonicalWorkspace,
+      { id: 7 }
+    );
+
+    expect(SparkyTruths.where).toHaveBeenCalledWith(
+      {
+        workspaceId: canonicalWorkspace.id,
+        userId: 7,
+        archived: false,
+      },
+      null,
+      { createdAt: "asc" }
+    );
+    expect(promptSection).toBe(
+      [
+        "## Approved SPARKY Truths",
+        "- The project is a neon cat brand.",
+        "- The voice is sharp and playful.",
+      ].join("\n")
+    );
   });
 });

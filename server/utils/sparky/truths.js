@@ -48,6 +48,32 @@ async function listApprovedSparkyTruths(workspace = null, user = null) {
   };
 }
 
+async function getApprovedSparkyTruthsPromptSection(
+  workspace = null,
+  user = null
+) {
+  const forbidden = requireCanonicalSparkyWorkspace(workspace);
+  if (forbidden) return "";
+
+  const truths = await SparkyTruths.where(
+    {
+      workspaceId: Number(workspace.id),
+      userId: getTruthOwnerId(user),
+      archived: false,
+    },
+    null,
+    { createdAt: "asc" }
+  );
+
+  const lines = truths
+    .map((truth) => `- ${String(truth?.truth ?? "").trim()}`)
+    .filter((line) => line !== "- ");
+
+  if (lines.length === 0) return "";
+
+  return `## Approved SPARKY Truths\n${lines.join("\n")}`;
+}
+
 async function createApprovedSparkyTruth(
   workspace = null,
   user = null,
@@ -128,6 +154,7 @@ async function archiveApprovedSparkyTruth(
 module.exports = {
   SPARKY_TRUTH_PROTECTION_ERROR,
   listApprovedSparkyTruths,
+  getApprovedSparkyTruthsPromptSection,
   createApprovedSparkyTruth,
   archiveApprovedSparkyTruth,
   requireCanonicalSparkyWorkspace,
