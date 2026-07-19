@@ -4,6 +4,8 @@ Use this pack when the user wants to build an identity, alter ego, project, bran
 
 Start with the minimum questions needed to find the shape of the idea.
 
+If the user is completely blank, begin with one of the starter prompts and then ask only the fewest questions needed to move forward.
+
 Core questions:
 
 1. What are we naming or building?

@@ -20,7 +20,8 @@ export default function WorkspaceRow({
     rowRef?.current?.remove();
     await Admin.deleteWorkspace(workspace.id);
   };
-  const canDelete = !deletionProtected && !isCanonicalSparkyWorkspace(workspace);
+  const canDelete =
+    !deletionProtected && !isCanonicalSparkyWorkspace(workspace);
 
   return (
     <>

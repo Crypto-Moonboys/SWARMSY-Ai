@@ -81,6 +81,8 @@ describe("SPARKY fixed workspace protection", () => {
     expect(adminEndpoint).toContain('"/admin/workspaces"');
     expect(adminEndpoint).toContain(PROTECTED_WORKSPACE_MESSAGE);
 
+    expect(sparkyUtil).toContain("SPARKY_CORE_PACK_DIR = path.join(");
+    expect(sparkyUtil).toContain('"sparky",');
     expect(sparkyUtil).toContain('path.join(__dirname, "..", "..", "sparky"');
     expect(sparkyUtil).not.toContain(
       'path.join(__dirname, "..", "..", "storage"'
