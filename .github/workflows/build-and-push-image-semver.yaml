@@ -54,7 +54,7 @@ jobs:
       
       - name: Extract metadata (tags, labels) for Docker
         id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef97b2010124a938b7
         with:
           images: |
             ${{ steps.dockerhub.outputs.enabled == 'true' && 'mintplexlabs/anythingllm' || '' }}
@@ -97,6 +97,7 @@ jobs:
       # About VEX attestations https://docs.docker.com/scout/explore/exceptions/
       # Justifications https://github.com/openvex/spec/blob/main/OPENVEX-SPEC.md#status-justifications
       - name: Add VEX attestations
+        if: steps.dockerhub.outputs.enabled == 'true' && steps.cve-list.outputs.CVE_EXCEPTIONS != ''
         env:
           CVE_EXCEPTIONS: ${{ steps.cve-list.outputs.CVE_EXCEPTIONS }}
         run: |
