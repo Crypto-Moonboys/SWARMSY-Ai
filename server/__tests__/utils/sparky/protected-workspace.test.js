@@ -14,6 +14,7 @@ describe("SPARKY fixed workspace protection", () => {
     const sparkyUtil = read("server/utils/sparky/index.js");
     const sparkyTruthsHelper = read("server/utils/sparky/truths.js");
     const sparkyTruthsModel = read("server/models/sparkyTruths.js");
+    const sparkyTruthsSchema = read("server/prisma/schema.prisma");
     const sparkyPrompt = read("server/sparky/packs/core/sparky-system-prompt.md");
 
     expect(workspaceModel).toContain("isCanonicalSparkyWorkspace");
@@ -63,10 +64,13 @@ describe("SPARKY fixed workspace protection", () => {
     expect(sparkyTruthsHelper).toContain("SPARKY is a protected fixed workspace.");
     expect(sparkyTruthsHelper).toContain("userId: getTruthOwnerId(user)");
     expect(sparkyTruthsHelper).toContain("archived: false");
-    expect(sparkyTruthsHelper).toContain("archived: true");
-    expect(sparkyTruthsModel).toContain("model sparky_truths");
-    expect(sparkyTruthsModel).toContain("truth         String");
-    expect(sparkyTruthsModel).toContain("archived      Boolean    @default(false)");
+    expect(sparkyTruthsModel).toContain("normalizeTruthValue(truth = \"\")");
+    expect(sparkyTruthsModel).toContain("normalizeUserId(userId = null)");
+    expect(sparkyTruthsModel).toContain("prisma.sparky_truths.create");
+    expect(sparkyTruthsModel).toContain("prisma.sparky_truths.updateMany");
+    expect(sparkyTruthsSchema).toContain("model sparky_truths");
+    expect(sparkyTruthsSchema).toContain("truth         String");
+    expect(sparkyTruthsSchema).toContain("archived      Boolean    @default(false)");
   });
 
   it("exposes a clear Continue with SPARKY entry point", () => {
