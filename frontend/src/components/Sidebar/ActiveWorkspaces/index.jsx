@@ -123,7 +123,9 @@ export default function ActiveWorkspaces() {
           >
             <div className="flex min-w-0 items-center gap-x-3">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-cyan-400/15 text-cyan-200">
-                <span className="text-[11px] font-black tracking-[0.2em]">S</span>
+                <span className="text-[11px] font-black tracking-[0.2em]">
+                  S
+                </span>
               </div>
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold">
