@@ -125,6 +125,14 @@ function promptHasSparkyCoreIdentity(prompt = "") {
   );
 }
 
+function sparkyPromptNeedsRefresh(workspace = null) {
+  return (
+    isCanonicalSparkyWorkspace(workspace) &&
+    normalizeSparkySystemPrompt(workspace.openAiPrompt) !==
+      normalizeSparkySystemPrompt(getSparkySystemPrompt())
+  );
+}
+
 function getSparkyCorePackCatalog() {
   return SPARKY_CORE_PACKS.map((pack) => {
     const absolutePath = path.join(SPARKY_CORE_PACK_DIR, pack.filename);
@@ -191,15 +199,32 @@ async function seedSparkyStarterSuggestedMessages(workspace = null) {
   return true;
 }
 
+async function refreshSparkySystemPrompt(Workspace, workspace = null) {
+  if (!sparkyPromptNeedsRefresh(workspace)) return workspace;
+
+  const { workspace: updatedWorkspace } = await Workspace.update(workspace.id, {
+    openAiPrompt: getSparkySystemPrompt(),
+  });
+
+  return updatedWorkspace || {
+    ...workspace,
+    openAiPrompt: getSparkySystemPrompt(),
+  };
+}
+
 async function ensureSparkyWorkspace() {
   const { Workspace } = require("../../models/workspace");
   const template = getSparkyWorkspaceTemplate();
   const existingWorkspace = await Workspace.get({ slug: template.slug });
 
   if (isCanonicalSparkyWorkspace(existingWorkspace)) {
-    await seedSparkyStarterSuggestedMessages(existingWorkspace);
+    const workspace = await refreshSparkySystemPrompt(
+      Workspace,
+      existingWorkspace
+    );
+    await seedSparkyStarterSuggestedMessages(workspace);
     return {
-      workspace: existingWorkspace,
+      workspace,
       error: null,
       collision: false,
       created: false,
@@ -247,6 +272,7 @@ module.exports = {
   normalizeSparkySystemPrompt,
   getSparkyCanonicalSystemPrompt,
   promptHasSparkyCoreIdentity,
+  sparkyPromptNeedsRefresh,
   getSparkyCorePackCatalog,
   getSparkyStarterSuggestedMessages,
   getSparkyWorkspaceTemplate,
@@ -254,5 +280,6 @@ module.exports = {
   isSparkyWorkspaceSlug,
   isCanonicalSparkyWorkspace,
   seedSparkyStarterSuggestedMessages,
+  refreshSparkySystemPrompt,
   ensureSparkyWorkspace,
 };
