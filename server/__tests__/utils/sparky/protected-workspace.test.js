@@ -12,6 +12,8 @@ describe("SPARKY fixed workspace protection", () => {
     const apiWorkspaceEndpoint = read("server/endpoints/api/workspace/index.js");
     const adminEndpoint = read("server/endpoints/admin.js");
     const sparkyUtil = read("server/utils/sparky/index.js");
+    const sparkyTruthsHelper = read("server/utils/sparky/truths.js");
+    const sparkyTruthsModel = read("server/models/sparkyTruths.js");
     const sparkyPrompt = read("server/sparky/packs/core/sparky-system-prompt.md");
 
     expect(workspaceModel).toContain("isCanonicalSparkyWorkspace");
@@ -31,6 +33,10 @@ describe("SPARKY fixed workspace protection", () => {
     expect(workspacesEndpoint).toContain("isCanonicalSparkyWorkspace(workspace)");
     expect(workspacesEndpoint).toContain("SPARKY is a protected fixed workspace.");
     expect(workspacesEndpoint).toContain('"/workspaces"');
+    expect(workspacesEndpoint).toContain('"/workspace/:slug/sparky-truths"');
+    expect(workspacesEndpoint).toContain("listApprovedSparkyTruths");
+    expect(workspacesEndpoint).toContain("createApprovedSparkyTruth");
+    expect(workspacesEndpoint).toContain("archiveApprovedSparkyTruth");
 
     expect(apiWorkspaceEndpoint).toContain("await ensureSparkyWorkspace();");
     expect(apiWorkspaceEndpoint).toContain(
@@ -54,6 +60,13 @@ describe("SPARKY fixed workspace protection", () => {
     expect(sparkyUtil).not.toContain('path.join(__dirname, "..", "..", "storage"');
     expect(sparkyUtil).not.toContain("SPARKY_WORKSPACE_METADATA");
     expect(sparkyPrompt).toContain("You are SPARKY");
+    expect(sparkyTruthsHelper).toContain("SPARKY is a protected fixed workspace.");
+    expect(sparkyTruthsHelper).toContain("userId: getTruthOwnerId(user)");
+    expect(sparkyTruthsHelper).toContain("archived: false");
+    expect(sparkyTruthsHelper).toContain("archived: true");
+    expect(sparkyTruthsModel).toContain("model sparky_truths");
+    expect(sparkyTruthsModel).toContain("truth         String");
+    expect(sparkyTruthsModel).toContain("archived      Boolean    @default(false)");
   });
 
   it("exposes a clear Continue with SPARKY entry point", () => {

@@ -179,6 +179,22 @@ model workspace_suggested_messages {
   @@index([workspaceId])
 }
 
+model sparky_truths {
+  id            Int        @id @default(autoincrement())
+  workspaceId   Int
+  userId        Int?
+  truth         String
+  archived      Boolean    @default(false)
+  createdAt     DateTime   @default(now())
+  lastUpdatedAt DateTime   @default(now())
+  workspace     workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user          users?     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([workspaceId])
+  @@index([userId])
+  @@index([workspaceId, userId, archived])
+}
+
 model workspace_chats {
   id             Int      @id @default(autoincrement())
   workspaceId    Int

@@ -46,6 +46,11 @@ const {
   ensureSparkyWorkspace,
   isCanonicalSparkyWorkspace,
 } = require("../utils/sparky");
+const {
+  listApprovedSparkyTruths,
+  createApprovedSparkyTruth,
+  archiveApprovedSparkyTruth,
+} = require("../utils/sparky/truths");
 
 function workspaceEndpoints(app) {
   if (!app) return;
@@ -539,6 +544,97 @@ function workspaceEndpoints(app) {
       } catch (e) {
         console.error(e.message, e);
         response.sendStatus(500).end();
+      }
+    }
+  );
+
+  app.get(
+    "/workspace/:slug/sparky-truths",
+    [validatedRequest, flexUserRoleValid([ROLES.all]), validWorkspaceSlug],
+    async (request, response) => {
+      try {
+        const result = await listApprovedSparkyTruths(
+          response.locals.workspace,
+          response.locals.user
+        );
+
+        if (!result.success) {
+          response.status(result.status).json({
+            success: false,
+            error: result.error,
+          });
+          return;
+        }
+
+        response.status(200).json({
+          success: true,
+          truths: result.truths,
+        });
+      } catch (error) {
+        console.error("Error fetching approved SPARKY truths:", error);
+        response.status(500).json({ success: false, error: error.message });
+      }
+    }
+  );
+
+  app.post(
+    "/workspace/:slug/sparky-truths",
+    [validatedRequest, flexUserRoleValid([ROLES.all]), validWorkspaceSlug],
+    async (request, response) => {
+      try {
+        const result = await createApprovedSparkyTruth(
+          response.locals.workspace,
+          response.locals.user,
+          reqBody(request)
+        );
+
+        if (!result.success) {
+          response.status(result.status).json({
+            success: false,
+            error: result.error,
+          });
+          return;
+        }
+
+        response.status(200).json({
+          success: true,
+          truth: result.truth,
+          message: "Approved SPARKY truth saved.",
+        });
+      } catch (error) {
+        console.error("Error saving approved SPARKY truth:", error);
+        response.status(500).json({ success: false, error: error.message });
+      }
+    }
+  );
+
+  app.delete(
+    "/workspace/:slug/sparky-truths/:truthId",
+    [validatedRequest, flexUserRoleValid([ROLES.all]), validWorkspaceSlug],
+    async (request, response) => {
+      try {
+        const result = await archiveApprovedSparkyTruth(
+          response.locals.workspace,
+          response.locals.user,
+          request.params.truthId
+        );
+
+        if (!result.success) {
+          response.status(result.status).json({
+            success: false,
+            error: result.error,
+          });
+          return;
+        }
+
+        response.status(200).json({
+          success: true,
+          truth: result.truth,
+          message: "Approved SPARKY truth archived.",
+        });
+      } catch (error) {
+        console.error("Error archiving approved SPARKY truth:", error);
+        response.status(500).json({ success: false, error: error.message });
       }
     }
   );
