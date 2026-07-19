@@ -32,6 +32,7 @@ on:
 jobs:
   push_multi_platform_to_registries:
     name: Push Docker multi-platform image to multiple registries
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-22.04-arm
     permissions:
       packages: write
