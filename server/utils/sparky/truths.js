@@ -1,8 +1,7 @@
 const { SparkyTruths } = require("../../models/sparkyTruths");
 const { isCanonicalSparkyWorkspace } = require("./index");
 
-const SPARKY_TRUTH_PROTECTION_ERROR =
-  "SPARKY is a protected fixed workspace.";
+const SPARKY_TRUTH_PROTECTION_ERROR = "SPARKY is a protected fixed workspace.";
 
 function getTruthOwnerId(user = null) {
   return user?.id ?? null;
