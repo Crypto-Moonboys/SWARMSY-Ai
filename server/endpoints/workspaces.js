@@ -47,8 +47,12 @@ const {
   isCanonicalSparkyWorkspace,
 } = require("../utils/sparky");
 const {
+  listSparkyRecords,
   listApprovedSparkyTruths,
+  createSparkyRecord,
   createApprovedSparkyTruth,
+  approveSparkyRecord,
+  archiveSparkyRecord,
   archiveApprovedSparkyTruth,
 } = require("../utils/sparky/truths");
 
@@ -547,6 +551,130 @@ function workspaceEndpoints(app) {
       } catch (e) {
         console.error(e.message, e);
         response.sendStatus(500).end();
+      }
+    }
+  );
+
+  app.get(
+    "/workspace/:slug/sparky-records",
+    [validatedRequest, flexUserRoleValid([ROLES.all]), validWorkspaceSlug],
+    async (request, response) => {
+      try {
+        const result = await listSparkyRecords(
+          response.locals.workspace,
+          response.locals.user,
+          request.query
+        );
+
+        if (!result.success) {
+          response.status(result.status).json({
+            success: false,
+            error: result.error,
+          });
+          return;
+        }
+
+        response.status(200).json({
+          success: true,
+          records: result.records,
+        });
+      } catch (error) {
+        console.error("Error fetching SPARKY records:", error);
+        response.status(500).json({ success: false, error: error.message });
+      }
+    }
+  );
+
+  app.post(
+    "/workspace/:slug/sparky-records",
+    [validatedRequest, flexUserRoleValid([ROLES.all]), validWorkspaceSlug],
+    async (request, response) => {
+      try {
+        const result = await createSparkyRecord(
+          response.locals.workspace,
+          response.locals.user,
+          reqBody(request)
+        );
+
+        if (!result.success) {
+          response.status(result.status).json({
+            success: false,
+            error: result.error,
+          });
+          return;
+        }
+
+        response.status(200).json({
+          success: true,
+          record: result.record,
+          message: "SPARKY record saved.",
+        });
+      } catch (error) {
+        console.error("Error saving SPARKY record:", error);
+        response.status(500).json({ success: false, error: error.message });
+      }
+    }
+  );
+
+  app.post(
+    "/workspace/:slug/sparky-records/:recordId/approve",
+    [validatedRequest, flexUserRoleValid([ROLES.all]), validWorkspaceSlug],
+    async (request, response) => {
+      try {
+        const result = await approveSparkyRecord(
+          response.locals.workspace,
+          response.locals.user,
+          request.params.recordId,
+          reqBody(request)
+        );
+
+        if (!result.success) {
+          response.status(result.status).json({
+            success: false,
+            error: result.error,
+          });
+          return;
+        }
+
+        response.status(200).json({
+          success: true,
+          record: result.record,
+          message: "SPARKY record approved.",
+        });
+      } catch (error) {
+        console.error("Error approving SPARKY record:", error);
+        response.status(500).json({ success: false, error: error.message });
+      }
+    }
+  );
+
+  app.delete(
+    "/workspace/:slug/sparky-records/:recordId",
+    [validatedRequest, flexUserRoleValid([ROLES.all]), validWorkspaceSlug],
+    async (request, response) => {
+      try {
+        const result = await archiveSparkyRecord(
+          response.locals.workspace,
+          response.locals.user,
+          request.params.recordId
+        );
+
+        if (!result.success) {
+          response.status(result.status).json({
+            success: false,
+            error: result.error,
+          });
+          return;
+        }
+
+        response.status(200).json({
+          success: true,
+          record: result.record,
+          message: "SPARKY record archived.",
+        });
+      } catch (error) {
+        console.error("Error archiving SPARKY record:", error);
+        response.status(500).json({ success: false, error: error.message });
       }
     }
   );
