@@ -37,6 +37,7 @@ import WorkspaceModelPicker from "./WorkspaceModelPicker";
 import { ChatSidebarProvider } from "./ChatSidebar";
 import SourcesSidebar from "./SourcesSidebar";
 import MemoriesSidebar from "./MemoriesSidebar";
+import SparkyRecordsSidebar from "./SparkyRecordsSidebar";
 
 export default function ChatContainer({
   workspace,
@@ -496,6 +497,7 @@ export default function ChatContainer({
             <ChatTooltips />
           </div>
           <MemoriesSidebar workspace={workspace} />
+          <SparkyRecordsSidebar workspace={workspace} />
         </div>
       </ChatSidebarProvider>
     );
@@ -544,6 +546,7 @@ export default function ChatContainer({
         </div>
         <SourcesSidebar />
         <MemoriesSidebar workspace={workspace} />
+        <SparkyRecordsSidebar workspace={workspace} />
       </div>
     </ChatSidebarProvider>
   );
