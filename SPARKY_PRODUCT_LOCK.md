@@ -30,6 +30,15 @@ PR 1 scope:
 - Keep core packs discoverable on disk.
 - Leave full pack ingestion as an explicit follow-up if it is not wired yet.
 
+
+Packaged MVP now includes:
+
+- One lightweight SPARKY record ledger for ideas, decisions, and proof.
+- Draft ideas stay out of live prompt memory.
+- Approved decisions and approved proof can be injected into SPARKY chat context.
+- Existing AnythingLLM memory, tools, workspaces, retrieval, and agents remain the engine.
+- SPARKY stays the mission layer, not a second AI brain.
+
 PR 1 non-goals:
 
 - Desktop installer changes.
