@@ -186,6 +186,10 @@ model sparky_truths {
   workspaceId   Int
   userId        Int?
   truth         String
+  kind          String     @default("decision")
+  status        String     @default("approved")
+  source        String?
+  notes         String?
   archived      Boolean    @default(false)
   createdAt     DateTime   @default(now())
   lastUpdatedAt DateTime   @default(now())
@@ -194,7 +198,10 @@ model sparky_truths {
 
   @@index([workspaceId])
   @@index([userId])
+  @@index([kind])
+  @@index([status])
   @@index([workspaceId, userId, archived])
+  @@index([workspaceId, userId, kind, status, archived])
 }
 
 model workspace_chats {
