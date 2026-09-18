@@ -255,6 +255,71 @@ const Workspace = {
 
     return result;
   },
+  sparkyRecords: {
+    list: async function (slug = "", filters = {}) {
+      const url = new URL(`${fullApiUrl()}/workspace/${slug}/sparky-records`);
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== null && value !== undefined && value !== "") {
+          url.searchParams.set(key, value);
+        }
+      });
+
+      return await fetch(url, {
+        method: "GET",
+        headers: baseHeaders(),
+      })
+        .then((res) => res.json())
+        .catch((e) => ({
+          success: false,
+          records: [],
+          error: e.message,
+        }));
+    },
+    create: async function (slug = "", record = {}) {
+      return await fetch(`${API_BASE}/workspace/${slug}/sparky-records`, {
+        method: "POST",
+        headers: baseHeaders(),
+        body: JSON.stringify(record),
+      })
+        .then((res) => res.json())
+        .catch((e) => ({
+          success: false,
+          record: null,
+          error: e.message,
+        }));
+    },
+    approve: async function (slug = "", recordId = null, updates = {}) {
+      return await fetch(
+        `${API_BASE}/workspace/${slug}/sparky-records/${recordId}/approve`,
+        {
+          method: "POST",
+          headers: baseHeaders(),
+          body: JSON.stringify(updates),
+        }
+      )
+        .then((res) => res.json())
+        .catch((e) => ({
+          success: false,
+          record: null,
+          error: e.message,
+        }));
+    },
+    archive: async function (slug = "", recordId = null) {
+      return await fetch(
+        `${API_BASE}/workspace/${slug}/sparky-records/${recordId}`,
+        {
+          method: "DELETE",
+          headers: baseHeaders(),
+        }
+      )
+        .then((res) => res.json())
+        .catch((e) => ({
+          success: false,
+          record: null,
+          error: e.message,
+        }));
+    },
+  },
   wipeVectorDb: async function (slug) {
     return await fetch(`${API_BASE}/workspace/${slug}/reset-vector-db`, {
       method: "DELETE",
