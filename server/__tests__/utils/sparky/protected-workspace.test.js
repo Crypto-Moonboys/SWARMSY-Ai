@@ -23,6 +23,9 @@ const GENERAL_APPEARANCE_PATH =
 const WORKSPACE_ROW_PATH =
   "frontend/src/pages/Admin/Workspaces/WorkspaceRow/index.jsx";
 const SPARKY_HELPER_PATH = "frontend/src/utils/sparky.js";
+const SPARKY_SIDEBAR_PATH =
+  "frontend/src/components/WorkspaceChat/ChatContainer/SparkyRecordsSidebar/index.jsx";
+const WORKSPACE_FRONTEND_MODEL_PATH = "frontend/src/models/workspace.js";
 const PROTECTED_WORKSPACE_MESSAGE =
   "SPARKY is a protected fixed workspace.";
 const SPARKY_TRUTHS_ARCHIVED_FIELD = "archived      Boolean    @default(false)";
@@ -38,6 +41,8 @@ describe("SPARKY fixed workspace protection", () => {
     const sparkyTruthsModel = read(SPARKY_TRUTHS_MODEL_PATH);
     const sparkyTruthsSchema = read(SPARKY_TRUTHS_SCHEMA_PATH);
     const sparkyPrompt = read(SPARKY_PROMPT_PATH);
+    const sparkySidebar = read(SPARKY_SIDEBAR_PATH);
+    const frontendWorkspaceModel = read(WORKSPACE_FRONTEND_MODEL_PATH);
 
     expect(workspaceModel).toContain("isCanonicalSparkyWorkspace");
     expect(workspaceModel).toContain("workspace_users");
@@ -58,7 +63,12 @@ describe("SPARKY fixed workspace protection", () => {
     );
     expect(workspacesEndpoint).toContain(PROTECTED_WORKSPACE_MESSAGE);
     expect(workspacesEndpoint).toContain('"/workspaces"');
+    expect(workspacesEndpoint).toContain('"/workspace/:slug/sparky-records"');
     expect(workspacesEndpoint).toContain('"/workspace/:slug/sparky-truths"');
+    expect(workspacesEndpoint).toContain("listSparkyRecords");
+    expect(workspacesEndpoint).toContain("createSparkyRecord");
+    expect(workspacesEndpoint).toContain("approveSparkyRecord");
+    expect(workspacesEndpoint).toContain("archiveSparkyRecord");
     expect(workspacesEndpoint).toContain("listApprovedSparkyTruths");
     expect(workspacesEndpoint).toContain("createApprovedSparkyTruth");
     expect(workspacesEndpoint).toContain("archiveApprovedSparkyTruth");
@@ -95,11 +105,19 @@ describe("SPARKY fixed workspace protection", () => {
     expect(sparkyTruthsHelper).toContain("archived: false");
     expect(sparkyTruthsModel).toContain("normalizeTruthValue(truth = \"\")");
     expect(sparkyTruthsModel).toContain("normalizeUserId(userId = null)");
+    expect(sparkyTruthsModel).toContain("normalizeRecordKind");
+    expect(sparkyTruthsModel).toContain("normalizeRecordStatus");
     expect(sparkyTruthsModel).toContain("prisma.sparky_truths.create");
-    expect(sparkyTruthsModel).toContain("prisma.sparky_truths.updateMany");
+    expect(sparkyTruthsModel).toContain("prisma.sparky_truths.update");
     expect(sparkyTruthsSchema).toContain("model sparky_truths");
     expect(sparkyTruthsSchema).toContain("truth         String");
+    expect(sparkyTruthsSchema).toContain('kind          String     @default("decision")');
+    expect(sparkyTruthsSchema).toContain('status        String     @default("approved")');
     expect(sparkyTruthsSchema).toContain(SPARKY_TRUTHS_ARCHIVED_FIELD);
+    expect(frontendWorkspaceModel).toContain("sparkyRecords");
+    expect(sparkySidebar).toContain("Save rough idea");
+    expect(sparkySidebar).toContain("Approve as decision");
+    expect(sparkySidebar).toContain("Save proof note");
   });
 
   it("exposes a clear Continue with SPARKY entry point", () => {
