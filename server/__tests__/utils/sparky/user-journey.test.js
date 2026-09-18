@@ -164,12 +164,14 @@ describe("SPARKY v1 normal-user journey sandbox", () => {
     });
 
     expect(prompt).toContain(systemPrompt);
-    expect(prompt).not.toContain("## Approved SPARKY Truths");
+    expect(prompt).not.toContain("## Approved SPARKY Decisions And Proof");
     expect(SparkyTruths.where).toHaveBeenCalledWith(
       {
         workspaceId: canonicalWorkspace.id,
         userId: defaultUser.id,
         archived: false,
+        status: "approved",
+        kind: { in: ["decision", "proof"] },
       },
       null,
       { createdAt: "asc" }
@@ -217,6 +219,8 @@ describe("SPARKY v1 normal-user journey sandbox", () => {
         workspaceId: canonicalWorkspace.id,
         userId: defaultUser.id,
         truth: "The project name is Masked Pizza Radio.",
+        kind: "decision",
+        status: "approved",
         archived: false,
       },
       message: null,
@@ -234,6 +238,8 @@ describe("SPARKY v1 normal-user journey sandbox", () => {
         workspaceId: canonicalWorkspace.id,
         userId: defaultUser.id,
         truth: "The project name is Masked Pizza Radio.",
+        kind: "decision",
+        status: "approved",
         archived: false,
       },
     ]);
@@ -254,9 +260,15 @@ describe("SPARKY v1 normal-user journey sandbox", () => {
       workspaceId: canonicalWorkspace.id,
       userId: defaultUser.id,
       truth: "The project name is Masked Pizza Radio.",
+      kind: "decision",
+      status: "approved",
+      source: undefined,
+      notes: undefined,
     });
-    expect(prompt).toContain("## Approved SPARKY Truths");
-    expect(prompt).toContain("- The project name is Masked Pizza Radio.");
+    expect(prompt).toContain("## Approved SPARKY Decisions And Proof");
+    expect(prompt).toContain(
+      "- [DECISION] The project name is Masked Pizza Radio."
+    );
   });
 
   it("keeps default multi-user access to canonical SPARKY while non-canonical sparky collisions stay private and unprotected", () => {
@@ -287,6 +299,9 @@ describe("SPARKY v1 normal-user journey sandbox", () => {
     expect(workspacesEndpoint).toContain("flexUserRoleValid([ROLES.all])");
     expect(workspacesEndpoint).toContain(
       '"/workspace/:slug/sparky-truths"'
+    );
+    expect(workspacesEndpoint).toContain(
+      '"/workspace/:slug/sparky-records"'
     );
     expect(adminWorkspaceUi).toContain("isCanonicalSparkyWorkspace(workspace)");
   });
@@ -323,12 +338,14 @@ describe("SPARKY v1 normal-user journey sandbox", () => {
       prompt: "continue",
     });
 
-    expect(prompt).not.toContain("## Approved SPARKY Truths");
+    expect(prompt).not.toContain("## Approved SPARKY Decisions And Proof");
     expect(SparkyTruths.where).toHaveBeenCalledWith(
       {
         workspaceId: canonicalWorkspace.id,
         userId: secondDefaultUser.id,
         archived: false,
+        status: "approved",
+        kind: { in: ["decision", "proof"] },
       },
       null,
       { createdAt: "asc" }
