@@ -3,6 +3,7 @@ import { SlidersHorizontal } from "@phosphor-icons/react";
 import useLoginMode from "@/hooks/useLoginMode";
 import TextSizeRow from "./TextSize";
 import MemoriesRow from "./Memories";
+import SparkyRecordsRow from "./SparkyRecords";
 import CopyLinkToChatRow from "./CopyLinkToChat";
 import ExportRow from "./Export";
 
@@ -64,6 +65,10 @@ export default function ChatSettingsMenu({
           className="absolute right-0 top-[42px] bg-zinc-800 light:bg-slate-50 border border-zinc-700 light:border-slate-300 rounded-lg p-3.5 w-[226px] flex flex-col gap-1.5 shadow-lg"
         >
           <TextSizeRow />
+          <SparkyRecordsRow
+            workspace={workspace}
+            onClose={() => setShowMenu(false)}
+          />
           <MemoriesRow onClose={() => setShowMenu(false)} />
           <ExportRow
             history={history}
