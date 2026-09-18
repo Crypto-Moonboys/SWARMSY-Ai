@@ -61,6 +61,16 @@ export function useMemoriesSidebar() {
   };
 }
 
+export function useSparkyRecordsSidebar() {
+  const { activeSidebar, toggleSidebar, closeSidebar } =
+    useContext(ChatSidebarContext);
+  return {
+    sidebarOpen: activeSidebar === "sparky-records",
+    toggleSidebar: () => toggleSidebar("sparky-records"),
+    closeSidebar,
+  };
+}
+
 /**
  * Reusable animation wrapper for right-side chat panels.
  * Uses a fixed-width wrapper + GPU-composited translateX so opening/closing
