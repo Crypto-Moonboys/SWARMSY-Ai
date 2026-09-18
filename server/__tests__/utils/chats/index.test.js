@@ -60,7 +60,7 @@ describe("chatPrompt SPARKY truth injection", () => {
 
   it("injects approved truths into canonical SPARKY prompts", async () => {
     getApprovedSparkyTruthsPromptSection.mockResolvedValue(
-      "## Approved SPARKY Truths\n- The project is a neon cat brand."
+      "## Approved SPARKY Decisions And Proof\n- [DECISION] The project is a neon cat brand."
     );
 
     const workspace = {
@@ -77,11 +77,11 @@ describe("chatPrompt SPARKY truth injection", () => {
     expect(promptWithMemories).toHaveBeenCalledWith(
       expect.objectContaining({
         systemPrompt: expect.stringContaining(
-          "## Approved SPARKY Truths"
+          "## Approved SPARKY Decisions And Proof"
         ),
       })
     );
-    expect(result).toContain("## Approved SPARKY Truths");
+    expect(result).toContain("## Approved SPARKY Decisions And Proof");
   });
 
   it("leaves non-canonical prompts unchanged when no truths exist", async () => {
