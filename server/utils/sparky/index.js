@@ -35,29 +35,29 @@ const SPARKY_PROMPT_IDENTITY_LINES = [
 const SPARKY_STARTER_SUGGESTED_MESSAGES = [
   {
     heading: "",
-    message: "Plan today’s empire build.",
+    message: "Plan today’s local empire build.",
   },
   {
     heading: "",
-    message: "Build my Moonboy/PFP bio.",
+    message: "I have a Moonboy/PFP to build.",
   },
   {
     heading: "",
-    message: "Describe my PFP character first.",
+    message: "I have a brand, product or art project.",
   },
   {
     heading: "",
-    message: "Build identity routes from a name.",
-  },
-  {
-    heading: "",
-    message:
-      "I have no idea. Build me a direction.",
+    message: "I have no idea. Build me a local-first direction.",
   },
   {
     heading: "",
     message:
-      "Make a lore, stencil, merch and campaign pack.",
+      "Make a street-level lore, stencil, merch and campaign pack.",
+  },
+  {
+    heading: "",
+    message:
+      "Map the tools, bots and automation needed.",
   },
 ];
 
