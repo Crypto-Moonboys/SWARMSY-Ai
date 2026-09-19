@@ -65,6 +65,11 @@ const SPARKY_STARTER_SUGGESTED_MESSAGES = [
   {
     heading: "",
     message:
+      "I know the name and faction, but I need to describe the look.",
+  },
+  {
+    heading: "",
+    message:
       "Turn my avatar into a stencil, icon, poster, merch, and campaign idea.",
   },
   {
