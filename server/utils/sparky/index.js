@@ -82,6 +82,13 @@ const SPARKY_CORE_PACKS = [
       "Turns Crypto Moonboys, GKniftyHEADS, 1/1 PFPs, avatars, and holder characters into identity, icon, lore, product, campaign, and creator-world routes.",
   },
   {
+    id: "crypto-moonboys-w81-canon-biography",
+    filename: "crypto-moonboys-w81-canon-biography.md",
+    title: "Crypto Moonboys W81 Canon Biography",
+    summary:
+      "Starts Moonboy, GKniftyHEADS, HODL Warrior, 1/1 PFP, avatar, and faction characters with W81 canon-backed biography, lore, faction, HODL Warrior, visual, collector, and metadata records.",
+  },
+  {
     id: "visibility-doctrine",
     filename: "visibility-doctrine.md",
     title: "Visibility Doctrine",
