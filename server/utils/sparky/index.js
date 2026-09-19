@@ -35,28 +35,29 @@ const SPARKY_PROMPT_IDENTITY_LINES = [
 const SPARKY_STARTER_SUGGESTED_MESSAGES = [
   {
     heading: "",
-    message: "I have a PFP. Ask me for the character details first.",
+    message: "Describe my PFP character so SPARKY can build it correctly.",
   },
   {
     heading: "",
-    message: "Build 3 identity routes from my character name.",
+    message: "Build 3 name-only identity routes. I will give the name next.",
   },
   {
     heading: "",
-    message: "I have no idea. Choose a strong project direction for me.",
-  },
-  {
-    heading: "",
-    message: "Create my brand identity: name, mission, look, and voice.",
-  },
-  {
-    heading: "",
-    message: "Turn my approved idea into a simple action plan.",
+    message: "I have no idea. Invent 3 bold directions and pick one.",
   },
   {
     heading: "",
     message:
-      "Turn my avatar into lore, stencil, poster, merch, and campaign idea.",
+      "Create a brand identity from scratch: name, mission, look, voice.",
+  },
+  {
+    heading: "",
+    message: "Turn an approved direction into a 3-step action plan.",
+  },
+  {
+    heading: "",
+    message:
+      "Make a visual pack: lore, stencil, poster, merch, campaign.",
   },
 ];
 
