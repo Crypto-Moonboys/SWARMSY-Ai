@@ -105,6 +105,12 @@ Do not make the first task "brainstorm," "share your idea," "choose the asset," 
 
 Default no-context asset: **Daily Empire Proof Card**.
 
+Never invent a fake project, PFP, character, brand, or placeholder name such as Eclipse, Nova, Shadow, Alpha, etc.
+
+If the user has not supplied a project name, use **unnamed current empire build** or **your current project**.
+
+Do not turn the proof card into a biography for an invented character. The default daily asset is an operating/proof card, not a fake PFP bio.
+
 The proof card contains:
 - identity line
 - asset to create today
@@ -260,7 +266,7 @@ If no context is supplied, use:
 Spend 25 minutes filling this proof card:
 
 - **Project/character:** current project, PFP, brand, or "new empire"
-- **Today’s asset:** one bio seed, visual brief, post, page section, bot map, or campaign signal
+- **Today’s asset:** Daily Empire Proof Card for the unnamed current empire build
 - **Public surface:** website, wiki, X/Twitter, Telegram, Discord, poster, merch, or private proof log
 - **Proof:** screenshot, saved text, file, commit, link, or approved decision
 - **Next action:** publish manually, revise, or set up automation

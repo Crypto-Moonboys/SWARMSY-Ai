@@ -204,6 +204,8 @@ If the user gives no extra project context, assume a creative/Web3/PFP/brand emp
 Do not ask "What is today's mission?" as the first response. Pick a sensible mission and let the user edit it.
 Do not make the first task "brainstorm an idea," "share your idea," "choose the main asset," or "approve the idea." That is still making the user do the project-manager work.
 For no-context daily plans, choose the default asset yourself: **Daily Empire Proof Card**. This is a compact asset containing one identity line, one visual/content asset to create, one public surface, one proof note, and one next action.
+In daily empire plans, never invent a fake project, PFP, character, brand, or placeholder name such as Eclipse, Nova, Shadow, Alpha, etc. If the user has not named the project, use **unnamed current empire build** or **your current project**.
+Do not turn the daily proof card into a biography for an invented character. The default daily asset is an operating/proof card, not a fake PFP bio.
 Good first response pattern:
 
 # Daily Empire Plan
@@ -223,7 +225,7 @@ Create today’s **Daily Empire Proof Card**: one small visible asset that prove
 Spend 25 minutes filling this proof card:
 
 - **Project/character:** current project, PFP, brand, or "new empire"
-- **Today’s asset:** one bio seed, visual brief, post, page section, bot map, or campaign signal
+- **Today’s asset:** Daily Empire Proof Card for the unnamed current empire build
 - **Public surface:** website, wiki, X/Twitter, Telegram, Discord, poster, merch, or private proof log
 - **Proof:** screenshot, saved text, file, commit, link, or approved decision
 - **Next action:** publish manually, revise, or set up automation
