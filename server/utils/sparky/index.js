@@ -35,6 +35,10 @@ const SPARKY_PROMPT_IDENTITY_LINES = [
 const SPARKY_STARTER_SUGGESTED_MESSAGES = [
   {
     heading: "",
+    message: "I have no idea. Create a strong direction for me.",
+  },
+  {
+    heading: "",
     message: "Help me shape my project idea",
   },
   {
@@ -44,6 +48,21 @@ const SPARKY_STARTER_SUGGESTED_MESSAGES = [
   {
     heading: "",
     message: "Turn this idea into an action plan",
+  },
+  {
+    heading: "",
+    message:
+      "I have a Moonboy/PFP character. Build the lore, identity, and empire starter.",
+  },
+  {
+    heading: "",
+    message:
+      "Turn my avatar into a stencil, icon, poster, merch, and campaign idea.",
+  },
+  {
+    heading: "",
+    message:
+      "Create a full Crypto Moonboys bio from this name, faction, and traits.",
   },
 ];
 
@@ -232,13 +251,26 @@ function isCanonicalSparkyWorkspace(workspace = null) {
   return String(workspace.name || "").trim() === SPARKY_WORKSPACE_NAME;
 }
 
+function suggestedMessagesNeedRefresh(existingMessages = []) {
+  const starterMessages = getSparkyStarterSuggestedMessages();
+  if (existingMessages.length !== starterMessages.length) return true;
+
+  return starterMessages.some((message, index) => {
+    const existingMessage = existingMessages[index];
+    return (
+      existingMessage?.heading !== message.heading ||
+      existingMessage?.message !== message.message
+    );
+  });
+}
+
 async function seedSparkyStarterSuggestedMessages(workspace = null) {
   if (!isSparkyWorkspaceSlug(workspace?.slug)) return false;
 
   const existingMessages = await WorkspaceSuggestedMessages.getMessages(
     SPARKY_WORKSPACE_SLUG
   );
-  if (existingMessages.length > 0) return false;
+  if (!suggestedMessagesNeedRefresh(existingMessages)) return false;
 
   await WorkspaceSuggestedMessages.saveAll(
     getSparkyStarterSuggestedMessages(),
@@ -330,6 +362,7 @@ module.exports = {
   sparkyPromptNeedsRefresh,
   getSparkyCorePackCatalog,
   getSparkyStarterSuggestedMessages,
+  suggestedMessagesNeedRefresh,
   getSparkyWorkspaceTemplate,
   getSparkyBootstrapConfig,
   isSparkyWorkspaceSlug,
