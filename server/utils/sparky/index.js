@@ -35,29 +35,29 @@ const SPARKY_PROMPT_IDENTITY_LINES = [
 const SPARKY_STARTER_SUGGESTED_MESSAGES = [
   {
     heading: "",
-    message: "Build my daily empire plan.",
+    message: "Plan today’s empire build.",
   },
   {
     heading: "",
-    message: "Describe my PFP character so I can build it correctly.",
+    message: "Describe my PFP character first.",
   },
   {
     heading: "",
-    message: "Build 3 name-only identity routes. I will give the name next.",
+    message: "Build identity routes from a name.",
   },
   {
     heading: "",
-    message: "I have no idea. Invent 3 bold directions and pick one.",
-  },
-  {
-    heading: "",
-    message:
-      "Create a brand identity from scratch: name, mission, look, voice.",
+    message: "I have no idea. Choose a strong direction.",
   },
   {
     heading: "",
     message:
-      "Make a visual pack: lore, stencil, poster, merch, campaign.",
+      "Create a full brand identity.",
+  },
+  {
+    heading: "",
+    message:
+      "Make a lore, stencil, merch and campaign pack.",
   },
 ];
 
