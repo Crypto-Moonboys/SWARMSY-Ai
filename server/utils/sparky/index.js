@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const prisma = require("../prisma");
 const {
   WorkspaceSuggestedMessages,
 } = require("../../models/workspacesSuggestedMessages");
@@ -232,7 +233,7 @@ function isCanonicalSparkyWorkspace(workspace = null) {
 }
 
 async function seedSparkyStarterSuggestedMessages(workspace = null) {
-  if (!isCanonicalSparkyWorkspace(workspace)) return false;
+  if (!isSparkyWorkspaceSlug(workspace?.slug)) return false;
 
   const existingMessages = await WorkspaceSuggestedMessages.getMessages(
     SPARKY_WORKSPACE_SLUG
@@ -247,14 +248,21 @@ async function seedSparkyStarterSuggestedMessages(workspace = null) {
 }
 
 async function refreshSparkySystemPrompt(Workspace, workspace = null) {
-  const template = getSparkyWorkspaceTemplate();
-  const promptNeedsRefresh = sparkyPromptNeedsRefresh(workspace);
-  const chatModeNeedsRefresh =
-    isCanonicalSparkyWorkspace(workspace) && workspace.chatMode !== template.chatMode;
+  if (!workspace) return workspace;
 
-  if (!promptNeedsRefresh && !chatModeNeedsRefresh) return workspace;
+  const template = getSparkyWorkspaceTemplate();
+  const promptNeedsRefresh =
+    normalizeSparkySystemPrompt(workspace.openAiPrompt) !==
+    normalizeSparkySystemPrompt(template.openAiPrompt);
+  const chatModeNeedsRefresh = workspace.chatMode !== template.chatMode;
+  const nameNeedsRefresh = String(workspace.name || "").trim() !== template.name;
+
+  if (!promptNeedsRefresh && !chatModeNeedsRefresh && !nameNeedsRefresh) {
+    return workspace;
+  }
 
   const { workspace: updatedWorkspace } = await Workspace.update(workspace.id, {
+    name: template.name,
     chatMode: template.chatMode,
     openAiPrompt: template.openAiPrompt,
   });
@@ -262,6 +270,7 @@ async function refreshSparkySystemPrompt(Workspace, workspace = null) {
   return (
     updatedWorkspace || {
       ...workspace,
+      name: template.name,
       chatMode: template.chatMode,
       openAiPrompt: template.openAiPrompt,
     }
@@ -271,9 +280,11 @@ async function refreshSparkySystemPrompt(Workspace, workspace = null) {
 async function ensureSparkyWorkspace() {
   const { Workspace } = require("../../models/workspace");
   const template = getSparkyWorkspaceTemplate();
-  const existingWorkspace = await Workspace.get({ slug: template.slug });
+  const existingWorkspace = await prisma.workspaces.findUnique({
+    where: { slug: template.slug },
+  });
 
-  if (isCanonicalSparkyWorkspace(existingWorkspace)) {
+  if (existingWorkspace) {
     const workspace = await refreshSparkySystemPrompt(
       Workspace,
       existingWorkspace
@@ -284,19 +295,7 @@ async function ensureSparkyWorkspace() {
       error: null,
       collision: false,
       created: false,
-      message: "SPARKY workspace is already bootstrapped.",
-    };
-  }
-
-  if (existingWorkspace) {
-    await seedSparkyStarterSuggestedMessages(existingWorkspace);
-    return {
-      workspace: existingWorkspace,
-      error: "sparky_workspace_slug_collision",
-      collision: true,
-      created: false,
-      message:
-        "SPARKY workspace slug already exists; leaving existing workspace untouched.",
+      message: "SPARKY workspace is bootstrapped and refreshed.",
     };
   }
 
