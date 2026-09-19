@@ -39,6 +39,10 @@ const SPARKY_STARTER_SUGGESTED_MESSAGES = [
   },
   {
     heading: "",
+    message: "Build my Moonboy/PFP bio.",
+  },
+  {
+    heading: "",
     message: "Describe my PFP character first.",
   },
   {
@@ -47,12 +51,8 @@ const SPARKY_STARTER_SUGGESTED_MESSAGES = [
   },
   {
     heading: "",
-    message: "I have no idea. Choose a strong direction.",
-  },
-  {
-    heading: "",
     message:
-      "Create a full brand identity.",
+      "I have no idea. Build me a direction.",
   },
   {
     heading: "",
