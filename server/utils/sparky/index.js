@@ -95,6 +95,20 @@ const SPARKY_CORE_PACKS = [
       "Compresses vague ideas, PFPs, brands, products, campaigns, and characters into structured creative DNA and approvable identity direction.",
   },
   {
+    id: "crypto-moonboys-latest-canon-brand-vision",
+    filename: "crypto-moonboys-latest-canon-brand-vision.md",
+    title: "Crypto Moonboys Latest Canon And Brand Vision",
+    summary:
+      "Current source for Crypto Moonboys brand truth, user paths, user-built IP, SWARMSY/SPARKY positioning, public copy rules, and safe explanation of what users can do now.",
+  },
+  {
+    id: "crypto-moonboys-w81-condensed-canon-digest",
+    filename: "crypto-moonboys-w81-condensed-canon-digest.md",
+    title: "Crypto Moonboys W81 Condensed Canon Digest",
+    summary:
+      "Condensed guide to the 94-file W81 archive, including brand, lore spine, factions, SWARMSY/SAM, game ideas, tokens/rewards, characters, and what to keep or filter.",
+  },
+  {
     id: "moonboy-pfp-identity-builder",
     filename: "moonboy-pfp-identity-builder.md",
     title: "Moonboy PFP Identity Builder",
