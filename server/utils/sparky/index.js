@@ -221,10 +221,7 @@ function isSparkyWorkspaceSlug(slug) {
 
 function isCanonicalSparkyWorkspace(workspace = null) {
   if (!workspace || workspace.slug !== SPARKY_WORKSPACE_SLUG) return false;
-  return (
-    String(workspace.name || "").trim() === SPARKY_WORKSPACE_NAME &&
-    promptHasSparkyCoreIdentity(workspace.openAiPrompt)
-  );
+  return String(workspace.name || "").trim() === SPARKY_WORKSPACE_NAME;
 }
 
 async function seedSparkyStarterSuggestedMessages(workspace = null) {
