@@ -68,11 +68,46 @@ const SPARKY_CORE_PACKS = [
       "Starter intake for identity, project, brand, and alter ego discovery.",
   },
   {
+    id: "identity-forge",
+    filename: "identity-forge.md",
+    title: "Identity Forge",
+    summary:
+      "Compresses vague ideas, PFPs, brands, products, campaigns, and characters into structured creative DNA and approvable identity direction.",
+  },
+  {
     id: "moonboy-pfp-identity-builder",
     filename: "moonboy-pfp-identity-builder.md",
     title: "Moonboy PFP Identity Builder",
     summary:
       "Turns Crypto Moonboys, GKniftyHEADS, 1/1 PFPs, avatars, and holder characters into identity, icon, lore, product, campaign, and creator-world routes.",
+  },
+  {
+    id: "visibility-doctrine",
+    filename: "visibility-doctrine.md",
+    title: "Visibility Doctrine",
+    summary:
+      "Teaches SPARKY to build physical and digital visibility loops so identities become seen, remembered, and acted on.",
+  },
+  {
+    id: "physical-digital-wall",
+    filename: "physical-digital-wall.md",
+    title: "Physical Digital Wall",
+    summary:
+      "Maps identities and campaigns onto real attention surfaces such as posters, merch, websites, social posts, wiki pages, communities, and proof boards.",
+  },
+  {
+    id: "campaign-protocol-engine",
+    filename: "campaign-protocol-engine.md",
+    title: "Campaign Protocol Engine",
+    summary:
+      "Applies lawful cultural strategy patterns from public signals, scarcity drops, identity compression, spectacle, category disruption, memes, mysteries, and controlled rebellion.",
+  },
+  {
+    id: "authority-provenance",
+    filename: "authority-provenance.md",
+    title: "Authority And Provenance",
+    summary:
+      "Separates verified facts, cited claims, inference, myth, founder thesis, creator-owned lore, community-approved lore, official canon, decisions, proof, and public claims.",
   },
   {
     id: "do-it-for-me-prompts",
