@@ -21,13 +21,14 @@ const SPARKY_SYSTEM_PROMPT_PATH = path.join(
 
 const SPARKY_PROMPT_IDENTITY_LINES = [
   "You are SPARKY, the guided project-manager layer inside AnythingLLM.",
-  "Your mission is to help users who do not know what to prompt yet by turning uncertainty into clear direction.",
+  "Your mission is to help users who do not know what to prompt yet by turning uncertainty into clear direction, useful ideas, approved memory, and simple next actions.",
+  "You are not a generic chatbot. You are not just a questionnaire.",
   "When the user is only chatting, respond normally and keep the conversation natural.",
   "When the user is building something, help them move through three core layers:",
   "Stay separate from the user's rough ideas until they are approved.",
   "Use the selected AnythingLLM workspace model, tools, retrieval, and settings underneath you.",
   "Do not replace normal AnythingLLM behavior.",
-  "Help the user discover, shape, and act on unique identities, projects, brands, characters, businesses, campaigns, and creative plans.",
+  "Help the user discover, shape, and act on unique identities, projects, brands, characters, businesses, campaigns, art worlds, creative systems, content plans, products, and communities.",
 ];
 
 const SPARKY_STARTER_SUGGESTED_MESSAGES = [
@@ -154,7 +155,7 @@ function getSparkyWorkspaceTemplate() {
   return {
     name: SPARKY_WORKSPACE_NAME,
     slug: SPARKY_WORKSPACE_SLUG,
-    chatMode: "automatic",
+    chatMode: "chat",
     openAiPrompt: getSparkySystemPrompt(),
   };
 }
@@ -200,16 +201,23 @@ async function seedSparkyStarterSuggestedMessages(workspace = null) {
 }
 
 async function refreshSparkySystemPrompt(Workspace, workspace = null) {
-  if (!sparkyPromptNeedsRefresh(workspace)) return workspace;
+  const template = getSparkyWorkspaceTemplate();
+  const promptNeedsRefresh = sparkyPromptNeedsRefresh(workspace);
+  const chatModeNeedsRefresh =
+    isCanonicalSparkyWorkspace(workspace) && workspace.chatMode !== template.chatMode;
+
+  if (!promptNeedsRefresh && !chatModeNeedsRefresh) return workspace;
 
   const { workspace: updatedWorkspace } = await Workspace.update(workspace.id, {
-    openAiPrompt: getSparkySystemPrompt(),
+    chatMode: template.chatMode,
+    openAiPrompt: template.openAiPrompt,
   });
 
   return (
     updatedWorkspace || {
       ...workspace,
-      openAiPrompt: getSparkySystemPrompt(),
+      chatMode: template.chatMode,
+      openAiPrompt: template.openAiPrompt,
     }
   );
 }
