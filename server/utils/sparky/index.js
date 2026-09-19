@@ -35,7 +35,7 @@ const SPARKY_PROMPT_IDENTITY_LINES = [
 const SPARKY_STARTER_SUGGESTED_MESSAGES = [
   {
     heading: "",
-    message: "Describe my PFP character so SPARKY can build it correctly.",
+    message: "Describe my PFP character so I can build it correctly.",
   },
   {
     heading: "",
