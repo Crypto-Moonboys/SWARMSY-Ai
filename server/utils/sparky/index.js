@@ -47,10 +47,6 @@ const SPARKY_STARTER_SUGGESTED_MESSAGES = [
   },
   {
     heading: "",
-    message: "Help me shape my project idea",
-  },
-  {
-    heading: "",
     message: "Build my project identity",
   },
   {
@@ -60,22 +56,7 @@ const SPARKY_STARTER_SUGGESTED_MESSAGES = [
   {
     heading: "",
     message:
-      "I have a Moonboy/PFP character. Ask what you need first.",
-  },
-  {
-    heading: "",
-    message:
-      "I know the name and faction, but I need to describe the look.",
-  },
-  {
-    heading: "",
-    message:
-      "Turn my avatar into a stencil, icon, poster, merch, and campaign idea.",
-  },
-  {
-    heading: "",
-    message:
-      "Create a full Crypto Moonboys bio from this name, faction, and traits.",
+      "Turn my avatar into lore, stencil, poster, merch, and campaign idea.",
   },
 ];
 
