@@ -35,6 +35,14 @@ const SPARKY_PROMPT_IDENTITY_LINES = [
 const SPARKY_STARTER_SUGGESTED_MESSAGES = [
   {
     heading: "",
+    message: "Describe my character first",
+  },
+  {
+    heading: "",
+    message: "Start a new character identity build",
+  },
+  {
+    heading: "",
     message: "I have no idea. Create a strong direction for me.",
   },
   {
@@ -52,7 +60,7 @@ const SPARKY_STARTER_SUGGESTED_MESSAGES = [
   {
     heading: "",
     message:
-      "I have a Moonboy/PFP character. Build the lore, identity, and empire starter.",
+      "I have a Moonboy/PFP character. Ask what you need first.",
   },
   {
     heading: "",
