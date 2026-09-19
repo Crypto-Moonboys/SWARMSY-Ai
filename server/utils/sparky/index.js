@@ -35,6 +35,10 @@ const SPARKY_PROMPT_IDENTITY_LINES = [
 const SPARKY_STARTER_SUGGESTED_MESSAGES = [
   {
     heading: "",
+    message: "Build my daily empire plan.",
+  },
+  {
+    heading: "",
     message: "Describe my PFP character so I can build it correctly.",
   },
   {
@@ -49,10 +53,6 @@ const SPARKY_STARTER_SUGGESTED_MESSAGES = [
     heading: "",
     message:
       "Create a brand identity from scratch: name, mission, look, voice.",
-  },
-  {
-    heading: "",
-    message: "Turn an approved direction into a 3-step action plan.",
   },
   {
     heading: "",
@@ -88,6 +88,13 @@ const SPARKY_CORE_PACKS = [
     title: "Identity Forge",
     summary:
       "Compresses vague ideas, PFPs, brands, products, campaigns, and characters into structured creative DNA and approvable identity direction.",
+  },
+  {
+    id: "daily-empire-operating-system",
+    filename: "daily-empire-operating-system.md",
+    title: "Daily Empire Operating System",
+    summary:
+      "Runs daily project-management, empire-building lanes, operating modes, check-ins, automation readiness, and tool/setup planning.",
   },
   {
     id: "crypto-moonboys-latest-canon-brand-vision",
