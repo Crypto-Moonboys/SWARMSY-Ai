@@ -19,7 +19,7 @@ import { isCanonicalSparkyWorkspace } from "@/utils/sparky";
 const SWARMSY_LOGO_URL =
   "https://raw.githubusercontent.com/Crypto-Moonboys/SWARMSY-Ai/master/images/SWARMSY%20TEXT%20LOGO%20AND%20SWARMSY%20BEE.png";
 
-export default function ActiveWorkspaces() {
+export default function ActiveWorkspaces({ showNewWsModal = null }) {
   const navigate = useNavigate();
   const { slug } = useParams();
   const [loading, setLoading] = useState(true);
@@ -144,6 +144,8 @@ export default function ActiveWorkspaces() {
               workspace={sparkyWorkspace}
               isActive={isSparkyActive}
               isVirtualThread={isSparkyVirtuallyActive}
+              normalWorkspace={otherWorkspaces[0] || null}
+              showNewWsModal={showNewWsModal}
             />
           )}
         </div>
@@ -271,6 +273,7 @@ export default function ActiveWorkspaces() {
                             workspace={workspace}
                             isActive={isActive}
                             isVirtualThread={isVirtuallyActive}
+                            showNewWsModal={showNewWsModal}
                           />
                         )}
                       </div>
