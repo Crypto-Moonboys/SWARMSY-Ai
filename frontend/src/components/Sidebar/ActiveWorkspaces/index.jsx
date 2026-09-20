@@ -129,15 +129,13 @@ export default function ActiveWorkspaces() {
           <Link
             to={paths.workspace.chat(sparkyWorkspace.slug)}
             aria-current={isSparkyActive ? "page" : ""}
-            className={`flex min-h-[70px] items-center justify-center rounded-[10px] border border-cyan-400/40 bg-black px-3 py-3 text-white transition-colors hover:bg-zinc-950 ${
-              isSparkyActive ? "ring-1 ring-cyan-300/60" : ""
-            }`}
+            className="flex h-[54px] items-center justify-center overflow-hidden rounded-[10px] bg-black px-2 py-1 text-white transition-colors hover:bg-zinc-950"
             aria-label="Continue with SWARMSY"
           >
             <img
               src={SWARMSY_LOGO_URL}
               alt="SWARMSY"
-              className="max-h-[46px] w-full object-contain"
+              className="h-[66px] w-full scale-125 object-contain"
               loading="eager"
             />
           </Link>
