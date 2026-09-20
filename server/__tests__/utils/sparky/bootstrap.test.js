@@ -60,12 +60,10 @@ afterEach(() => {
 });
 
 describe("SPARKY bootstrap foundation", () => {
-  it("keeps the product lock doc in place", () => {
-    const productLockPath = path.join(
-      process.cwd(),
-      "SPARKY_PRODUCT_LOCK.md"
-    );
-    expect(fs.existsSync(productLockPath)).toBe(true);
+  it("keeps the release README in place", () => {
+    const readmePath = path.join(process.cwd(), "README.md");
+    expect(fs.existsSync(readmePath)).toBe(true);
+    expect(fs.readFileSync(readmePath, "utf8")).toContain("SWARMSY-Ai");
   });
 
   it("keeps the SPARKY system prompt on disk", () => {
