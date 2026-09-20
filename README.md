@@ -1,5 +1,199 @@
 <a name="readme-top"></a>
 
+# SWARMSY-Ai
+
+SWARMSY-Ai is a Crypto Moonboys fork of AnythingLLM with a fixed **SPARKY** workspace.
+
+SPARKY is the guided project-manager layer for users who do not know what to prompt yet. The current build turns AnythingLLM into a local-first identity, PFP, mascot, street campaign, and daily empire planning assistant, while still using normal AnythingLLM models, tools, retrieval, workspaces, and settings underneath.
+
+The upstream AnythingLLM README is kept below for base product, provider, hosting, and development documentation.
+
+## Current Build
+
+### SPARKY Workspace
+
+The app seeds and protects a canonical workspace:
+
+- **Name:** SPARKY
+- **Slug:** `sparky`
+- **Mode:** chat
+- **Prompt source:** `server/sparky/packs/core/sparky-system-prompt.md`
+- **Seed/bootstrap code:** `server/utils/sparky/index.js`
+
+SPARKY is refreshed by the Prisma seed step. The seed updates the SPARKY system prompt and suggested starter messages when the canonical files change.
+
+### SPARKY Operating Spine
+
+SPARKY is not meant to behave like a generic chatbot or a bland branding assistant.
+
+Its current spine is:
+
+- lawful Graffiti Bot / guerrilla brand strategist
+- local-first campaign planner
+- PFP-to-identity builder
+- stencil/icon art director
+- cyber-street lore builder
+- proof-focused project manager
+
+SPARKY should think in terms of:
+
+- message
+- mascot, mark, stencil, icon, or character
+- lawful real-world proof surface
+- digital proof echo
+- next action
+
+Physical activation must stay lawful, permissioned, safe, and non-harmful.
+
+### Main User Paths
+
+SPARKY currently supports three main lanes:
+
+1. **PFP / Avatar Holder**
+   - Builds a PFP, Moonboy, NFT, avatar, or character into lore, identity, icon/stencil direction, merch/poster surfaces, local activation, and digital proof.
+
+2. **Brand / Product / Art / Music Project**
+   - Helps artists, singers, musicians, painters, products, local businesses, services, events, and brands build a street-level local-first identity campaign.
+
+3. **No-Idea User**
+   - Gives strong local-first directions without forcing the user through a generic marketing questionnaire.
+
+### Deterministic Starter Replies
+
+The six starter messages are now handled in code before the model is called.
+
+File:
+
+- `server/utils/sparky/starterReplies.js`
+
+Chat hook:
+
+- `server/endpoints/chat.js`
+
+This avoids small local models drifting into generic output for starter buttons.
+
+Current starter messages:
+
+- `Plan today’s local empire build.`
+- `I have a Moonboy/PFP to build.`
+- `I have a brand, product or art project.`
+- `I have no idea. Build me a local-first direction.`
+- `Make a street-level lore, stencil, merch and campaign pack.`
+- `Map the tools, bots and automation needed.`
+
+Only exact starter messages are short-circuited. Normal user replies still go through the configured LLM.
+
+### Crypto Moonboys Packs
+
+SPARKY core packs live in:
+
+- `server/sparky/packs/core/`
+
+Important current packs include:
+
+- `sparky-system-prompt.md`
+- `daily-empire-operating-system.md`
+- `moonboy-pfp-identity-builder.md`
+- `crypto-moonboys-latest-canon-brand-vision.md`
+- `crypto-moonboys-w81-condensed-canon-digest.md`
+- `crypto-moonboys-w81-canon-biography.md`
+- `visibility-doctrine.md`
+- `physical-digital-wall.md`
+- `campaign-protocol-engine.md`
+- `authority-provenance.md`
+
+Source order for Crypto Moonboys lore should stay:
+
+1. latest canon and brand vision
+2. W81 condensed canon digest
+3. W81 canon biography pack
+4. raw W81 archive or specific faction files when available
+5. old public wiki/category pages for style and links only
+
+### Image Creation Reality
+
+SPARKY does not automatically create images unless a real image-generation or image-editing tool is connected.
+
+If the user asks for an image, poster, logo, mascot, stencil, merch visual, toy, PFP variant, or icon and no image tool is available, SPARKY should provide:
+
+- Visual Production Brief
+- External AI Handoff Prompt
+- instructions for GPT image generation, Grok, Midjourney, Leonardo, Firefly, Stable Diffusion, or another image/design tool
+
+SPARKY must not pretend an image was created when it was only described.
+
+### Automation Reality
+
+SPARKY separates work into:
+
+- **Manual Now:** plan, copy, prompts, checklists, proof cards, and next actions
+- **Agent-Assisted:** available tools can help after approval
+- **Auto Mode:** only active after real calendars, APIs, bots, webhooks, background jobs, or accounts are connected and approved
+
+SPARKY must not claim it scheduled, posted, emailed, uploaded, deployed, scraped, bought, or automated anything unless a real runtime tool actually did it.
+
+## Local Setup Notes
+
+Standard setup is inherited from AnythingLLM, but this repo currently needs these commands often during local Windows development.
+
+Clone and install:
+
+```bat
+git clone https://github.com/Crypto-Moonboys/SWARMSY-Ai.git
+cd SWARMSY-Ai
+yarn setup
+```
+
+On Windows, if `yarn setup` fails because `cp` is not available, copy env files manually:
+
+```bat
+copy frontend\.env.example frontend\.env
+copy server\.env.example server\.env.development
+copy collector\.env.example collector\.env
+copy docker\.env.example docker\.env
+```
+
+If local certificate inspection causes Prisma or package download errors:
+
+```bat
+set NODE_TLS_REJECT_UNAUTHORIZED=0
+```
+
+Refresh SPARKY after pulling prompt, pack, starter, or seed changes:
+
+```bat
+set NODE_TLS_REJECT_UNAUTHORIZED=0
+yarn prisma:seed
+```
+
+Run the app in three terminals:
+
+```bat
+yarn dev:server
+yarn dev:collector
+yarn dev:frontend
+```
+
+Default frontend is usually:
+
+```text
+http://localhost:3000
+```
+
+## Development Rules For This Fork
+
+When editing SPARKY behavior:
+
+- Keep deterministic starter replies in sync with `sparky-system-prompt.md`.
+- Do not make starter replies claim Auto Mode, image generation, posting, scheduling, uploading, or deployment is active by default.
+- Do not invent PFP traits, faction facts, image details, template IDs, rarity, or canon.
+- Do not turn HODL Warriors Army into a normal faction; it is the higher wartime unity layer.
+- Keep local-first activation lawful and permissioned.
+- Keep upstream AnythingLLM behavior intact unless a change is explicitly SPARKY-specific.
+- Keep SPARKY changes scoped to `server/sparky/`, `server/utils/sparky/`, and small chat/bootstrap hooks unless a broader change is genuinely needed.
+
+---
+
 > [!NOTE]
 > We are also working on [Open Computer](/open-computer) which gives an entire computer environment for AI Agents to use.
 >
