@@ -71,6 +71,16 @@ export function useSparkyRecordsSidebar() {
   };
 }
 
+export function useSparkyCalendarSidebar() {
+  const { activeSidebar, toggleSidebar, closeSidebar } =
+    useContext(ChatSidebarContext);
+  return {
+    sidebarOpen: activeSidebar === "sparky-calendar",
+    toggleSidebar: () => toggleSidebar("sparky-calendar"),
+    closeSidebar,
+  };
+}
+
 /**
  * Reusable animation wrapper for right-side chat panels.
  * Uses a fixed-width wrapper + GPU-composited translateX so opening/closing

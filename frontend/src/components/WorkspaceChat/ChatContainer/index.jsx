@@ -34,10 +34,15 @@ import QuickActions from "@/components/lib/QuickActions";
 import SuggestedMessages from "@/components/lib/SuggestedMessages";
 import ChatSettingsMenu from "./ChatSettingsMenu";
 import WorkspaceModelPicker from "./WorkspaceModelPicker";
-import { ChatSidebarProvider, useSparkyRecordsSidebar } from "./ChatSidebar";
+import {
+  ChatSidebarProvider,
+  useSparkyCalendarSidebar,
+  useSparkyRecordsSidebar,
+} from "./ChatSidebar";
 import SourcesSidebar from "./SourcesSidebar";
 import MemoriesSidebar from "./MemoriesSidebar";
 import SparkyRecordsSidebar from "./SparkyRecordsSidebar";
+import SparkyWorkflowCalendarSidebar from "./SparkyWorkflowCalendarSidebar";
 import { isCanonicalSparkyWorkspace } from "@/utils/sparky";
 
 const SPARKY_FLOATING_CLIP_URL =
@@ -121,7 +126,8 @@ function SparkyFloatingClip({
   workspace = null,
 }) {
   const [open, setOpen] = useState(false);
-  const { toggleSidebar } = useSparkyRecordsSidebar();
+  const { toggleSidebar: toggleRecordsSidebar } = useSparkyRecordsSidebar();
+  const { toggleSidebar: toggleCalendarSidebar } = useSparkyCalendarSidebar();
   const prompts = getSparkyForwardPrompts(latestAssistantText);
   const showRecordsAction = isCanonicalSparkyWorkspace(workspace);
 
@@ -134,7 +140,12 @@ function SparkyFloatingClip({
   }
 
   function openRecords() {
-    toggleSidebar();
+    toggleRecordsSidebar();
+    setOpen(false);
+  }
+
+  function openCalendar() {
+    toggleCalendarSidebar();
     setOpen(false);
   }
 
@@ -167,6 +178,15 @@ function SparkyFloatingClip({
               </button>
             ))}
           </div>
+          {showRecordsAction && (
+            <button
+              type="button"
+              onClick={openCalendar}
+              className="mt-2 w-full rounded-[10px] border border-yellow-300/30 bg-yellow-300/10 px-3 py-2 text-left text-sm font-semibold leading-snug text-yellow-100 hover:border-yellow-300/70 hover:bg-yellow-300/15"
+            >
+              Open Workflow Calendar
+            </button>
+          )}
           {showRecordsAction && (
             <button
               type="button"
@@ -675,6 +695,7 @@ export default function ChatContainer({
           </div>
           <MemoriesSidebar workspace={workspace} />
           <SparkyRecordsSidebar workspace={workspace} />
+          <SparkyWorkflowCalendarSidebar workspace={workspace} />
         </div>
       </ChatSidebarProvider>
     );
@@ -729,6 +750,7 @@ export default function ChatContainer({
         <SourcesSidebar />
         <MemoriesSidebar workspace={workspace} />
         <SparkyRecordsSidebar workspace={workspace} />
+        <SparkyWorkflowCalendarSidebar workspace={workspace} />
       </div>
     </ChatSidebarProvider>
   );
