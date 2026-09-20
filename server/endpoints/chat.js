@@ -14,8 +14,50 @@ const {
 } = require("../utils/middleware/validWorkspace");
 const { writeResponseChunk } = require("../utils/helpers/chat/responses");
 const { WorkspaceThread } = require("../models/workspaceThread");
+const { WorkspaceChats } = require("../models/workspaceChats");
 const { User } = require("../models/user");
 const { getModelTag } = require("./utils");
+const { getSparkyStarterReply } = require("../utils/sparky/starterReplies");
+
+
+async function maybeHandleSparkyStarterReply({
+  response,
+  workspace,
+  message,
+  user,
+  thread = null,
+  attachments = [],
+}) {
+  const textResponse = getSparkyStarterReply(workspace, message);
+  if (!textResponse) return false;
+
+  const uuid = uuidv4();
+  writeResponseChunk(response, {
+    id: uuid,
+    type: "textResponse",
+    textResponse,
+    sources: [],
+    attachments,
+    close: true,
+    error: null,
+  });
+
+  await WorkspaceChats.new({
+    workspaceId: workspace.id,
+    prompt: message,
+    response: {
+      text: textResponse,
+      sources: [],
+      type: "chat",
+      attachments,
+    },
+    threadId: thread?.id || null,
+    include: true,
+    user,
+  });
+
+  return true;
+}
 
 function chatEndpoints(app) {
   if (!app) return;
@@ -56,6 +98,19 @@ function chatEndpoints(app) {
             close: true,
             error: `You have met your maximum 24 hour chat quota of ${user.dailyMessageLimit} chats. Try again later.`,
           });
+          return;
+        }
+
+        if (
+          await maybeHandleSparkyStarterReply({
+            response,
+            workspace,
+            message,
+            user,
+            attachments,
+          })
+        ) {
+          response.end();
           return;
         }
 
@@ -143,6 +198,20 @@ function chatEndpoints(app) {
             close: true,
             error: `You have met your maximum 24 hour chat quota of ${user.dailyMessageLimit} chats. Try again later.`,
           });
+          return;
+        }
+
+        if (
+          await maybeHandleSparkyStarterReply({
+            response,
+            workspace,
+            message,
+            user,
+            thread,
+            attachments,
+          })
+        ) {
+          response.end();
           return;
         }
 
