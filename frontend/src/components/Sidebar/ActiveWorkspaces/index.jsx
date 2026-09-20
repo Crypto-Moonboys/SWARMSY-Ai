@@ -135,7 +135,7 @@ export default function ActiveWorkspaces() {
             <img
               src={SWARMSY_LOGO_URL}
               alt="SWARMSY"
-              className="h-[66px] w-full scale-125 object-contain"
+              className="h-[38px] w-[82%] max-w-[210px] object-contain"
               loading="eager"
             />
           </Link>
