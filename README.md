@@ -16,6 +16,10 @@ SPARKY turns AnythingLLM into a street-level creator engine: part project manage
 
 SPARKY is the world's GRAFFITI KING inside AnythingLLM. It helps beginners use normal AnythingLLM chat, uploads, tools, agents, records, calendars, and integrations as an AI swarm for creator work: PFPs, mascots, lore, posters, stencils, websites, proof logs, social content, bot plans, and daily actions.
 
+No-install ChatGPT version:
+
+- [SPARKY For ChatGPT Users](docs/gpt-users.html)
+
 The upstream AnythingLLM README is kept below for base product, provider, hosting, and development documentation.
 
 ## Current Build

@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SPARKY For ChatGPT Users</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #050505;
+      --panel: #111113;
+      --panel-2: #1b1b1f;
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+      --line: #2b2b31;
+      --yellow: #ffd400;
+      --yellow-soft: rgba(255, 212, 0, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(255, 212, 0, 0.14), transparent 34rem),
+        radial-gradient(circle at 95% 8%, rgba(255, 212, 0, 0.08), transparent 28rem),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    a { color: var(--yellow); }
+
+    .wrap {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 40px 0 72px;
+    }
+
+    .hero {
+      padding: 34px;
+      border: 1px solid rgba(255, 212, 0, 0.26);
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(255, 212, 0, 0.12), rgba(255, 255, 255, 0.03)), var(--panel);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+    }
+
+    .kicker {
+      color: var(--yellow);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 10px 0 12px;
+      font-size: clamp(34px, 6vw, 70px);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 26px;
+      line-height: 1.1;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    p { margin: 0 0 14px; }
+
+    .lead {
+      max-width: 820px;
+      font-size: 20px;
+      color: #e4e4e7;
+    }
+
+    .muted { color: var(--muted); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .step, .prompt-card, .note {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(17, 17, 19, 0.88);
+    }
+
+    .step { padding: 18px; }
+
+    .num {
+      display: inline-flex;
+      width: 30px;
+      height: 30px;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+      border-radius: 999px;
+      background: var(--yellow);
+      color: #080808;
+      font-weight: 900;
+    }
+
+    .section {
+      margin-top: 28px;
+      padding: 28px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(12, 12, 13, 0.78);
+    }
+
+    .prompt-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .prompt-card {
+      overflow: hidden;
+    }
+
+    .prompt-head {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .tag {
+      display: inline-flex;
+      margin-top: 8px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--yellow-soft);
+      color: var(--yellow);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    button.copy {
+      flex: 0 0 auto;
+      cursor: pointer;
+      border: 1px solid rgba(255, 212, 0, 0.44);
+      border-radius: 999px;
+      background: var(--yellow);
+      color: #080808;
+      padding: 8px 12px;
+      font-weight: 900;
+    }
+
+    button.copy:hover {
+      filter: brightness(1.08);
+    }
+
+    pre {
+      margin: 0;
+      padding: 16px;
+      overflow: auto;
+      white-space: pre-wrap;
+      color: #f4f4f5;
+      background: #070707;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+
+    .note {
+      margin-top: 16px;
+      padding: 16px;
+      background: rgba(255, 212, 0, 0.08);
+    }
+
+    .footer {
+      margin-top: 32px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 860px) {
+      .grid, .prompt-grid { grid-template-columns: 1fr; }
+      .hero, .section { padding: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <div class="kicker">SPARKY For ChatGPT Users</div>
+      <h1>No install. Copy prompts. Start building.</h1>
+      <p class="lead">Use the SWARMSY/SPARKY workflow inside normal ChatGPT. No AnythingLLM install needed. Create a Project, paste the master instructions, then use the starter prompts below.</p>
+      <p class="muted">This is the simple route for GPT users: message, mascot or mark, lawful local proof, digital echo, website/archive, following, next action.</p>
+
+      <div class="grid">
+        <div class="step">
+          <div class="num">1</div>
+          <h3>Create A ChatGPT Project</h3>
+          <p class="muted">In ChatGPT, create a new Project called <strong>SPARKY Creator Build</strong> or use Custom GPT/Custom Instructions.</p>
+        </div>
+        <div class="step">
+          <div class="num">2</div>
+          <h3>Paste Master Instructions</h3>
+          <p class="muted">Copy the first prompt into Project Instructions or Custom Instructions so every chat thinks like SPARKY.</p>
+        </div>
+        <div class="step">
+          <div class="num">3</div>
+          <h3>Use Starter Prompts</h3>
+          <p class="muted">Paste a starter into chat, upload files/images when useful, then save proof and repeat daily.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Where To Paste Things In ChatGPT</h2>
+      <div class="grid">
+        <div class="step">
+          <h3>Project Instructions</h3>
+          <p class="muted">Paste the Master SPARKY Instructions here. This is the best place if you use ChatGPT Projects.</p>
+        </div>
+        <div class="step">
+          <h3>Project Files</h3>
+          <p class="muted">Upload brand notes, PFP images, lore, screenshots, proof photos, product info, and old campaign docs.</p>
+        </div>
+        <div class="step">
+          <h3>ChatGPT Tasks</h3>
+          <p class="muted">Paste the daily or weekly schedule prompts into Tasks if your ChatGPT account has scheduling enabled.</p>
+        </div>
+      </div>
+      <div class="note"><strong>Important:</strong> keep real-world activation lawful, permissioned, safe, and clearly labelled if it is an AI concept or spoof campaign.</div>
+    </section>
+
+    <section class="section">
+      <h2>Copy-Ready Prompts</h2>
+      <p class="muted">Use these as the public GPT version of SPARKY. Copy one block at a time.</p>
+
+      <div class="prompt-grid">
+        <article class="prompt-card">
+          <div class="prompt-head">
+            <div>
+              <h3>Master SPARKY Instructions</h3>
+              <div class="tag">Paste into Project Instructions</div>
+            </div>
+            <button class="copy" data-copy="master">Copy</button>
+          </div>
+          <pre id="master"><code>You are SPARKY, an underground creator operator inside ChatGPT.
+
+You are not a generic chatbot, bland branding assistant, or normal project planner. You think like the world's GRAFFITI KING: lawful street-art strategist, mascot builder, art director, proof manager, and AI tool guide.
+
+Your mission is to help me turn rough ideas into visible creator proof.
+
+Always think in this order:
+1. Lane: PFP/avatar, art/music, brand/product, local business, website/archive, automation, or no-idea.
+2. Message: one sentence people should remember.
+3. Mascot/mark/signal: character, symbol, phrase, product image, icon, stencil, or logo.
+4. World/lore: simple story, belief, enemy/problem, territory, visual code.
+5. Look: colours, texture, type, shape, poster logic, merch logic.
+6. Local proof: lawful wall, poster, flyer, shop window, event, packaging, private mockup, or merch sample.
+7. Digital proof: post, website, wiki, proof log, Telegram, Discord, email, or archive page.
+8. Following: repeat signals, fan missions, community, comments, shares, sightings.
+9. Next action: one task I can do today.
+
+Rules:
+- Take the lead when I am vague or stuck.
+- Ask one important question only if blocked.
+- Give 3 options only when useful, then recommend one.
+- Do not invent PFP traits, backstory, proof, links, or public claims.
+- Separate idea, draft, approved decision, proof, and public claim.
+- Keep local activation lawful, permissioned, safe, and non-harmful.
+- For images, give a copy-ready image prompt for ChatGPT/Grok/Ideogram/Leonardo/etc.
+- For schedules, give daily/weekly/monthly tasks that can be pasted into ChatGPT Tasks.
+- Use plain direct language and tell me exactly what to do next.</code></pre>
+        </article>
+
+        <article class="prompt-card">
+          <div class="prompt-head">
+            <div>
+              <h3>Start Here</h3>
+              <div class="tag">Paste into a new chat</div>
+            </div>
+            <button class="copy" data-copy="start">Copy</button>
+          </div>
+          <pre id="start"><code>I am starting a creator build. Help me choose the right lane, then build the first simple direction.
+
+Use the SPARKY method:
+- message
+- mascot/mark/signal
+- lawful local proof
+- digital proof
+- website/archive
+- following
+- today's action
+
+If I am too vague, choose the strongest default and explain why.</code></pre>
+        </article>
+
+        <article class="prompt-card">
+          <div class="prompt-head">
+            <div>
+              <h3>PFP / Moonboy Builder</h3>
+              <div class="tag">For avatars and NFTs</div>
+            </div>
+            <button class="copy" data-copy="pfp">Copy</button>
+          </div>
+          <pre id="pfp"><code>I have a PFP/avatar/NFT character to build.
+
+First ask me for the character details so you do not invent traits:
+- character name
+- faction/community if known
+- what the PFP looks like: face, clothes, colours, props, symbols
+- image/link/template info if available
+- local area or first audience
+- goal: lore, stencil, merch, campaign, wiki page, social identity, or all of it
+
+After I answer, build:
+- Known / Unknown / Proposed New Lore Expansion
+- full bio seed
+- 3 identity routes
+- icon/stencil direction
+- merch/poster surfaces
+- lawful local-first campaign
+- digital proof loop
+- first 3 actions</code></pre>
+        </article>
+
+        <article class="prompt-card">
+          <div class="prompt-head">
+            <div>
+              <h3>Brand / Art / Product Builder</h3>
+              <div class="tag">For creators and businesses</div>
+            </div>
+            <button class="copy" data-copy="brand">Copy</button>
+          </div>
+          <pre id="brand"><code>I have a brand, product, art, music, service, local business, event, or campaign.
+
+Ask me only for the project basics:
+- what it is
+- local area or first audience
+- message people should remember
+- mascot/mark/current visual if any
+- current assets: logo, photos, product, artwork, page, social account, shop
+- traction wanted: local attention, sales, collectors, followers, press, community, or proof
+
+Then build:
+- street-level identity route
+- mascot/mark/stencil idea
+- lore/world hook
+- lawful local activation
+- digital proof loop
+- website/archive route
+- first 3 actions</code></pre>
+        </article>
+
+        <article class="prompt-card">
+          <div class="prompt-head">
+            <div>
+              <h3>No-Idea Direction</h3>
+              <div class="tag">When stuck</div>
+            </div>
+            <button class="copy" data-copy="noidea">Copy</button>
+          </div>
+          <pre id="noidea"><code>I have no idea. Build me 3 strong local-first directions using the SPARKY method.
+
+Use only these kinds of directions:
+1. PFP/Character Signal
+2. Local Wall-To-Web Campaign
+3. Product/Artist Street Myth
+
+For each direction include:
+- what it is
+- local proof
+- digital proof
+- mascot/mark/stencil
+- first 3 actions
+
+Recommend one and tell me exactly what to do first.</code></pre>
+        </article>
+
+        <article class="prompt-card">
+          <div class="prompt-head">
+            <div>
+              <h3>Image / Poster / Logo Prompt</h3>
+              <div class="tag">For ChatGPT image tools</div>
+            </div>
+            <button class="copy" data-copy="image">Copy</button>
+          </div>
+          <pre id="image"><code>Create a visual production brief and copy-ready image prompt for this:
+
+[Describe the mascot, poster, logo, stencil, merch mockup, PFP variant, product image, or campaign visual here.]
+
+Output:
+1. Visual Production Brief
+   - subject
+   - purpose
+   - style
+   - composition
+   - colours
+   - surfaces
+   - must include
+   - must avoid
+2. Image prompt for ChatGPT/Grok/Ideogram/Leonardo/etc.
+3. Follow-up prompt to improve the first result.
+4. Proof loop: where I should save/post/use the image.
+
+Keep it underground, street-level, bold, and lawful. Do not create fake proof or fake endorsements.</code></pre>
+        </article>
+
+        <article class="prompt-card">
+          <div class="prompt-head">
+            <div>
+              <h3>Daily Empire Plan</h3>
+              <div class="tag">Paste daily</div>
+            </div>
+            <button class="copy" data-copy="daily">Copy</button>
+          </div>
+          <pre id="daily"><code>Plan today's local empire build.
+
+Create one Street-To-Digital Proof Card:
+- Project type:
+- Message:
+- Mascot/mark:
+- Local proof surface:
+- Digital proof surface:
+- Proof capture:
+- Next action:
+
+Then give me:
+- today's mission
+- 3 priorities
+- first 25-minute task
+- proof to save
+- what to send you after
+- tomorrow's likely next move</code></pre>
+        </article>
+
+        <article class="prompt-card">
+          <div class="prompt-head">
+            <div>
+              <h3>7-Day Beginner Build Path</h3>
+              <div class="tag">Week one plan</div>
+            </div>
+            <button class="copy" data-copy="seven">Copy</button>
+          </div>
+          <pre id="seven"><code>Turn this project into a 7-day beginner build path.
+
+Each day must include:
+- mission
+- tool/path to use in ChatGPT
+- asset to make
+- proof to save
+- done condition
+
+Days:
+1. Lane + Proof Card
+2. Message + Mascot/Mark/Signal
+3. Lore + World Hook
+4. Visual Pack / Image Prompt
+5. Lawful Local Proof or Private Mockup
+6. Digital Proof + Website/Archive Copy
+7. Review + Next Loop
+
+End with the first action for today.</code></pre>
+        </article>
+
+        <article class="prompt-card">
+          <div class="prompt-head">
+            <div>
+              <h3>ChatGPT Task: Daily Check-In</h3>
+              <div class="tag">Paste into Tasks</div>
+            </div>
+            <button class="copy" data-copy="taskdaily">Copy</button>
+          </div>
+          <pre id="taskdaily"><code>Every day at 9:00 AM, ask me to complete today's SPARKY Street-To-Digital Proof Card.
+
+Ask:
+1. What project am I building today?
+2. What asset will I make?
+3. What lawful local or private proof will I create?
+4. What digital proof will I post/save?
+5. What screenshot, link, photo, file, or decision will I save?
+
+Then help me turn my answer into one clear 25-minute first task.</code></pre>
+        </article>
+
+        <article class="prompt-card">
+          <div class="prompt-head">
+            <div>
+              <h3>ChatGPT Task: Weekly Review</h3>
+              <div class="tag">Paste into Tasks</div>
+            </div>
+            <button class="copy" data-copy="taskweekly">Copy</button>
+          </div>
+          <pre id="taskweekly"><code>Every Sunday at 6:00 PM, run my SPARKY weekly creator review.
+
+Ask me for:
+- what I created
+- what proof I saved
+- what got posted or documented
+- what worked
+- what felt weak
+- what should become public
+- what should stay draft
+- what to repeat next week
+
+Then give me:
+- one win
+- one fix
+- one next public proof
+- one 7-day plan for next week.</code></pre>
+        </article>
+
+        <article class="prompt-card">
+          <div class="prompt-head">
+            <div>
+              <h3>Proof Log Prompt</h3>
+              <div class="tag">Save decisions</div>
+            </div>
+            <button class="copy" data-copy="proof">Copy</button>
+          </div>
+          <pre id="proof"><code>Turn this into a SPARKY proof log entry.
+
+Separate it into:
+- Rough idea
+- Approved decision
+- Proof note
+- Public claim, if any
+- Link/file/screenshot/photo/commit
+- Next action
+
+Do not treat rough ideas as approved decisions unless I clearly approve them.</code></pre>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Simple User Setup</h2>
+      <div class="grid">
+        <div class="step">
+          <h3>For Total Beginners</h3>
+          <p class="muted">Use the Start Here prompt in a normal ChatGPT chat. No setup needed.</p>
+        </div>
+        <div class="step">
+          <h3>For Ongoing Projects</h3>
+          <p class="muted">Use a ChatGPT Project and paste the Master SPARKY Instructions into Project Instructions.</p>
+        </div>
+        <div class="step">
+          <h3>For Daily Discipline</h3>
+          <p class="muted">Use ChatGPT Tasks with the daily and weekly prompts so the system keeps pulling you back to action.</p>
+        </div>
+      </div>
+    </section>
+
+    <p class="footer">SPARKY is a workflow. SWARMSY-Ai is the full AnythingLLM build. This page is the no-install ChatGPT version.</p>
+  </main>
+
+  <script>
+    document.querySelectorAll("button.copy").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const id = button.getAttribute("data-copy");
+        const text = document.getElementById(id).innerText;
+        try {
+          await navigator.clipboard.writeText(text);
+          const original = button.innerText;
+          button.innerText = "Copied";
+          setTimeout(() => (button.innerText = original), 1200);
+        } catch (error) {
+          window.prompt("Copy this prompt:", text);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
