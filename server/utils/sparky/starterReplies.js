@@ -128,7 +128,8 @@ The point is not another planner. The point is an underground street-level creat
 - **Chat with SPARKY:** ideas, names, lore, bios, brand routes, campaign plans, copy, prompts, and next actions.
 - **Upload a Document:** screenshots, images, briefs, lore files, repo notes, product info, old plans, or brand assets.
 - **Tools / Agent:** research, file work, repo work, web tasks, or structured actions only when tools are connected.
-- **External Image AI:** GPT, Grok, or another online image AI for posters, icons, logos, mascots, merch mockups, and visual concepts.
+- **AnythingLLM /img:** use \`/img [prompt]\` for posters, icons, logos, mascots, merch mockups, and visual concepts when Image Generation is configured.
+- **External Image AI:** GPT, Grok, Ideogram, Leonardo, Firefly, Stable Diffusion, or another online image AI only when \`/img\` is not configured or not available.
 - **Website / Wiki / Archive:** document the identity, lore, proof, campaign, links, and next steps.
 - **Social / Community:** turn proof into X/Twitter, Instagram, TikTok, Telegram, Discord, email, or community updates.
 - **Proof / Records:** save rough ideas, approved decisions, screenshots, links, files, commits, and proof notes where available.

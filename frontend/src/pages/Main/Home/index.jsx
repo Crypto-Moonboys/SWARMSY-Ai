@@ -47,7 +47,7 @@ function getSparkyForwardPrompts(latestAssistantText = "") {
       "Show me exactly which AnythingLLM button or tool to use next.",
       "Help me choose a lane: PFP, brand, art/music, website, automation, or normal chat.",
       "Turn a rough idea into an underground street-to-digital 7-day build path.",
-      "Create an external AI prompt for an image, logo, poster, mascot, or mockup.",
+      "Create an AnythingLLM /img prompt and fallback image AI prompt.",
       "I need normal AnythingLLM help, not a SWARMSY project flow. Help me with anything.",
     ];
   }
@@ -74,7 +74,7 @@ function getSparkyForwardPrompts(latestAssistantText = "") {
 
   if (text.includes("image") || text.includes("poster") || text.includes("icon") || text.includes("stencil") || text.includes("logo") || text.includes("mascot")) {
     return [
-      "Create the full GPT/Grok image handoff prompt and tell the new AI the scope.",
+      "Create the /img prompt first, then a GPT/Grok fallback prompt if needed.",
       "Make this visual idea work as a stencil, poster, sticker, and merch mark.",
       "Give me a cleaner production brief: subject, pose, colours, symbols, and avoid list.",
       "Turn the finished image into a local proof post and digital proof loop.",
@@ -97,7 +97,7 @@ function getSparkyForwardPrompts(latestAssistantText = "") {
       "Build the brand identity: name, mission, look, voice, and street signal.",
       "Turn this into a mascot or mark people can remember locally.",
       "Create an underground launch pack: lore hook, poster, merch, campaign, and proof loop.",
-      "Create the external AI image prompt for the logo, mascot, poster, or mockup.",
+      "Create the /img prompt and fallback image AI prompt for the logo, mascot, poster, or mockup.",
       "Turn this brand/project into a 7-day beginner build path.",
     ];
   }
@@ -107,7 +107,7 @@ function getSparkyForwardPrompts(latestAssistantText = "") {
     "Give me 3 stronger directions and pick the best one.",
     "Turn this into one street-to-digital proof step I can do today.",
     "Save this as an idea, approved decision, or proof note.",
-    "Create the external AI prompt if this needs an image, logo, poster, or mascot.",
+    "Create the /img prompt first if this needs an image, logo, poster, or mascot.",
   ];
 }
 

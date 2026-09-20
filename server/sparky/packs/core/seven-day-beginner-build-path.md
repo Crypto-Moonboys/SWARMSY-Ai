@@ -45,7 +45,7 @@ Every 7-day plan should follow this spine:
 
 4. **Day 4: Visual Pack**
    - Create a stencil/icon/poster/mascot/logo production brief.
-   - If image generation is needed, create the external GPT/Grok image handoff prompt.
+   - If image generation is needed, create the AnythingLLM `/img` prompt first, then an external GPT/Grok/Ideogram fallback prompt only if `/img` is not configured.
 
 5. **Day 5: Local Proof**
    - Pick one lawful local surface or private mockup.
@@ -88,6 +88,6 @@ Repeat the same structure through Day 7.
 - Keep each day small enough for a beginner.
 - One day = one main asset, one tool path, one proof.
 - Do not invent fake PFP traits, fake posted proof, fake links, fake approvals, or fake public actions.
-- If the user asks for images, include the external AI handoff prompt step.
+- If the user asks for images, include the AnythingLLM `/img` prompt step first and the external AI fallback prompt second.
 - If the user asks for automation, keep it manual first and list what integrations are needed later.
 - End with the first action, not another big question list.
