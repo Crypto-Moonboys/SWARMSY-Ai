@@ -21,7 +21,7 @@ export const MAX_ICONS = 3;
 const SWARMSY_GITHUB_URL = "https://github.com/Crypto-Moonboys/SWARMSY-Ai";
 const HODL_WARRIORS_CHAT_URL = "https://t.me/gkniftyheads/46556";
 const HODL_WARRIORS_BUTTON_URL =
-  "https://raw.githubusercontent.com/Crypto-Moonboys/SWARMSY-Ai/master/images/hodl-warriors-footer-button.png";
+  "https://raw.githubusercontent.com/Crypto-Moonboys/SWARMSY-Ai/master/images/hodl-warriors-footer-button.png?v=hodl-warriors-black-77136f4";
 
 export const ICON_COMPONENTS = {
   BookOpen: BookOpen,
