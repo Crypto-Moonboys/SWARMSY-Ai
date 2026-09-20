@@ -159,6 +159,7 @@ export default function SparkyWorkflowCalendarSidebar({
       scope,
       workflow: label,
       note: note.trim(),
+      done: false,
       createdAt: new Date().toISOString(),
     };
     persist([nextEntry, ...entries]);
@@ -168,6 +169,14 @@ export default function SparkyWorkflowCalendarSidebar({
 
   function removeEntry(entryId) {
     persist(entries.filter((entry) => entry.id !== entryId));
+  }
+
+  function toggleDone(entryId) {
+    persist(
+      entries.map((entry) =>
+        entry.id === entryId ? { ...entry, done: !entry.done } : entry
+      )
+    );
   }
 
   function moveDate(direction) {
@@ -210,6 +219,7 @@ export default function SparkyWorkflowCalendarSidebar({
           entries={entries}
           visibleEntries={visibleEntries}
           removeEntry={removeEntry}
+          toggleDone={toggleDone}
           sendCommand={sendCommand}
         />
       </div>
@@ -318,7 +328,7 @@ function WorkflowComposer({
   return (
     <div className="flex flex-col gap-2 rounded-lg border border-zinc-800 light:border-slate-300 bg-zinc-950/60 light:bg-white p-3">
       <p className="text-xs font-bold uppercase tracking-[0.14em] text-yellow-300 light:text-yellow-600">
-        Attach workflow
+        Add to plan
       </p>
       <select
         value={workflow}
@@ -378,7 +388,7 @@ function WorkflowComposer({
         onClick={attachWorkflow}
         className="h-9 rounded-lg border-none bg-yellow-300 text-zinc-950 text-sm font-bold hover:bg-yellow-200 disabled:opacity-40 disabled:cursor-not-allowed"
       >
-        Attach workflow
+        Add To My Plan
       </button>
     </div>
   );
@@ -390,6 +400,7 @@ function CalendarBody({
   entries,
   visibleEntries,
   removeEntry,
+  toggleDone,
   sendCommand,
 }) {
   if (view === "week") {
@@ -398,6 +409,7 @@ function CalendarBody({
         selectedDate={selectedDate}
         entries={entries}
         removeEntry={removeEntry}
+        toggleDone={toggleDone}
         sendCommand={sendCommand}
       />
     );
@@ -408,6 +420,7 @@ function CalendarBody({
         selectedDate={selectedDate}
         entries={entries}
         removeEntry={removeEntry}
+        toggleDone={toggleDone}
         sendCommand={sendCommand}
       />
     );
@@ -417,12 +430,19 @@ function CalendarBody({
       selectedDate={selectedDate}
       entries={visibleEntries}
       removeEntry={removeEntry}
+      toggleDone={toggleDone}
       sendCommand={sendCommand}
     />
   );
 }
 
-function DayView({ selectedDate, entries, removeEntry, sendCommand }) {
+function DayView({
+  selectedDate,
+  entries,
+  removeEntry,
+  toggleDone,
+  sendCommand,
+}) {
   const contextEntries = entries.filter((entry) => entry.scope !== "hour");
   const hourEntries = entries.filter((entry) => entry.scope === "hour");
 
@@ -434,6 +454,7 @@ function DayView({ selectedDate, entries, removeEntry, sendCommand }) {
           title="Day / week / month workflows"
           entries={contextEntries}
           removeEntry={removeEntry}
+          toggleDone={toggleDone}
           sendCommand={sendCommand}
         />
       )}
@@ -461,6 +482,7 @@ function DayView({ selectedDate, entries, removeEntry, sendCommand }) {
                       key={entry.id}
                       entry={entry}
                       removeEntry={removeEntry}
+                      toggleDone={toggleDone}
                       sendCommand={sendCommand}
                     />
                   ))}
@@ -474,7 +496,13 @@ function DayView({ selectedDate, entries, removeEntry, sendCommand }) {
   );
 }
 
-function WeekView({ selectedDate, entries, removeEntry, sendCommand }) {
+function WeekView({
+  selectedDate,
+  entries,
+  removeEntry,
+  toggleDone,
+  sendCommand,
+}) {
   const firstDay = startOfWeek(selectedDate);
   const days = Array.from({ length: 7 }, (_, index) => addDays(firstDay, index));
 
@@ -492,6 +520,7 @@ function WeekView({ selectedDate, entries, removeEntry, sendCommand }) {
           <MiniEntries
             entries={entriesForDay(entries, day)}
             removeEntry={removeEntry}
+            toggleDone={toggleDone}
             sendCommand={sendCommand}
           />
         </div>
@@ -500,7 +529,13 @@ function WeekView({ selectedDate, entries, removeEntry, sendCommand }) {
   );
 }
 
-function MonthView({ selectedDate, entries, removeEntry, sendCommand }) {
+function MonthView({
+  selectedDate,
+  entries,
+  removeEntry,
+  toggleDone,
+  sendCommand,
+}) {
   const selected = parseISODate(selectedDate);
   const monthStart = new Date(selected.getFullYear(), selected.getMonth(), 1);
   const firstGridDay = startOfWeek(toISODate(monthStart));
@@ -524,6 +559,7 @@ function MonthView({ selectedDate, entries, removeEntry, sendCommand }) {
           title="Month workflows"
           entries={monthWideEntries}
           removeEntry={removeEntry}
+          toggleDone={toggleDone}
           sendCommand={sendCommand}
         />
       )}
@@ -553,7 +589,11 @@ function MonthView({ selectedDate, entries, removeEntry, sendCommand }) {
               {exactEntries.slice(0, 2).map((entry) => (
                 <p
                   key={entry.id}
-                  className="mt-1 truncate rounded bg-yellow-300/15 px-1 py-0.5 text-[10px] text-yellow-100 light:text-yellow-700"
+                  className={`mt-1 truncate rounded px-1 py-0.5 text-[10px] ${
+                    entry.done
+                      ? "bg-green-400/15 text-green-200 light:text-green-700 line-through"
+                      : "bg-yellow-300/15 text-yellow-100 light:text-yellow-700"
+                  }`}
                   title={entry.workflow}
                 >
                   {entry.workflow}
@@ -580,7 +620,13 @@ function SectionTitle({ title }) {
   );
 }
 
-function EntryStack({ title, entries, removeEntry, sendCommand }) {
+function EntryStack({
+  title,
+  entries,
+  removeEntry,
+  toggleDone,
+  sendCommand,
+}) {
   return (
     <div className="rounded-lg border border-zinc-800 light:border-slate-300 bg-zinc-950/50 light:bg-white p-3">
       <p className="mb-2 text-xs font-semibold text-zinc-400 light:text-slate-500">
@@ -592,6 +638,7 @@ function EntryStack({ title, entries, removeEntry, sendCommand }) {
             key={entry.id}
             entry={entry}
             removeEntry={removeEntry}
+            toggleDone={toggleDone}
             sendCommand={sendCommand}
           />
         ))}
@@ -600,7 +647,7 @@ function EntryStack({ title, entries, removeEntry, sendCommand }) {
   );
 }
 
-function MiniEntries({ entries, removeEntry, sendCommand }) {
+function MiniEntries({ entries, removeEntry, toggleDone, sendCommand }) {
   if (entries.length === 0) {
     return (
       <p className="mt-1 text-xs text-zinc-600 light:text-slate-400">
@@ -616,6 +663,7 @@ function MiniEntries({ entries, removeEntry, sendCommand }) {
           key={entry.id}
           entry={entry}
           removeEntry={removeEntry}
+          toggleDone={toggleDone}
           sendCommand={sendCommand}
         />
       ))}
@@ -644,7 +692,19 @@ function buildGoogleCalendarPrompt(entry) {
   ].join("\n");
 }
 
-function WorkflowEntry({ entry, removeEntry, sendCommand }) {
+function buildStartWorkflowPrompt(entry) {
+  return [
+    "Start this SPARKY workflow with me now.",
+    "",
+    `Workflow: ${entry.workflow}`,
+    `Plan slot: ${entry.date}${entry.hour ? ` at ${entry.hour}` : ""}`,
+    entry.note ? `Notes: ${entry.note}` : "Notes: No extra notes supplied.",
+    "",
+    "Give me the first action only, then wait for me to report done before giving the next action.",
+  ].join("\n");
+}
+
+function WorkflowEntry({ entry, removeEntry, toggleDone, sendCommand }) {
   const timeLabel =
     entry.scope === "hour"
       ? entry.hour
@@ -655,10 +715,20 @@ function WorkflowEntry({ entry, removeEntry, sendCommand }) {
           : "Month";
 
   return (
-    <div className="rounded-lg border border-zinc-800 light:border-slate-300 bg-zinc-900 light:bg-slate-50 p-2">
+    <div
+      className={`rounded-lg border p-2 ${
+        entry.done
+          ? "border-green-400/30 bg-green-400/10 light:bg-green-50"
+          : "border-zinc-800 light:border-slate-300 bg-zinc-900 light:bg-slate-50"
+      }`}
+    >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-zinc-50 light:text-slate-900">
+          <p
+            className={`truncate text-sm font-semibold text-zinc-50 light:text-slate-900 ${
+              entry.done ? "line-through opacity-70" : ""
+            }`}
+          >
             {entry.workflow}
           </p>
           <p className="mt-0.5 text-[11px] uppercase tracking-wide text-yellow-300 light:text-yellow-700">
@@ -666,6 +736,20 @@ function WorkflowEntry({ entry, removeEntry, sendCommand }) {
           </p>
         </div>
         <div className="flex shrink-0 flex-col items-end gap-1">
+          {sendCommand && (
+            <button
+              type="button"
+              onClick={() =>
+                sendCommand({
+                  text: buildStartWorkflowPrompt(entry),
+                  writeMode: "replace",
+                })
+              }
+              className="rounded border border-white/10 bg-white/10 px-2 py-1 text-[11px] font-semibold text-white hover:border-yellow-300/60 hover:bg-yellow-300/10 light:text-slate-800"
+            >
+              Start
+            </button>
+          )}
           {sendCommand && (
             <button
               type="button"
@@ -680,6 +764,17 @@ function WorkflowEntry({ entry, removeEntry, sendCommand }) {
               Google
             </button>
           )}
+          <button
+            type="button"
+            onClick={() => toggleDone(entry.id)}
+            className={`rounded border px-2 py-1 text-[11px] font-semibold ${
+              entry.done
+                ? "border-green-400/40 bg-green-400/15 text-green-100 light:text-green-700"
+                : "border-white/10 bg-white/5 text-zinc-300 hover:border-green-400/50 hover:text-green-200 light:text-slate-600"
+            }`}
+          >
+            {entry.done ? "Undo" : "Done"}
+          </button>
           <button
             type="button"
             onClick={() => removeEntry(entry.id)}
