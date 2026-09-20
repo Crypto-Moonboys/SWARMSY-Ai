@@ -189,6 +189,11 @@ export default function ChatContainer({
       .find((message) => message.role === "assistant" && !!message.content)
       ?.content || "";
 
+  useEffect(() => {
+    document.body.classList.toggle("swarmsy-thinking", loadingResponse);
+    return () => document.body.classList.remove("swarmsy-thinking");
+  }, [loadingResponse]);
+
   /**
    * Keep chat history bottom-padding in sync with the prompt input's
    * actual rendered height so expanding input never covers messages.
