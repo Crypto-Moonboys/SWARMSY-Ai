@@ -45,6 +45,15 @@ const SPARKY_FLOATING_CLIP_URL =
 function getSparkyForwardPrompts(latestAssistantText = "") {
   const text = String(latestAssistantText || "").toLowerCase();
 
+  if (!text.trim()) {
+    return [
+      "I am starting from zero. Ask me what I want to build, fix, learn, automate, or create.",
+      "Show me what you can help with today: creative work, websites, bots, research, files, images, automation, or planning.",
+      "I need normal AnythingLLM help, not a SWARMSY project flow. Help me with anything.",
+      "Help me choose a lane: PFP, brand, art project, website, bot, daily plan, or general question.",
+    ];
+  }
+
   if (text.includes("automation") || text.includes("bot") || text.includes("api") || text.includes("calendar")) {
     return [
       "Map this into Manual Now, Agent-Assisted Next, and Auto Mode later.",
@@ -125,7 +134,7 @@ function SparkyFloatingClip({ latestAssistantText = "", sendCommand = null }) {
       {open && (
         <div className="absolute bottom-[118px] right-0 w-[330px] rounded-[18px] border border-white/10 bg-zinc-950/95 p-3 text-white shadow-2xl backdrop-blur-md">
           <div className="mb-2 px-1 text-[11px] font-bold uppercase tracking-[0.18em] text-yellow-300">
-            SPARKY next ideas
+            SPARKY wider ideas
           </div>
           <div className="flex flex-col gap-2">
             {prompts.map((prompt) => (
@@ -140,7 +149,7 @@ function SparkyFloatingClip({ latestAssistantText = "", sendCommand = null }) {
             ))}
           </div>
           <p className="mt-2 px-1 text-[11px] text-white/45">
-            Click one to copy it and load it into the message box.
+            Click one to load a wider helper prompt into the message box.
           </p>
         </div>
       )}
