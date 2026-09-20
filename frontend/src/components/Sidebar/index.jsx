@@ -31,6 +31,87 @@ export default function Sidebar() {
 
   return (
     <>
+      <style>{`
+        @keyframes swarmsySidebarDotField {
+          0%, 100% {
+            opacity: 0.28;
+            transform: translate3d(-14px, -10px, 0) scale(1);
+          }
+          35% {
+            opacity: 0.52;
+            transform: translate3d(18px, 10px, 0) scale(1.08);
+          }
+          70% {
+            opacity: 0.38;
+            transform: translate3d(-6px, 24px, 0) scale(0.96);
+          }
+        }
+
+        @keyframes swarmsySidebarGlowField {
+          0%, 100% {
+            opacity: 0.45;
+            transform: translate3d(-18px, 18px, 0) scale(1);
+          }
+          45% {
+            opacity: 0.72;
+            transform: translate3d(22px, -24px, 0) scale(1.1);
+          }
+          75% {
+            opacity: 0.56;
+            transform: translate3d(8px, 18px, 0) scale(0.95);
+          }
+        }
+
+        .swarmsy-sidebar-shell {
+          background:
+            radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.08), transparent 28%),
+            radial-gradient(circle at 78% 72%, rgba(255, 255, 255, 0.05), transparent 30%),
+            #050505;
+          isolation: isolate;
+        }
+
+        .swarmsy-sidebar-shell::before,
+        .swarmsy-sidebar-shell::after {
+          content: "";
+          position: absolute;
+          inset: -18%;
+          pointer-events: none;
+          z-index: 0;
+        }
+
+        .swarmsy-sidebar-shell::before {
+          background-image: radial-gradient(circle, rgba(255, 255, 255, 0.34) 1px, transparent 1.8px);
+          background-size: 15px 15px;
+          -webkit-mask-image:
+            radial-gradient(circle at 38% 22%, black 0 18%, transparent 42%),
+            radial-gradient(circle at 72% 64%, black 0 14%, transparent 36%),
+            radial-gradient(circle at 24% 82%, black 0 12%, transparent 32%);
+          mask-image:
+            radial-gradient(circle at 38% 22%, black 0 18%, transparent 42%),
+            radial-gradient(circle at 72% 64%, black 0 14%, transparent 36%),
+            radial-gradient(circle at 24% 82%, black 0 12%, transparent 32%);
+          animation: swarmsySidebarDotField 24s ease-in-out infinite;
+        }
+
+        .swarmsy-sidebar-shell::after {
+          background:
+            radial-gradient(circle at 28% 26%, rgba(255, 255, 255, 0.11), transparent 25%),
+            radial-gradient(circle at 76% 38%, rgba(255, 255, 255, 0.08), transparent 26%),
+            radial-gradient(circle at 42% 82%, rgba(255, 255, 255, 0.06), transparent 28%);
+          filter: blur(12px);
+          animation: swarmsySidebarGlowField 18s ease-in-out infinite;
+        }
+
+        body.swarmsy-thinking .swarmsy-sidebar-shell::before {
+          animation-duration: 7s;
+          opacity: 0.72;
+        }
+
+        body.swarmsy-thinking .swarmsy-sidebar-shell::after {
+          animation-duration: 5s;
+          opacity: 0.88;
+        }
+      `}</style>
       <div
         style={{
           width: showSidebar ? "292px" : "0px",
@@ -62,9 +143,9 @@ export default function Sidebar() {
           </div>
           <div
             ref={sidebarRef}
-            className="relative mx-[16px] mb-[16px] mt-[8px] rounded-[16px] bg-theme-bg-sidebar light:bg-slate-200 border-[2px] border-theme-sidebar-border light:border-none min-w-[250px] p-[10px] h-[calc(100%-182px)]"
+            className="swarmsy-sidebar-shell relative mx-[16px] mb-[16px] mt-[8px] overflow-hidden rounded-[20px] light:bg-slate-200 min-w-[250px] p-[10px] h-[calc(100%-182px)]"
           >
-            <div className="flex flex-col h-full overflow-hidden">
+            <div className="relative z-[1] flex flex-col h-full overflow-hidden">
               <div className="flex-grow flex flex-col min-w-[235px] min-h-0">
                 <div className="relative h-[calc(100%-60px)] flex flex-col w-full justify-between pt-[10px] overflow-y-scroll no-scroll">
                   <div className="flex flex-col gap-y-[14px]">
@@ -72,7 +153,7 @@ export default function Sidebar() {
                     <ActiveWorkspaces showNewWsModal={showNewWsModal} />
                   </div>
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 pb-3 rounded-b-[16px] bg-theme-bg-sidebar light:bg-slate-200 bg-opacity-80 backdrop-filter backdrop-blur-md z-10">
+                <div className="absolute bottom-0 left-0 right-0 pb-3 rounded-b-[20px] bg-black/10 light:bg-slate-200 bg-opacity-80 backdrop-filter backdrop-blur-md z-10">
                   <Footer />
                 </div>
               </div>
