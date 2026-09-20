@@ -557,6 +557,7 @@ export default function ChatContainer({
               </div>
             </div>
           </DnDFileUploaderWrapper>
+          <SparkyFloatingClip />
           <ChatTooltips />
         </div>
         <SourcesSidebar />
