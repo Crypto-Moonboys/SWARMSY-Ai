@@ -16,6 +16,9 @@ import { LAST_VISITED_WORKSPACE } from "@/utils/constants";
 import { safeJsonParse } from "@/utils/request";
 import { isCanonicalSparkyWorkspace } from "@/utils/sparky";
 
+const SWARMSY_LOGO_URL =
+  "https://raw.githubusercontent.com/Crypto-Moonboys/SWARMSY-Ai/master/images/SWARMSY%20TEXT%20LOGO%20AND%20SWARMSY%20BEE.png";
+
 export default function ActiveWorkspaces() {
   const navigate = useNavigate();
   const { slug } = useParams();
@@ -126,25 +129,17 @@ export default function ActiveWorkspaces() {
           <Link
             to={paths.workspace.chat(sparkyWorkspace.slug)}
             aria-current={isSparkyActive ? "page" : ""}
-            className={`flex items-center justify-between rounded-[10px] border border-cyan-400/40 bg-cyan-500/10 px-3 py-3 text-white transition-colors hover:bg-cyan-500/15 ${
+            className={`flex min-h-[70px] items-center justify-center rounded-[10px] border border-cyan-400/40 bg-black px-3 py-3 text-white transition-colors hover:bg-zinc-950 ${
               isSparkyActive ? "ring-1 ring-cyan-300/60" : ""
             }`}
+            aria-label="Continue with SWARMSY"
           >
-            <div className="flex min-w-0 items-center gap-x-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-cyan-400/15 text-cyan-200">
-                <span className="text-[11px] font-black tracking-[0.2em]">
-                  S
-                </span>
-              </div>
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold">
-                  Continue with SPARKY
-                </p>
-                <p className="truncate text-[11px] text-cyan-100/70">
-                  Fixed guided workspace for identity and project direction
-                </p>
-              </div>
-            </div>
+            <img
+              src={SWARMSY_LOGO_URL}
+              alt="SWARMSY"
+              className="max-h-[46px] w-full object-contain"
+              loading="eager"
+            />
           </Link>
           {isSparkyActive && (
             <ThreadContainer
