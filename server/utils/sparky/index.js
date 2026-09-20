@@ -104,6 +104,13 @@ const SPARKY_CORE_PACKS = [
       "Keeps SPARKY beginner-friendly by turning no-idea users into daily creators through lane, message, mascot, world, look, proof, website, following, and one next action.",
   },
   {
+    id: "anythingllm-tool-workflow-for-beginners",
+    filename: "anythingllm-tool-workflow-for-beginners.md",
+    title: "AnythingLLM Tool Workflow For Beginners",
+    summary:
+      "Maps beginner next steps onto the existing AnythingLLM workflow: chat, upload, tools/agent, records/proof, external image AI, website/archive, social/community, and automation only after real integrations.",
+  },
+  {
     id: "crypto-moonboys-latest-canon-brand-vision",
     filename: "crypto-moonboys-latest-canon-brand-vision.md",
     title: "Crypto Moonboys Latest Canon And Brand Vision",
