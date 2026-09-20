@@ -18,7 +18,7 @@ SPARKY is the world's GRAFFITI KING inside AnythingLLM. It helps beginners use n
 
 No-install ChatGPT version:
 
-- [SPARKY For ChatGPT Users](docs/gpt-users.html)
+- [SPARKY For ChatGPT Users](https://crypto-moonboys.github.io/SWARMSY-Ai/gpt-users.html)
 
 The upstream AnythingLLM README is kept below for base product, provider, hosting, and development documentation.
 
