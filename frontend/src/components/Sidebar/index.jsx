@@ -37,13 +37,25 @@ export default function Sidebar() {
             opacity: 0.58;
             transform: translate3d(-22px, -18px, 0) scale(1);
           }
-          35% {
-            opacity: 0.95;
-            transform: translate3d(28px, 18px, 0) scale(1.12);
+          16% {
+            opacity: 0.78;
+            transform: translate3d(18px, -30px, 0) scale(1.08);
           }
-          70% {
+          31% {
+            opacity: 0.94;
+            transform: translate3d(34px, 14px, 0) scale(1.14);
+          }
+          48% {
+            opacity: 0.68;
+            transform: translate3d(-8px, 42px, 0) scale(1.02);
+          }
+          64% {
+            opacity: 0.9;
+            transform: translate3d(-38px, 18px, 0) scale(1.1);
+          }
+          82% {
             opacity: 0.72;
-            transform: translate3d(-12px, 34px, 0) scale(1.02);
+            transform: translate3d(12px, 30px, 0) scale(0.98);
           }
         }
 
@@ -52,13 +64,29 @@ export default function Sidebar() {
             opacity: 0.78;
             transform: translate3d(-42px, 34px, 0) scale(1.05);
           }
-          45% {
+          12% {
+            opacity: 0.9;
+            transform: translate3d(-18px, -44px, 0) scale(1.18);
+          }
+          26% {
             opacity: 0.96;
             transform: translate3d(42px, -48px, 0) scale(1.3);
           }
-          75% {
+          41% {
+            opacity: 0.84;
+            transform: translate3d(54px, 12px, 0) scale(1.08);
+          }
+          58% {
+            opacity: 1;
+            transform: translate3d(-26px, 54px, 0) scale(1.26);
+          }
+          73% {
             opacity: 0.86;
             transform: translate3d(18px, 38px, 0) scale(1.16);
+          }
+          88% {
+            opacity: 0.94;
+            transform: translate3d(-54px, -4px, 0) scale(1.22);
           }
         }
 
@@ -85,7 +113,7 @@ export default function Sidebar() {
             radial-gradient(circle, rgba(255, 255, 255, 0.34) 1.4px, transparent 2.6px);
           background-position: 0 0, 7px 7px;
           background-size: 13px 13px, 29px 29px;
-          animation: swarmsySidebarDotField 18s ease-in-out infinite;
+          animation: swarmsySidebarDotField 36s ease-in-out infinite;
           z-index: 1;
         }
 
@@ -97,18 +125,18 @@ export default function Sidebar() {
             radial-gradient(circle at 14% 64%, rgba(255, 255, 255, 0.46), transparent 28%),
             radial-gradient(circle at 62% 52%, rgba(255, 255, 255, 0.5), transparent 32%);
           filter: blur(2px);
-          animation: swarmsySidebarGlowField 10s ease-in-out infinite;
+          animation: swarmsySidebarGlowField 28s ease-in-out infinite;
           mix-blend-mode: difference;
           z-index: 0;
         }
 
         body.swarmsy-thinking .swarmsy-sidebar-shell::before {
-          animation-duration: 3.6s;
+          animation-duration: 10s;
           opacity: 1;
         }
 
         body.swarmsy-thinking .swarmsy-sidebar-shell::after {
-          animation-duration: 2.2s;
+          animation-duration: 7s;
           opacity: 1;
         }
       `}</style>
