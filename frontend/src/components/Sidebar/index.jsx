@@ -49,27 +49,26 @@ export default function Sidebar() {
 
         @keyframes swarmsySidebarGlowField {
           0%, 100% {
-            opacity: 0.92;
-            transform: translate3d(-34px, 28px, 0) scale(1.08);
+            opacity: 0.78;
+            transform: translate3d(-42px, 34px, 0) scale(1.05);
           }
           45% {
-            opacity: 1;
-            transform: translate3d(36px, -38px, 0) scale(1.34);
+            opacity: 0.96;
+            transform: translate3d(42px, -48px, 0) scale(1.3);
           }
           75% {
-            opacity: 0.96;
-            transform: translate3d(14px, 30px, 0) scale(1.16);
+            opacity: 0.86;
+            transform: translate3d(18px, 38px, 0) scale(1.16);
           }
         }
 
         .swarmsy-sidebar-shell {
           background:
-            radial-gradient(circle at 18% 16%, rgba(255, 255, 255, 0.24), transparent 30%),
-            radial-gradient(circle at 74% 68%, rgba(255, 255, 255, 0.18), transparent 36%),
-            radial-gradient(circle at 45% 42%, rgba(255, 255, 255, 0.1), transparent 30%),
-            linear-gradient(145deg, #030303 0%, #151515 52%, #050505 100%);
+            radial-gradient(circle at 20% 18%, rgba(120, 120, 120, 0.28), transparent 28%),
+            radial-gradient(circle at 78% 72%, rgba(90, 90, 90, 0.24), transparent 34%),
+            linear-gradient(145deg, #020202 0%, #151515 52%, #030303 100%);
           isolation: isolate;
-          box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1), inset 0 0 92px rgba(255,255,255,0.13);
+          box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12), inset 0 0 110px rgba(160,160,160,0.18);
         }
 
         .swarmsy-sidebar-shell::before,
@@ -79,7 +78,6 @@ export default function Sidebar() {
           inset: -18%;
           pointer-events: none;
           z-index: 0;
-          mix-blend-mode: screen;
         }
 
         .swarmsy-sidebar-shell::before {
@@ -93,12 +91,12 @@ export default function Sidebar() {
 
         .swarmsy-sidebar-shell::after {
           background:
-            radial-gradient(circle at 28% 26%, rgba(255, 255, 255, 0.46), transparent 27%),
-            radial-gradient(circle at 78% 36%, rgba(255, 255, 255, 0.36), transparent 32%),
-            radial-gradient(circle at 42% 82%, rgba(255, 255, 255, 0.3), transparent 36%),
-            radial-gradient(circle at 12% 66%, rgba(255, 255, 255, 0.28), transparent 28%),
-            radial-gradient(circle at 58% 52%, rgba(255, 255, 255, 0.22), transparent 34%);
-          filter: blur(7px);
+            radial-gradient(circle at 22% 22%, rgba(180, 180, 180, 0.7), transparent 24%),
+            radial-gradient(circle at 78% 34%, rgba(150, 150, 150, 0.54), transparent 30%),
+            radial-gradient(circle at 46% 78%, rgba(135, 135, 135, 0.5), transparent 34%),
+            radial-gradient(circle at 14% 64%, rgba(120, 120, 120, 0.44), transparent 28%),
+            radial-gradient(circle at 62% 52%, rgba(165, 165, 165, 0.42), transparent 32%);
+          filter: blur(3px);
           animation: swarmsySidebarGlowField 10s ease-in-out infinite;
         }
 
