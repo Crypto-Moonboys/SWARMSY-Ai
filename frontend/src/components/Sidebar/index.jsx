@@ -16,9 +16,11 @@ import SearchBox from "./SearchBox";
 import { Tooltip } from "react-tooltip";
 import { createPortal } from "react-dom";
 
+const SWARMSY_APP_LOGO_URL =
+  "https://raw.githubusercontent.com/Crypto-Moonboys/SWARMSY-Ai/master/images/anythingLLM%20SWARMSY.jpg";
+
 export default function Sidebar() {
   const { user } = useUser();
-  const { logo } = useLogo();
   const sidebarRef = useRef(null);
   const { showSidebar, setShowSidebar, canToggleSidebar } = useSidebarToggle();
   const {
@@ -43,20 +45,24 @@ export default function Sidebar() {
           />
         )}
         <div className="overflow-hidden h-full">
-          <div className="flex shrink-0 w-full justify-center my-[18px]">
-            <div className="flex w-[250px] min-w-[250px]">
-              <Link to={paths.home()} aria-label="Home">
+          <div className="flex shrink-0 w-full justify-center mt-0 mb-[8px]">
+            <div className="flex w-full min-w-[292px] justify-center bg-black">
+              <Link
+                to={paths.home()}
+                aria-label="Home"
+                className="block w-full"
+              >
                 <img
-                  src={logo}
-                  alt="Logo"
-                  className={`rounded max-h-[24px] object-contain transition-opacity duration-500 ${showSidebar ? "opacity-100" : "opacity-0"}`}
+                  src={SWARMSY_APP_LOGO_URL}
+                  alt="AnythingLLM SWARMSY"
+                  className={`block h-[150px] w-full object-cover transition-opacity duration-500 ${showSidebar ? "opacity-100" : "opacity-0"}`}
                 />
               </Link>
             </div>
           </div>
           <div
             ref={sidebarRef}
-            className="relative m-[16px] rounded-[16px] bg-theme-bg-sidebar light:bg-slate-200 border-[2px] border-theme-sidebar-border light:border-none min-w-[250px] p-[10px] h-[calc(100%-76px)]"
+            className="relative mx-[16px] mb-[16px] mt-[8px] rounded-[16px] bg-black light:bg-slate-200 border-[2px] border-theme-sidebar-border light:border-none min-w-[250px] p-[10px] h-[calc(100%-182px)]"
           >
             <div className="flex flex-col h-full overflow-hidden">
               <div className="flex-grow flex flex-col min-w-[235px] min-h-0">
@@ -66,7 +72,7 @@ export default function Sidebar() {
                     <ActiveWorkspaces showNewWsModal={showNewWsModal} />
                   </div>
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 pb-3 rounded-b-[16px] bg-theme-bg-sidebar light:bg-slate-200 bg-opacity-80 backdrop-filter backdrop-blur-md z-10">
+                <div className="absolute bottom-0 left-0 right-0 pb-3 rounded-b-[16px] bg-black light:bg-slate-200 bg-opacity-80 backdrop-filter backdrop-blur-md z-10">
                   <Footer />
                 </div>
               </div>
