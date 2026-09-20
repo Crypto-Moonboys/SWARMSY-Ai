@@ -77,7 +77,6 @@ export default function Sidebar() {
           position: absolute;
           inset: -18%;
           pointer-events: none;
-          z-index: 0;
         }
 
         .swarmsy-sidebar-shell::before {
@@ -87,17 +86,20 @@ export default function Sidebar() {
           background-position: 0 0, 7px 7px;
           background-size: 13px 13px, 29px 29px;
           animation: swarmsySidebarDotField 18s ease-in-out infinite;
+          z-index: 1;
         }
 
         .swarmsy-sidebar-shell::after {
           background:
-            radial-gradient(circle at 22% 22%, rgba(180, 180, 180, 0.7), transparent 24%),
-            radial-gradient(circle at 78% 34%, rgba(150, 150, 150, 0.54), transparent 30%),
-            radial-gradient(circle at 46% 78%, rgba(135, 135, 135, 0.5), transparent 34%),
-            radial-gradient(circle at 14% 64%, rgba(120, 120, 120, 0.44), transparent 28%),
-            radial-gradient(circle at 62% 52%, rgba(165, 165, 165, 0.42), transparent 32%);
-          filter: blur(3px);
+            radial-gradient(circle at 22% 22%, rgba(255, 255, 255, 0.72), transparent 24%),
+            radial-gradient(circle at 78% 34%, rgba(255, 255, 255, 0.58), transparent 30%),
+            radial-gradient(circle at 46% 78%, rgba(255, 255, 255, 0.52), transparent 34%),
+            radial-gradient(circle at 14% 64%, rgba(255, 255, 255, 0.46), transparent 28%),
+            radial-gradient(circle at 62% 52%, rgba(255, 255, 255, 0.5), transparent 32%);
+          filter: blur(2px);
           animation: swarmsySidebarGlowField 10s ease-in-out infinite;
+          mix-blend-mode: difference;
+          z-index: 0;
         }
 
         body.swarmsy-thinking .swarmsy-sidebar-shell::before {
