@@ -30,6 +30,20 @@ import { ChatSidebarProvider } from "@/components/WorkspaceChat/ChatContainer/Ch
 import MemoriesSidebar from "@/components/WorkspaceChat/ChatContainer/MemoriesSidebar";
 import { isCanonicalSparkyWorkspace } from "@/utils/sparky";
 
+const SPARKY_FLOATING_CLIP_URL =
+  "https://raw.githubusercontent.com/Crypto-Moonboys/SWARMSY-Ai/master/images/SPARKY%20FLOATING%20CLIP.png";
+
+function SparkyFloatingClip() {
+  return (
+    <img
+      src={SPARKY_FLOATING_CLIP_URL}
+      alt=""
+      aria-hidden="true"
+      className="pointer-events-none absolute bottom-[24px] right-[42px] z-10 hidden w-[150px] select-none xl:block 2xl:w-[170px]"
+    />
+  );
+}
+
 async function getTargetWorkspace() {
   const lastVisited = safeJsonParse(
     localStorage.getItem(LAST_VISITED_WORKSPACE)
@@ -328,6 +342,7 @@ function HomeContent({ workspace, setWorkspace, threadSlug, setThreadSlug }) {
               />
             </div>
           </DnDFileUploaderWrapper>
+          <SparkyFloatingClip />
           <ChatTooltips />
         </div>
         <MemoriesSidebar workspace={workspace} />

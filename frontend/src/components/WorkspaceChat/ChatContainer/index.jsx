@@ -39,6 +39,20 @@ import SourcesSidebar from "./SourcesSidebar";
 import MemoriesSidebar from "./MemoriesSidebar";
 import SparkyRecordsSidebar from "./SparkyRecordsSidebar";
 
+const SPARKY_FLOATING_CLIP_URL =
+  "https://raw.githubusercontent.com/Crypto-Moonboys/SWARMSY-Ai/master/images/SPARKY%20FLOATING%20CLIP.png";
+
+function SparkyFloatingClip() {
+  return (
+    <img
+      src={SPARKY_FLOATING_CLIP_URL}
+      alt=""
+      aria-hidden="true"
+      className="pointer-events-none absolute bottom-[24px] right-[42px] z-10 hidden w-[150px] select-none xl:block 2xl:w-[170px]"
+    />
+  );
+}
+
 export default function ChatContainer({
   workspace,
   threadSlug = null,
@@ -494,6 +508,7 @@ export default function ChatContainer({
                 />
               </div>
             </DnDFileUploaderWrapper>
+            <SparkyFloatingClip />
             <ChatTooltips />
           </div>
           <MemoriesSidebar workspace={workspace} />
