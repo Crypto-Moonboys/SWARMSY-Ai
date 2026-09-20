@@ -695,7 +695,10 @@ export default function ChatContainer({
           </div>
           <MemoriesSidebar workspace={workspace} />
           <SparkyRecordsSidebar workspace={workspace} />
-          <SparkyWorkflowCalendarSidebar workspace={workspace} />
+          <SparkyWorkflowCalendarSidebar
+            workspace={workspace}
+            sendCommand={sendCommand}
+          />
         </div>
       </ChatSidebarProvider>
     );
@@ -750,7 +753,10 @@ export default function ChatContainer({
         <SourcesSidebar />
         <MemoriesSidebar workspace={workspace} />
         <SparkyRecordsSidebar workspace={workspace} />
-        <SparkyWorkflowCalendarSidebar workspace={workspace} />
+        <SparkyWorkflowCalendarSidebar
+          workspace={workspace}
+          sendCommand={sendCommand}
+        />
       </div>
     </ChatSidebarProvider>
   );

@@ -515,7 +515,10 @@ function HomeContent({ workspace, setWorkspace, threadSlug, setThreadSlug }) {
         </div>
         <MemoriesSidebar workspace={workspace} />
         <SparkyRecordsSidebar workspace={workspace} />
-        <SparkyWorkflowCalendarSidebar workspace={workspace} />
+        <SparkyWorkflowCalendarSidebar
+          workspace={workspace}
+          sendCommand={sendCommand}
+        />
       </div>
     </ChatSidebarProvider>
   );

@@ -118,7 +118,10 @@ function entriesForDay(entries, isoDate) {
   );
 }
 
-export default function SparkyWorkflowCalendarSidebar({ workspace }) {
+export default function SparkyWorkflowCalendarSidebar({
+  workspace,
+  sendCommand = null,
+}) {
   const { sidebarOpen, closeSidebar } = useSparkyCalendarSidebar();
   const [view, setView] = useState("day");
   const [selectedDate, setSelectedDate] = useState(todayISO());
@@ -207,6 +210,7 @@ export default function SparkyWorkflowCalendarSidebar({ workspace }) {
           entries={entries}
           visibleEntries={visibleEntries}
           removeEntry={removeEntry}
+          sendCommand={sendCommand}
         />
       </div>
     </ChatSidebar>
@@ -223,6 +227,10 @@ function SidebarHeader({ closeSidebar }) {
         <p className="text-xs leading-4 text-zinc-400 light:text-slate-500 mt-1">
           Plan daily, weekly, and monthly SPARKY workflows. This is a planner,
           not Auto Mode.
+        </p>
+        <p className="text-xs leading-4 text-yellow-300/80 light:text-yellow-700 mt-2">
+          Use Google buttons to load a calendar action into chat when Google
+          Calendar Agent Skill is connected.
         </p>
       </div>
       <button
@@ -382,6 +390,7 @@ function CalendarBody({
   entries,
   visibleEntries,
   removeEntry,
+  sendCommand,
 }) {
   if (view === "week") {
     return (
@@ -389,6 +398,7 @@ function CalendarBody({
         selectedDate={selectedDate}
         entries={entries}
         removeEntry={removeEntry}
+        sendCommand={sendCommand}
       />
     );
   }
@@ -398,6 +408,7 @@ function CalendarBody({
         selectedDate={selectedDate}
         entries={entries}
         removeEntry={removeEntry}
+        sendCommand={sendCommand}
       />
     );
   }
@@ -406,11 +417,12 @@ function CalendarBody({
       selectedDate={selectedDate}
       entries={visibleEntries}
       removeEntry={removeEntry}
+      sendCommand={sendCommand}
     />
   );
 }
 
-function DayView({ selectedDate, entries, removeEntry }) {
+function DayView({ selectedDate, entries, removeEntry, sendCommand }) {
   const contextEntries = entries.filter((entry) => entry.scope !== "hour");
   const hourEntries = entries.filter((entry) => entry.scope === "hour");
 
@@ -422,6 +434,7 @@ function DayView({ selectedDate, entries, removeEntry }) {
           title="Day / week / month workflows"
           entries={contextEntries}
           removeEntry={removeEntry}
+          sendCommand={sendCommand}
         />
       )}
       <div className="flex flex-col gap-2">
@@ -448,6 +461,7 @@ function DayView({ selectedDate, entries, removeEntry }) {
                       key={entry.id}
                       entry={entry}
                       removeEntry={removeEntry}
+                      sendCommand={sendCommand}
                     />
                   ))}
                 </div>
@@ -460,7 +474,7 @@ function DayView({ selectedDate, entries, removeEntry }) {
   );
 }
 
-function WeekView({ selectedDate, entries, removeEntry }) {
+function WeekView({ selectedDate, entries, removeEntry, sendCommand }) {
   const firstDay = startOfWeek(selectedDate);
   const days = Array.from({ length: 7 }, (_, index) => addDays(firstDay, index));
 
@@ -475,14 +489,18 @@ function WeekView({ selectedDate, entries, removeEntry }) {
           <p className="text-xs font-semibold text-zinc-300 light:text-slate-700">
             {formatShortDate(day)}
           </p>
-          <MiniEntries entries={entriesForDay(entries, day)} removeEntry={removeEntry} />
+          <MiniEntries
+            entries={entriesForDay(entries, day)}
+            removeEntry={removeEntry}
+            sendCommand={sendCommand}
+          />
         </div>
       ))}
     </div>
   );
 }
 
-function MonthView({ selectedDate, entries, removeEntry }) {
+function MonthView({ selectedDate, entries, removeEntry, sendCommand }) {
   const selected = parseISODate(selectedDate);
   const monthStart = new Date(selected.getFullYear(), selected.getMonth(), 1);
   const firstGridDay = startOfWeek(toISODate(monthStart));
@@ -506,6 +524,7 @@ function MonthView({ selectedDate, entries, removeEntry }) {
           title="Month workflows"
           entries={monthWideEntries}
           removeEntry={removeEntry}
+          sendCommand={sendCommand}
         />
       )}
       <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-semibold uppercase tracking-wide text-zinc-500 light:text-slate-400">
@@ -561,7 +580,7 @@ function SectionTitle({ title }) {
   );
 }
 
-function EntryStack({ title, entries, removeEntry }) {
+function EntryStack({ title, entries, removeEntry, sendCommand }) {
   return (
     <div className="rounded-lg border border-zinc-800 light:border-slate-300 bg-zinc-950/50 light:bg-white p-3">
       <p className="mb-2 text-xs font-semibold text-zinc-400 light:text-slate-500">
@@ -573,6 +592,7 @@ function EntryStack({ title, entries, removeEntry }) {
             key={entry.id}
             entry={entry}
             removeEntry={removeEntry}
+            sendCommand={sendCommand}
           />
         ))}
       </div>
@@ -580,7 +600,7 @@ function EntryStack({ title, entries, removeEntry }) {
   );
 }
 
-function MiniEntries({ entries, removeEntry }) {
+function MiniEntries({ entries, removeEntry, sendCommand }) {
   if (entries.length === 0) {
     return (
       <p className="mt-1 text-xs text-zinc-600 light:text-slate-400">
@@ -592,13 +612,39 @@ function MiniEntries({ entries, removeEntry }) {
   return (
     <div className="mt-2 flex flex-col gap-2">
       {entries.map((entry) => (
-        <WorkflowEntry key={entry.id} entry={entry} removeEntry={removeEntry} />
+        <WorkflowEntry
+          key={entry.id}
+          entry={entry}
+          removeEntry={removeEntry}
+          sendCommand={sendCommand}
+        />
       ))}
     </div>
   );
 }
 
-function WorkflowEntry({ entry, removeEntry }) {
+function buildGoogleCalendarPrompt(entry) {
+  const scopeText =
+    entry.scope === "hour"
+      ? `${entry.date} at ${entry.hour} for 1 hour`
+      : entry.scope === "day"
+        ? `all day on ${entry.date}`
+        : entry.scope === "week"
+          ? `the week starting ${startOfWeek(entry.date)}`
+          : `the month of ${monthKey(entry.date)}`;
+
+  return [
+    "Use the Google Calendar Agent Skill to create a calendar event/reminder for this SPARKY workflow.",
+    "",
+    `Title: SPARKY - ${entry.workflow}`,
+    `When: ${scopeText}`,
+    entry.note ? `Notes: ${entry.note}` : "Notes: No extra notes supplied.",
+    "",
+    "If Google Calendar is not connected or the time/calendar is unclear, tell me exactly what is missing before creating it.",
+  ].join("\n");
+}
+
+function WorkflowEntry({ entry, removeEntry, sendCommand }) {
   const timeLabel =
     entry.scope === "hour"
       ? entry.hour
@@ -619,13 +665,29 @@ function WorkflowEntry({ entry, removeEntry }) {
             {timeLabel}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => removeEntry(entry.id)}
-          className="shrink-0 border-none bg-transparent text-xs text-zinc-500 hover:text-red-400"
-        >
-          Remove
-        </button>
+        <div className="flex shrink-0 flex-col items-end gap-1">
+          {sendCommand && (
+            <button
+              type="button"
+              onClick={() =>
+                sendCommand({
+                  text: buildGoogleCalendarPrompt(entry),
+                  writeMode: "replace",
+                })
+              }
+              className="rounded border border-yellow-300/30 bg-yellow-300/10 px-2 py-1 text-[11px] font-semibold text-yellow-100 hover:border-yellow-300/70 hover:bg-yellow-300/15 light:text-yellow-700"
+            >
+              Google
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => removeEntry(entry.id)}
+            className="border-none bg-transparent text-xs text-zinc-500 hover:text-red-400"
+          >
+            Remove
+          </button>
+        </div>
       </div>
       {entry.note && (
         <p className="mt-2 text-xs leading-4 text-zinc-400 light:text-slate-600">
