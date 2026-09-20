@@ -5,12 +5,15 @@ import { Plus, CircleNotch, Trash } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import ThreadItem from "./ThreadItem";
 import { useParams } from "react-router-dom";
+import { isCanonicalSparkyWorkspace } from "@/utils/sparky";
 import useHoverMetaKey from "./hooks";
 export const THREAD_RENAME_EVENT = "renameThread";
 
 export default function ThreadContainer({
   workspace,
   isVirtualThread = false,
+  normalWorkspace = null,
+  showNewWsModal = null,
 }) {
   const { threadSlug = null } = useParams();
   const [threads, setThreads] = useState([]);
@@ -159,23 +162,41 @@ export default function ThreadContainer({
         threads={threads}
         onDelete={handleDeleteAll}
       />
-      <NewThreadButton workspace={workspace} />
+      <NewThreadButton workspace={workspace} normalWorkspace={normalWorkspace} showNewWsModal={showNewWsModal} />
     </div>
   );
 }
 
-function NewThreadButton({ workspace }) {
+function NewThreadButton({ workspace, normalWorkspace = null, showNewWsModal = null }) {
   const [loading, setLoading] = useState(false);
+  const isSparkyWorkspace = isCanonicalSparkyWorkspace(workspace);
+  const targetWorkspace = isSparkyWorkspace ? normalWorkspace : workspace;
+  const buttonLabel = isSparkyWorkspace
+    ? targetWorkspace
+      ? "New AnythingLLM Thread"
+      : "New AnythingLLM Workspace"
+    : "New Thread";
+  const loadingLabel = isSparkyWorkspace
+    ? targetWorkspace
+      ? "Starting Normal Thread..."
+      : "Opening Workspace..."
+    : "Starting Thread...";
+
   const onClick = async () => {
+    if (isSparkyWorkspace && !targetWorkspace) {
+      showNewWsModal?.();
+      return;
+    }
+
     setLoading(true);
-    const { thread, error } = await Workspace.threads.new(workspace.slug);
+    const { thread, error } = await Workspace.threads.new(targetWorkspace.slug);
     if (!!error) {
       showToast(`Could not create thread - ${error}`, "error", { clear: true });
       setLoading(false);
       return;
     }
     window.location.replace(
-      paths.workspace.thread(workspace.slug, thread.slug)
+      paths.workspace.thread(targetWorkspace.slug, thread.slug)
     );
   };
 
@@ -203,11 +224,11 @@ function NewThreadButton({ workspace }) {
 
         {loading ? (
           <p className="text-left text-white light:text-theme-text-primary text-sm">
-            Starting Thread...
+            {loadingLabel}
           </p>
         ) : (
           <p className="text-left text-white light:text-theme-text-primary text-sm font-semibold">
-            New Thread
+            {buttonLabel}
           </p>
         )}
       </div>
