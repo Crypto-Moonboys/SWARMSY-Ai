@@ -34,10 +34,11 @@ import QuickActions from "@/components/lib/QuickActions";
 import SuggestedMessages from "@/components/lib/SuggestedMessages";
 import ChatSettingsMenu from "./ChatSettingsMenu";
 import WorkspaceModelPicker from "./WorkspaceModelPicker";
-import { ChatSidebarProvider } from "./ChatSidebar";
+import { ChatSidebarProvider, useSparkyRecordsSidebar } from "./ChatSidebar";
 import SourcesSidebar from "./SourcesSidebar";
 import MemoriesSidebar from "./MemoriesSidebar";
 import SparkyRecordsSidebar from "./SparkyRecordsSidebar";
+import { isCanonicalSparkyWorkspace } from "@/utils/sparky";
 
 const SPARKY_FLOATING_CLIP_URL =
   "https://raw.githubusercontent.com/Crypto-Moonboys/SWARMSY-Ai/master/images/SPARKY%20FLOATING%20CLIP.png";
@@ -114,15 +115,26 @@ function getSparkyForwardPrompts(latestAssistantText = "") {
   ];
 }
 
-function SparkyFloatingClip({ latestAssistantText = "", sendCommand = null }) {
+function SparkyFloatingClip({
+  latestAssistantText = "",
+  sendCommand = null,
+  workspace = null,
+}) {
   const [open, setOpen] = useState(false);
+  const { toggleSidebar } = useSparkyRecordsSidebar();
   const prompts = getSparkyForwardPrompts(latestAssistantText);
+  const showRecordsAction = isCanonicalSparkyWorkspace(workspace);
 
   async function usePrompt(prompt) {
     sendCommand?.({ text: prompt, writeMode: "replace" });
     try {
       await navigator.clipboard?.writeText(prompt);
     } catch {}
+    setOpen(false);
+  }
+
+  function openRecords() {
+    toggleSidebar();
     setOpen(false);
   }
 
@@ -155,6 +167,15 @@ function SparkyFloatingClip({ latestAssistantText = "", sendCommand = null }) {
               </button>
             ))}
           </div>
+          {showRecordsAction && (
+            <button
+              type="button"
+              onClick={openRecords}
+              className="mt-2 w-full rounded-[10px] border border-yellow-300/30 bg-yellow-300/10 px-3 py-2 text-left text-sm font-semibold leading-snug text-yellow-100 hover:border-yellow-300/70 hover:bg-yellow-300/15"
+            >
+              Open SPARKY Records / Proof
+            </button>
+          )}
           <p className="mt-2 px-1 text-[11px] text-white/45">
             Click one to load a wider helper prompt into the message box.
           </p>
@@ -648,6 +669,7 @@ export default function ChatContainer({
             <SparkyFloatingClip
               latestAssistantText={latestAssistantText}
               sendCommand={sendCommand}
+              workspace={workspace}
             />
             <ChatTooltips />
           </div>
@@ -698,9 +720,10 @@ export default function ChatContainer({
             </div>
           </DnDFileUploaderWrapper>
           <SparkyFloatingClip
-              latestAssistantText={latestAssistantText}
-              sendCommand={sendCommand}
-            />
+            latestAssistantText={latestAssistantText}
+            sendCommand={sendCommand}
+            workspace={workspace}
+          />
           <ChatTooltips />
         </div>
         <SourcesSidebar />
