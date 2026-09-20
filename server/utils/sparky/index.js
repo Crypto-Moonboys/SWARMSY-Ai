@@ -111,6 +111,13 @@ const SPARKY_CORE_PACKS = [
       "Maps beginner next steps onto the existing AnythingLLM workflow: chat, upload, tools/agent, records/proof, external image AI, website/archive, social/community, and automation only after real integrations.",
   },
   {
+    id: "seven-day-beginner-build-path",
+    filename: "seven-day-beginner-build-path.md",
+    title: "Seven-Day Beginner Build Path",
+    summary:
+      "Turns any PFP, brand, art project, product, music idea, website, local campaign, or no-idea user into a simple 7-day plan with one asset, one tool path, and one proof each day.",
+  },
+  {
     id: "crypto-moonboys-latest-canon-brand-vision",
     filename: "crypto-moonboys-latest-canon-brand-vision.md",
     title: "Crypto Moonboys Latest Canon And Brand Vision",
