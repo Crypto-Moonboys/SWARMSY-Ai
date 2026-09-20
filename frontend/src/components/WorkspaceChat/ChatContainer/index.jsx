@@ -47,19 +47,21 @@ function getSparkyForwardPrompts(latestAssistantText = "") {
 
   if (!text.trim()) {
     return [
-      "I am starting from zero. Ask me what I want to build, fix, learn, automate, or create.",
-      "Show me what you can help with today: creative work, websites, bots, research, files, images, automation, or planning.",
+      "Show me exactly which AnythingLLM button or tool to use next.",
+      "Help me choose a lane: PFP, brand, art/music, website, automation, or normal chat.",
+      "Turn a rough idea into a 7-day beginner build path.",
+      "Create an external AI prompt for an image, logo, poster, mascot, or mockup.",
       "I need normal AnythingLLM help, not a SWARMSY project flow. Help me with anything.",
-      "Help me choose a lane: PFP, brand, art project, website, bot, daily plan, or general question.",
     ];
   }
 
   if (text.includes("automation") || text.includes("bot") || text.includes("api") || text.includes("calendar")) {
     return [
+      "Show me the exact AnythingLLM tool path before any automation setup.",
       "Map this into Manual Now, Agent-Assisted Next, and Auto Mode later.",
-      "Give me the exact tools, accounts, APIs, and permissions needed for this.",
       "Turn this into a 7-day automation setup plan with one simple task per day.",
-      "Create the safest no-code version first, then the real auto-mode version.",
+      "List the exact tools, accounts, APIs, permissions, and approvals needed.",
+      "Create the safest manual/no-code version first, then the real Auto Mode version.",
     ];
   }
 
@@ -68,25 +70,28 @@ function getSparkyForwardPrompts(latestAssistantText = "") {
       "Ask me for the missing PFP character details before inventing traits.",
       "Build the full Moonboy/PFP bio from the known details only.",
       "Turn this character into a stencil, poster, merch, and local campaign pack.",
-      "Give me 3 stronger identity routes and pick the best one.",
+      "Save this as an idea, approved decision, or proof note.",
+      "Turn this PFP into a 7-day beginner build path.",
     ];
   }
 
   if (text.includes("image") || text.includes("poster") || text.includes("icon") || text.includes("stencil") || text.includes("logo") || text.includes("mascot")) {
     return [
-      "Create a copy/paste prompt for GPT or Grok image generation from this idea.",
+      "Create the full GPT/Grok image handoff prompt and tell the new AI the scope.",
       "Make this visual idea work as a stencil, poster, sticker, and merch mark.",
       "Give me a cleaner production brief: subject, pose, colours, symbols, and avoid list.",
-      "Make it more street-level, bold, local-first, and easy to recognise.",
+      "Turn the finished image into a local proof post and digital proof loop.",
+      "Show me which AnythingLLM step comes after the image is made.",
     ];
   }
 
   if (text.includes("daily") || text.includes("proof") || text.includes("local") || text.includes("campaign")) {
     return [
       "Turn this into today's Street-To-Digital Proof Card.",
-      "Give me the first 3 actions I can actually do today.",
+      "Show me exactly what to do, click, upload, save, or post next.",
+      "Save this as an idea, approved decision, or proof note.",
       "Make this local-first: one real-world surface and one digital proof post.",
-      "Simplify this into one mission, one asset, one proof, and one next move.",
+      "Turn this into a 7-day beginner build path.",
     ];
   }
 
@@ -95,15 +100,17 @@ function getSparkyForwardPrompts(latestAssistantText = "") {
       "Build the brand identity: name, mission, look, voice, and street signal.",
       "Turn this into a mascot or mark people can remember locally.",
       "Create a launch pack: lore hook, poster, merch, campaign, and proof loop.",
-      "Give me 3 bold directions and choose the one with most traction potential.",
+      "Create the external AI image prompt for the logo, mascot, poster, or mockup.",
+      "Turn this brand/project into a 7-day beginner build path.",
     ];
   }
 
   return [
+    "Show me exactly which AnythingLLM button or tool to use next.",
     "Give me 3 stronger directions and pick the best one.",
     "Turn this into one clear next step I can do today.",
-    "Make this local-first with a real-world proof and digital proof.",
-    "Ask me the missing details before building the full plan.",
+    "Save this as an idea, approved decision, or proof note.",
+    "Create the external AI prompt if this needs an image, logo, poster, or mascot.",
   ];
 }
 
