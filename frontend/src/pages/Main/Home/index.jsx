@@ -102,7 +102,17 @@ function SparkyFloatingClip({ latestAssistantText = "", sendCommand = null }) {
   }
 
   return (
-    <div className="absolute bottom-[24px] right-[42px] z-20 hidden select-none xl:block">
+    <>
+      <style>{`
+        @keyframes sparkyBeeFlight {
+          0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+          18% { transform: translate3d(-18px, -8px, 0) rotate(-3deg); }
+          38% { transform: translate3d(16px, -20px, 0) rotate(3deg); }
+          58% { transform: translate3d(24px, 4px, 0) rotate(2deg); }
+          78% { transform: translate3d(-14px, 14px, 0) rotate(-4deg); }
+        }
+      `}</style>
+      <div className="absolute bottom-[24px] right-[42px] z-20 hidden select-none xl:block">
       {open && (
         <div className="absolute bottom-[118px] right-0 w-[330px] rounded-[18px] border border-white/10 bg-zinc-950/95 p-3 text-white shadow-2xl backdrop-blur-md">
           <div className="mb-2 px-1 text-[11px] font-bold uppercase tracking-[0.18em] text-yellow-300">
@@ -137,9 +147,11 @@ function SparkyFloatingClip({ latestAssistantText = "", sendCommand = null }) {
           alt=""
           aria-hidden="true"
           className="pointer-events-none w-[150px] 2xl:w-[170px]"
+          style={{ animation: "sparkyBeeFlight 7.5s ease-in-out infinite" }}
         />
       </button>
-    </div>
+      </div>
+    </>
   );
 }
 
