@@ -151,7 +151,7 @@ export default function Sidebar() {
                     <ActiveWorkspaces showNewWsModal={showNewWsModal} />
                   </div>
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 pb-3 rounded-b-[20px] bg-black/10 light:bg-slate-200 bg-opacity-80 backdrop-filter backdrop-blur-md z-10">
+                <div className="absolute bottom-0 left-0 right-0 pb-3 rounded-b-[20px] bg-transparent light:bg-slate-200 z-10">
                   <Footer />
                 </div>
               </div>
