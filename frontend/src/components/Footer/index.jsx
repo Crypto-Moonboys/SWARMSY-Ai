@@ -42,16 +42,25 @@ function HodlWarriorsButton() {
         href={HODL_WARRIORS_CHAT_URL}
         target="_blank"
         rel="noreferrer"
-        className="transition-all duration-300 flex h-9 w-9 items-center justify-center bg-transparent hover:scale-105"
+        className="transition-all duration-300 flex h-9 w-9 items-center justify-center bg-transparent"
+        style={{ borderRadius: 0, filter: "none", mixBlendMode: "normal" }}
         aria-label="HODL Warriors Chat"
         data-tooltip-id="footer-item"
         data-tooltip-content="HODL WARRIORS CHAT"
       >
-        <img
-          src={HODL_WARRIORS_BUTTON_URL}
-          alt=""
+        <span
           aria-hidden="true"
-          className="h-9 w-9 object-contain"
+          className="block h-9 w-9"
+          style={{
+            backgroundColor: "transparent",
+            backgroundImage: `url("${HODL_WARRIORS_BUTTON_URL}")`,
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "contain",
+            borderRadius: 0,
+            filter: "none",
+            mixBlendMode: "normal",
+          }}
         />
       </a>
     </div>
