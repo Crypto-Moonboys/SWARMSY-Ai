@@ -1,5 +1,9 @@
 <a name="readme-top"></a>
 
+![SWARMSY AnythingLLM](images/SWARMSY%20ANYTHINGLLM.jpg)
+
+![SWARMSY Window](images/SWARMSY%20WINDOW.jpg)
+
 # SWARMSY-Ai
 
 SWARMSY-Ai is an underground creator operating system built on top of AnythingLLM, with a fixed **SPARKY** workspace at the centre.
