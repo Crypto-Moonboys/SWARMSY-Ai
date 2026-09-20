@@ -49,26 +49,27 @@ export default function Sidebar() {
 
         @keyframes swarmsySidebarGlowField {
           0%, 100% {
-            opacity: 0.72;
-            transform: translate3d(-28px, 24px, 0) scale(1);
+            opacity: 0.92;
+            transform: translate3d(-34px, 28px, 0) scale(1.08);
           }
           45% {
             opacity: 1;
-            transform: translate3d(30px, -32px, 0) scale(1.18);
+            transform: translate3d(36px, -38px, 0) scale(1.34);
           }
           75% {
-            opacity: 0.82;
-            transform: translate3d(10px, 24px, 0) scale(1.02);
+            opacity: 0.96;
+            transform: translate3d(14px, 30px, 0) scale(1.16);
           }
         }
 
         .swarmsy-sidebar-shell {
           background:
-            radial-gradient(circle at 18% 16%, rgba(255, 255, 255, 0.16), transparent 28%),
-            radial-gradient(circle at 74% 68%, rgba(255, 255, 255, 0.12), transparent 34%),
+            radial-gradient(circle at 18% 16%, rgba(255, 255, 255, 0.24), transparent 30%),
+            radial-gradient(circle at 74% 68%, rgba(255, 255, 255, 0.18), transparent 36%),
+            radial-gradient(circle at 45% 42%, rgba(255, 255, 255, 0.1), transparent 30%),
             linear-gradient(145deg, #030303 0%, #151515 52%, #050505 100%);
           isolation: isolate;
-          box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08), inset 0 0 72px rgba(255,255,255,0.075);
+          box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1), inset 0 0 92px rgba(255,255,255,0.13);
         }
 
         .swarmsy-sidebar-shell::before,
@@ -92,12 +93,13 @@ export default function Sidebar() {
 
         .swarmsy-sidebar-shell::after {
           background:
-            radial-gradient(circle at 28% 26%, rgba(255, 255, 255, 0.26), transparent 24%),
-            radial-gradient(circle at 78% 36%, rgba(255, 255, 255, 0.18), transparent 28%),
-            radial-gradient(circle at 42% 82%, rgba(255, 255, 255, 0.16), transparent 32%),
-            radial-gradient(circle at 12% 66%, rgba(255, 255, 255, 0.14), transparent 24%);
-          filter: blur(10px);
-          animation: swarmsySidebarGlowField 13s ease-in-out infinite;
+            radial-gradient(circle at 28% 26%, rgba(255, 255, 255, 0.46), transparent 27%),
+            radial-gradient(circle at 78% 36%, rgba(255, 255, 255, 0.36), transparent 32%),
+            radial-gradient(circle at 42% 82%, rgba(255, 255, 255, 0.3), transparent 36%),
+            radial-gradient(circle at 12% 66%, rgba(255, 255, 255, 0.28), transparent 28%),
+            radial-gradient(circle at 58% 52%, rgba(255, 255, 255, 0.22), transparent 34%);
+          filter: blur(7px);
+          animation: swarmsySidebarGlowField 10s ease-in-out infinite;
         }
 
         body.swarmsy-thinking .swarmsy-sidebar-shell::before {
@@ -106,7 +108,7 @@ export default function Sidebar() {
         }
 
         body.swarmsy-thinking .swarmsy-sidebar-shell::after {
-          animation-duration: 2.8s;
+          animation-duration: 2.2s;
           opacity: 1;
         }
       `}</style>
