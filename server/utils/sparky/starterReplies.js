@@ -115,36 +115,36 @@ Once I know the lane, I will build the pack:
 - website/archive route
 - first 3 actions`,
 
-  "Map the tools, bots and automation needed.": `# Automation Map
+  "Map the tools, bots and automation needed.": `# SWARMSY Tool Path
 
-## Manual Now
-- **What it means:** I give the plan, copy, prompts, checklists, proof cards, and next actions.
-- **Status:** Ready.
+## Simple Answer
+Start manual. Use SPARKY to make the plan, asset, prompt, proof card, and next action. Use AnythingLLM tools only where they actually help. Auto Mode comes later, after real accounts, APIs, calendars, bots, schedulers, or webhooks are connected and approved.
 
-## Agent-Assisted
-- **What it means:** I help draft, research, prepare files, or use available tools after approval.
-- **Status:** Depends on runtime tools.
+## Use This Now
+- **Chat with SPARKY:** ideas, names, lore, bios, brand routes, campaign plans, copy, prompts, and next actions.
+- **Upload a Document:** screenshots, images, briefs, lore files, repo notes, product info, old plans, or brand assets.
+- **Tools / Agent:** research, file work, repo work, web tasks, or structured actions only when tools are connected.
+- **External Image AI:** GPT, Grok, or another online image AI for posters, icons, logos, mascots, merch mockups, and visual concepts.
+- **Website / Wiki / Archive:** document the identity, lore, proof, campaign, links, and next steps.
+- **Social / Community:** turn proof into X/Twitter, Instagram, TikTok, Telegram, Discord, email, or community updates.
+- **Proof / Records:** save rough ideas, approved decisions, screenshots, links, files, commits, and proof notes where available.
 
-## Auto Mode
-- **What it means:** Scheduled posts, calendar checks, bots, APIs, webhooks, and background jobs.
-- **Status:** Not active until connected.
+## Mode Ladder
+- **Manual Now:** ready today. I give the plan, copy, prompts, checklist, proof card, and next action.
+- **Agent-Assisted:** available only when tools can actually help and you approve the action.
+- **Auto Mode:** not active yet. Needs connected accounts, API keys, calendar, scheduler, bot, webhook, hosting, or social tools.
 
-## Tool Areas Needed
-- **Website/wiki/page builder:** publish the identity, proof cards, lore pages, campaign pages
-- **Image/stencil/poster workflow:** make icons, posters, flyers, merch mockups, image prompts
-- **Proof log or records table:** track what was made, approved, posted, photographed, or published
-- **Social posting/scheduler:** post proof updates and repeat campaign signals
-- **Telegram/Discord bot:** only if a community exists or needs check-ins/missions
-- **Calendar/check-in system:** daily plan, reminders, weekly review
-- **API/webhook/background job:** needed for true Auto Mode
-
-## Reality
-Manual and guided work can start now. Auto Mode needs connected accounts, API keys, permissions, schedules, and approval.
+## First Setup
+1. Pick the lane: PFP, brand, art/music, local business, website/archive, or automation.
+2. Make one asset: bio, proof card, image prompt, poster copy, campaign note, or page draft.
+3. Save proof: screenshot, link, file, commit, photo, or approved decision.
+4. Repeat daily until there is enough proof to automate.
 
 ## Next Moves
-- Map my manual daily workflow
+- Show me exactly which AnythingLLM button/tool to use next
 - Map my PFP/character empire tools
 - Map my brand/art/product tools
+- Turn this into a 7-day manual build plan
 - Build the Auto Mode setup list`,
 };
 

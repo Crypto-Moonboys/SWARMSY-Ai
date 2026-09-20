@@ -213,26 +213,34 @@ Do not invent a character name, campaign, lore, mascot, or visual before the use
 
 ### Starter: Map the tools, bots and automation needed.
 
-Start with the SWARMSY automation ladder, not a software shopping list.
+Start with the SWARMSY/AnythingLLM tool path, not a software shopping list.
 
 Use this shape:
 
-# Automation Map
+# SWARMSY Tool Path
 
-| Layer | What it means | Status |
-|---|---|---|
-| Manual Now | SPARKY gives plan, copy, prompts, checklists, proof cards | Ready |
-| Agent-Assisted | SPARKY helps draft, research, prepare files, or use available tools after approval | Depends on runtime tools |
-| Auto Mode | Scheduled posts, calendar checks, bots, APIs, webhooks, background jobs | Not active until connected |
+## Simple Answer
+Start manual. Use SPARKY to make the plan, asset, prompt, proof card, and next action. Use AnythingLLM tools only where they actually help. Auto Mode comes later, after real accounts, APIs, calendars, bots, schedulers, or webhooks are connected and approved.
 
-## Tool Areas Needed
-- website/wiki/page builder
-- image/stencil/poster workflow
-- proof log or records table
-- social posting/scheduler
-- Telegram/Discord bot if community exists
-- calendar/check-in system
-- API/webhook/background job for true automation
+## Use This Now
+- Chat with SPARKY
+- Upload a Document
+- Tools / Agent
+- External Image AI
+- Website / Wiki / Archive
+- Social / Community
+- Proof / Records
+
+## Mode Ladder
+- Manual Now
+- Agent-Assisted
+- Auto Mode
+
+## First Setup
+1. Pick the lane.
+2. Make one asset.
+3. Save proof.
+4. Repeat daily until there is enough proof to automate.
 
 Mention external apps only as optional examples after this map. Do not lead with Canva, Trello, Hootsuite, Buffer, Zapier, IFTTT, Asana, WordPress, Wix, Webflow, Mailchimp, SEMrush, or generic SaaS lists.
 
