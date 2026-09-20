@@ -34,41 +34,41 @@ export default function Sidebar() {
       <style>{`
         @keyframes swarmsySidebarDotField {
           0%, 100% {
-            opacity: 0.38;
-            transform: translate3d(-18px, -14px, 0) scale(1);
+            opacity: 0.58;
+            transform: translate3d(-22px, -18px, 0) scale(1);
           }
           35% {
-            opacity: 0.72;
-            transform: translate3d(22px, 12px, 0) scale(1.08);
+            opacity: 0.95;
+            transform: translate3d(28px, 18px, 0) scale(1.12);
           }
           70% {
-            opacity: 0.5;
-            transform: translate3d(-8px, 28px, 0) scale(0.98);
+            opacity: 0.72;
+            transform: translate3d(-12px, 34px, 0) scale(1.02);
           }
         }
 
         @keyframes swarmsySidebarGlowField {
           0%, 100% {
-            opacity: 0.45;
-            transform: translate3d(-18px, 18px, 0) scale(1);
+            opacity: 0.72;
+            transform: translate3d(-28px, 24px, 0) scale(1);
           }
           45% {
-            opacity: 0.72;
-            transform: translate3d(22px, -24px, 0) scale(1.1);
+            opacity: 1;
+            transform: translate3d(30px, -32px, 0) scale(1.18);
           }
           75% {
-            opacity: 0.56;
-            transform: translate3d(8px, 18px, 0) scale(0.95);
+            opacity: 0.82;
+            transform: translate3d(10px, 24px, 0) scale(1.02);
           }
         }
 
         .swarmsy-sidebar-shell {
           background:
-            radial-gradient(circle at 16% 12%, rgba(255, 255, 255, 0.09), transparent 24%),
-            radial-gradient(circle at 78% 70%, rgba(255, 255, 255, 0.07), transparent 28%),
-            linear-gradient(145deg, #050505 0%, #101010 48%, #050505 100%);
+            radial-gradient(circle at 18% 16%, rgba(255, 255, 255, 0.16), transparent 28%),
+            radial-gradient(circle at 74% 68%, rgba(255, 255, 255, 0.12), transparent 34%),
+            linear-gradient(145deg, #030303 0%, #151515 52%, #050505 100%);
           isolation: isolate;
-          box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05), inset 0 0 44px rgba(255,255,255,0.035);
+          box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08), inset 0 0 72px rgba(255,255,255,0.075);
         }
 
         .swarmsy-sidebar-shell::before,
@@ -78,34 +78,36 @@ export default function Sidebar() {
           inset: -18%;
           pointer-events: none;
           z-index: 0;
+          mix-blend-mode: screen;
         }
 
         .swarmsy-sidebar-shell::before {
           background-image:
-            radial-gradient(circle, rgba(255, 255, 255, 0.42) 1px, transparent 1.8px),
-            radial-gradient(circle, rgba(255, 255, 255, 0.18) 1px, transparent 2px);
+            radial-gradient(circle, rgba(255, 255, 255, 0.72) 1.2px, transparent 2.2px),
+            radial-gradient(circle, rgba(255, 255, 255, 0.34) 1.4px, transparent 2.6px);
           background-position: 0 0, 7px 7px;
-          background-size: 14px 14px, 28px 28px;
-          animation: swarmsySidebarDotField 24s ease-in-out infinite;
+          background-size: 13px 13px, 29px 29px;
+          animation: swarmsySidebarDotField 18s ease-in-out infinite;
         }
 
         .swarmsy-sidebar-shell::after {
           background:
-            radial-gradient(circle at 28% 26%, rgba(255, 255, 255, 0.11), transparent 25%),
-            radial-gradient(circle at 76% 38%, rgba(255, 255, 255, 0.08), transparent 26%),
-            radial-gradient(circle at 42% 82%, rgba(255, 255, 255, 0.06), transparent 28%);
-          filter: blur(12px);
-          animation: swarmsySidebarGlowField 18s ease-in-out infinite;
+            radial-gradient(circle at 28% 26%, rgba(255, 255, 255, 0.26), transparent 24%),
+            radial-gradient(circle at 78% 36%, rgba(255, 255, 255, 0.18), transparent 28%),
+            radial-gradient(circle at 42% 82%, rgba(255, 255, 255, 0.16), transparent 32%),
+            radial-gradient(circle at 12% 66%, rgba(255, 255, 255, 0.14), transparent 24%);
+          filter: blur(10px);
+          animation: swarmsySidebarGlowField 13s ease-in-out infinite;
         }
 
         body.swarmsy-thinking .swarmsy-sidebar-shell::before {
-          animation-duration: 5s;
-          opacity: 0.9;
+          animation-duration: 3.6s;
+          opacity: 1;
         }
 
         body.swarmsy-thinking .swarmsy-sidebar-shell::after {
-          animation-duration: 4s;
-          opacity: 0.88;
+          animation-duration: 2.8s;
+          opacity: 1;
         }
       `}</style>
       <div
