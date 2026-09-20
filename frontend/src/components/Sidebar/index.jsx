@@ -34,16 +34,16 @@ export default function Sidebar() {
       <style>{`
         @keyframes swarmsySidebarDotField {
           0%, 100% {
-            opacity: 0.28;
-            transform: translate3d(-14px, -10px, 0) scale(1);
+            opacity: 0.38;
+            transform: translate3d(-18px, -14px, 0) scale(1);
           }
           35% {
-            opacity: 0.52;
-            transform: translate3d(18px, 10px, 0) scale(1.08);
+            opacity: 0.72;
+            transform: translate3d(22px, 12px, 0) scale(1.08);
           }
           70% {
-            opacity: 0.38;
-            transform: translate3d(-6px, 24px, 0) scale(0.96);
+            opacity: 0.5;
+            transform: translate3d(-8px, 28px, 0) scale(0.98);
           }
         }
 
@@ -64,10 +64,11 @@ export default function Sidebar() {
 
         .swarmsy-sidebar-shell {
           background:
-            radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.08), transparent 28%),
-            radial-gradient(circle at 78% 72%, rgba(255, 255, 255, 0.05), transparent 30%),
-            #050505;
+            radial-gradient(circle at 16% 12%, rgba(255, 255, 255, 0.09), transparent 24%),
+            radial-gradient(circle at 78% 70%, rgba(255, 255, 255, 0.07), transparent 28%),
+            linear-gradient(145deg, #050505 0%, #101010 48%, #050505 100%);
           isolation: isolate;
+          box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05), inset 0 0 44px rgba(255,255,255,0.035);
         }
 
         .swarmsy-sidebar-shell::before,
@@ -80,16 +81,11 @@ export default function Sidebar() {
         }
 
         .swarmsy-sidebar-shell::before {
-          background-image: radial-gradient(circle, rgba(255, 255, 255, 0.34) 1px, transparent 1.8px);
-          background-size: 15px 15px;
-          -webkit-mask-image:
-            radial-gradient(circle at 38% 22%, black 0 18%, transparent 42%),
-            radial-gradient(circle at 72% 64%, black 0 14%, transparent 36%),
-            radial-gradient(circle at 24% 82%, black 0 12%, transparent 32%);
-          mask-image:
-            radial-gradient(circle at 38% 22%, black 0 18%, transparent 42%),
-            radial-gradient(circle at 72% 64%, black 0 14%, transparent 36%),
-            radial-gradient(circle at 24% 82%, black 0 12%, transparent 32%);
+          background-image:
+            radial-gradient(circle, rgba(255, 255, 255, 0.42) 1px, transparent 1.8px),
+            radial-gradient(circle, rgba(255, 255, 255, 0.18) 1px, transparent 2px);
+          background-position: 0 0, 7px 7px;
+          background-size: 14px 14px, 28px 28px;
           animation: swarmsySidebarDotField 24s ease-in-out infinite;
         }
 
@@ -103,12 +99,12 @@ export default function Sidebar() {
         }
 
         body.swarmsy-thinking .swarmsy-sidebar-shell::before {
-          animation-duration: 7s;
-          opacity: 0.72;
+          animation-duration: 5s;
+          opacity: 0.9;
         }
 
         body.swarmsy-thinking .swarmsy-sidebar-shell::after {
-          animation-duration: 5s;
+          animation-duration: 4s;
           opacity: 0.88;
         }
       `}</style>
