@@ -58,7 +58,7 @@ function HodlWarriorsButton() {
             backgroundRepeat: "no-repeat",
             backgroundSize: "contain",
             borderRadius: 0,
-            filter: "invert(1)",
+            filter: "invert(1) hue-rotate(180deg) saturate(1.8)",
             mixBlendMode: "normal",
           }}
         />
