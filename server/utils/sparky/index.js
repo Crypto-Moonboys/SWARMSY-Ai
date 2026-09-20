@@ -97,6 +97,13 @@ const SPARKY_CORE_PACKS = [
       "Runs daily project-management, empire-building lanes, operating modes, check-ins, automation readiness, and tool/setup planning.",
   },
   {
+    id: "creator-empire-for-beginners",
+    filename: "creator-empire-for-beginners.md",
+    title: "Creator Empire For Beginners",
+    summary:
+      "Keeps SPARKY beginner-friendly by turning no-idea users into daily creators through lane, message, mascot, world, look, proof, website, following, and one next action.",
+  },
+  {
     id: "crypto-moonboys-latest-canon-brand-vision",
     filename: "crypto-moonboys-latest-canon-brand-vision.md",
     title: "Crypto Moonboys Latest Canon And Brand Vision",
