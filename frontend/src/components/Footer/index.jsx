@@ -18,6 +18,11 @@ import { Tooltip } from "react-tooltip";
 import { Link } from "react-router-dom";
 
 export const MAX_ICONS = 3;
+const SWARMSY_GITHUB_URL = "https://github.com/Crypto-Moonboys/SWARMSY-Ai";
+const HODL_WARRIORS_CHAT_URL = "https://t.me/gkniftyheads/46556";
+const HODL_WARRIORS_BUTTON_URL =
+  "https://raw.githubusercontent.com/Crypto-Moonboys/SWARMSY-Ai/master/images/HODL%20WARRIORS%20BUTTON.png";
+
 export const ICON_COMPONENTS = {
   BookOpen: BookOpen,
   DiscordLogo: DiscordLogo,
@@ -29,6 +34,29 @@ export const ICON_COMPONENTS = {
   Briefcase: Briefcase,
   Info: Info,
 };
+
+function HodlWarriorsButton() {
+  return (
+    <div className="flex w-fit">
+      <a
+        href={HODL_WARRIORS_CHAT_URL}
+        target="_blank"
+        rel="noreferrer"
+        className="transition-all duration-300 p-2 rounded-full bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover"
+        aria-label="HODL Warriors Chat"
+        data-tooltip-id="footer-item"
+        data-tooltip-content="HODL WARRIORS CHAT"
+      >
+        <img
+          src={HODL_WARRIORS_BUTTON_URL}
+          alt=""
+          aria-hidden="true"
+          className="h-5 w-5 rounded-full object-cover"
+        />
+      </a>
+    </div>
+  );
+}
 
 export default function Footer() {
   const [footerData, setFooterData] = useState(false);
@@ -51,7 +79,7 @@ export default function Footer() {
         <div className="flex space-x-4">
           <div className="flex w-fit">
             <Link
-              to={paths.github()}
+              to={SWARMSY_GITHUB_URL}
               target="_blank"
               rel="noreferrer"
               className="transition-all duration-300 p-2 rounded-full bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover"
@@ -97,6 +125,7 @@ export default function Footer() {
               />
             </Link>
           </div>
+          <HodlWarriorsButton />
           {!isMobile && <SettingsButton />}
         </div>
         <Tooltip
@@ -115,10 +144,20 @@ export default function Footer() {
         {footerData.map((item, index) => (
           <a
             key={index}
-            href={item.url}
+            href={
+              index === 0 && item.icon === "GithubLogo"
+                ? SWARMSY_GITHUB_URL
+                : item.url
+            }
             target="_blank"
             rel="noreferrer"
             className="transition-all duration-300 flex w-fit h-fit p-2 p-2 rounded-full bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover hover:border-slate-100"
+            data-tooltip-id="footer-item"
+            data-tooltip-content={
+              index === 0 && item.icon === "GithubLogo"
+                ? "View Source Code"
+                : item.url
+            }
           >
             {React.createElement(
               ICON_COMPONENTS?.[item.icon] ?? ICON_COMPONENTS.Info,
@@ -130,6 +169,7 @@ export default function Footer() {
             )}
           </a>
         ))}
+        <HodlWarriorsButton />
         {!isMobile && <SettingsButton />}
       </div>
       <Tooltip
