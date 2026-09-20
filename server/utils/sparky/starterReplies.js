@@ -105,11 +105,17 @@ Once I know the lane, I will build the pack:
 
   "Map the tools, bots and automation needed.": `# Automation Map
 
-| Layer | What it means | Status |
-|---|---|---|
-| Manual Now | I give the plan, copy, prompts, checklists, proof cards, and next actions | Ready |
-| Agent-Assisted | I help draft, research, prepare files, or use available tools after approval | Depends on runtime tools |
-| Auto Mode | Scheduled posts, calendar checks, bots, APIs, webhooks, background jobs | Not active until connected |
+## Manual Now
+- **What it means:** I give the plan, copy, prompts, checklists, proof cards, and next actions.
+- **Status:** Ready.
+
+## Agent-Assisted
+- **What it means:** I help draft, research, prepare files, or use available tools after approval.
+- **Status:** Depends on runtime tools.
+
+## Auto Mode
+- **What it means:** Scheduled posts, calendar checks, bots, APIs, webhooks, and background jobs.
+- **Status:** Not active until connected.
 
 ## Tool Areas Needed
 - **Website/wiki/page builder:** publish the identity, proof cards, lore pages, campaign pages
