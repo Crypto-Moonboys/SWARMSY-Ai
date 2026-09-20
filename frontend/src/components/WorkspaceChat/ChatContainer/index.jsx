@@ -42,14 +42,113 @@ import SparkyRecordsSidebar from "./SparkyRecordsSidebar";
 const SPARKY_FLOATING_CLIP_URL =
   "https://raw.githubusercontent.com/Crypto-Moonboys/SWARMSY-Ai/master/images/SPARKY%20FLOATING%20CLIP.png";
 
-function SparkyFloatingClip() {
+function getSparkyForwardPrompts(latestAssistantText = "") {
+  const text = String(latestAssistantText || "").toLowerCase();
+
+  if (text.includes("automation") || text.includes("bot") || text.includes("api") || text.includes("calendar")) {
+    return [
+      "Map this into Manual Now, Agent-Assisted Next, and Auto Mode later.",
+      "Give me the exact tools, accounts, APIs, and permissions needed for this.",
+      "Turn this into a 7-day automation setup plan with one simple task per day.",
+      "Create the safest no-code version first, then the real auto-mode version.",
+    ];
+  }
+
+  if (text.includes("pfp") || text.includes("moonboy") || text.includes("avatar") || text.includes("faction") || text.includes("lore")) {
+    return [
+      "Ask me for the missing PFP character details before inventing traits.",
+      "Build the full Moonboy/PFP bio from the known details only.",
+      "Turn this character into a stencil, poster, merch, and local campaign pack.",
+      "Give me 3 stronger identity routes and pick the best one.",
+    ];
+  }
+
+  if (text.includes("image") || text.includes("poster") || text.includes("icon") || text.includes("stencil") || text.includes("logo") || text.includes("mascot")) {
+    return [
+      "Create a copy/paste prompt for GPT or Grok image generation from this idea.",
+      "Make this visual idea work as a stencil, poster, sticker, and merch mark.",
+      "Give me a cleaner production brief: subject, pose, colours, symbols, and avoid list.",
+      "Make it more street-level, bold, local-first, and easy to recognise.",
+    ];
+  }
+
+  if (text.includes("daily") || text.includes("proof") || text.includes("local") || text.includes("campaign")) {
+    return [
+      "Turn this into today's Street-To-Digital Proof Card.",
+      "Give me the first 3 actions I can actually do today.",
+      "Make this local-first: one real-world surface and one digital proof post.",
+      "Simplify this into one mission, one asset, one proof, and one next move.",
+    ];
+  }
+
+  if (text.includes("brand") || text.includes("product") || text.includes("art") || text.includes("music")) {
+    return [
+      "Build the brand identity: name, mission, look, voice, and street signal.",
+      "Turn this into a mascot or mark people can remember locally.",
+      "Create a launch pack: lore hook, poster, merch, campaign, and proof loop.",
+      "Give me 3 bold directions and choose the one with most traction potential.",
+    ];
+  }
+
+  return [
+    "Give me 3 stronger directions and pick the best one.",
+    "Turn this into one clear next step I can do today.",
+    "Make this local-first with a real-world proof and digital proof.",
+    "Ask me the missing details before building the full plan.",
+  ];
+}
+
+function SparkyFloatingClip({ latestAssistantText = "", sendCommand = null }) {
+  const [open, setOpen] = useState(false);
+  const prompts = getSparkyForwardPrompts(latestAssistantText);
+
+  async function usePrompt(prompt) {
+    sendCommand?.({ text: prompt, writeMode: "replace" });
+    try {
+      await navigator.clipboard?.writeText(prompt);
+    } catch {}
+    setOpen(false);
+  }
+
   return (
-    <img
-      src={SPARKY_FLOATING_CLIP_URL}
-      alt=""
-      aria-hidden="true"
-      className="pointer-events-none absolute bottom-[24px] right-[42px] z-10 hidden w-[150px] select-none xl:block 2xl:w-[170px]"
-    />
+    <div className="absolute bottom-[24px] right-[42px] z-20 hidden select-none xl:block">
+      {open && (
+        <div className="absolute bottom-[118px] right-0 w-[330px] rounded-[18px] border border-white/10 bg-zinc-950/95 p-3 text-white shadow-2xl backdrop-blur-md">
+          <div className="mb-2 px-1 text-[11px] font-bold uppercase tracking-[0.18em] text-yellow-300">
+            SPARKY next ideas
+          </div>
+          <div className="flex flex-col gap-2">
+            {prompts.map((prompt) => (
+              <button
+                key={prompt}
+                type="button"
+                onClick={() => usePrompt(prompt)}
+                className="rounded-[10px] border border-white/10 bg-white/5 px-3 py-2 text-left text-sm leading-snug text-white hover:border-yellow-300/60 hover:bg-yellow-300/10"
+              >
+                {prompt}
+              </button>
+            ))}
+          </div>
+          <p className="mt-2 px-1 text-[11px] text-white/45">
+            Click one to copy it and load it into the message box.
+          </p>
+        </div>
+      )}
+
+      <button
+        type="button"
+        onClick={() => setOpen((current) => !current)}
+        aria-label="Open SPARKY next ideas"
+        className="rounded-full border-none bg-transparent p-0 outline-none transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-yellow-300"
+      >
+        <img
+          src={SPARKY_FLOATING_CLIP_URL}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none w-[150px] 2xl:w-[170px]"
+        />
+      </button>
+    </div>
   );
 }
 
@@ -72,6 +171,11 @@ export default function ChatContainer({
 
   const isEmpty =
     chatHistory.length === 0 && !sessionStorage.getItem(PENDING_HOME_MESSAGE);
+  const latestAssistantText =
+    [...chatHistory]
+      .reverse()
+      .find((message) => message.role === "assistant" && !!message.content)
+      ?.content || "";
 
   /**
    * Keep chat history bottom-padding in sync with the prompt input's
@@ -508,7 +612,10 @@ export default function ChatContainer({
                 />
               </div>
             </DnDFileUploaderWrapper>
-            <SparkyFloatingClip />
+            <SparkyFloatingClip
+              latestAssistantText={latestAssistantText}
+              sendCommand={sendCommand}
+            />
             <ChatTooltips />
           </div>
           <MemoriesSidebar workspace={workspace} />
@@ -557,7 +664,10 @@ export default function ChatContainer({
               </div>
             </div>
           </DnDFileUploaderWrapper>
-          <SparkyFloatingClip />
+          <SparkyFloatingClip
+              latestAssistantText={latestAssistantText}
+              sendCommand={sendCommand}
+            />
           <ChatTooltips />
         </div>
         <SourcesSidebar />
