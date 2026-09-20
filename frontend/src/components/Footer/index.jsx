@@ -42,7 +42,7 @@ function HodlWarriorsButton() {
         href={HODL_WARRIORS_CHAT_URL}
         target="_blank"
         rel="noreferrer"
-        className="transition-all duration-300 p-2 rounded-full bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover"
+        className="transition-all duration-300 flex h-9 w-9 items-center justify-center bg-transparent hover:scale-105"
         aria-label="HODL Warriors Chat"
         data-tooltip-id="footer-item"
         data-tooltip-content="HODL WARRIORS CHAT"
@@ -51,7 +51,7 @@ function HodlWarriorsButton() {
           src={HODL_WARRIORS_BUTTON_URL}
           alt=""
           aria-hidden="true"
-          className="h-5 w-5 rounded-full object-cover"
+          className="h-9 w-9 object-contain"
         />
       </a>
     </div>
