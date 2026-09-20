@@ -4,6 +4,8 @@
 
 SWARMSY-Ai is a Crypto Moonboys fork of AnythingLLM with a fixed **SPARKY** workspace.
 
+https://cryptomoonboys.com/
+
 SPARKY is the guided project-manager layer for users who do not know what to prompt yet. The current build turns AnythingLLM into a local-first identity, PFP, mascot, street campaign, and daily empire planning assistant, while still using normal AnythingLLM models, tools, retrieval, workspaces, and settings underneath.
 
 The upstream AnythingLLM README is kept below for base product, provider, hosting, and development documentation.
