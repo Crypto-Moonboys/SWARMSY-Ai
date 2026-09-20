@@ -59,8 +59,10 @@ Send:
 Then I will build:
 - street-level identity route
 - mascot/mark/stencil idea
+- simple lore/world hook
 - lawful local activation
 - digital proof loop
+- website/archive route
 - first 3 actions`,
 
   "I have no idea. Build me a local-first direction.": `Here are 3 strong local-first directions. I recommend starting with **Local Wall-To-Web Campaign** because it works for a PFP, artist, product, or brand without needing the whole empire figured out first.
@@ -90,17 +92,27 @@ Then I will build:
 Start with **Local Wall-To-Web Campaign**.
 
 ## First Move
-Answer one line: is this for a PFP/avatar, an artist/music project, a product, a local business, or a brand?`,
+I will keep this simple: answer one line with the lane you want, or say **choose for me**.
+
+Options:
+- PFP/avatar
+- artist/music project
+- brand/product/local business
+- website/archive
+- choose for me`,
 
   "Make a street-level lore, stencil, merch and campaign pack.": `Is this for a **PFP/avatar** or for a **brand/product/art/music project**?
 
 Once I know the lane, I will build the pack:
-- lore hook
+- message
+- mascot/mark/signal
+- lore/world hook
 - stencil/icon idea
 - poster/flyer direction
 - merch surfaces
 - lawful local activation
 - digital proof loop
+- website/archive route
 - first 3 actions`,
 
   "Map the tools, bots and automation needed.": `# Automation Map
