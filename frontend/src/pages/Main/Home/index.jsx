@@ -46,7 +46,7 @@ function getSparkyForwardPrompts(latestAssistantText = "") {
     return [
       "Show me exactly which AnythingLLM button or tool to use next.",
       "Help me choose a lane: PFP, brand, art/music, website, automation, or normal chat.",
-      "Turn a rough idea into a 7-day beginner build path.",
+      "Turn a rough idea into an underground street-to-digital 7-day build path.",
       "Create an external AI prompt for an image, logo, poster, mascot, or mockup.",
       "I need normal AnythingLLM help, not a SWARMSY project flow. Help me with anything.",
     ];
@@ -96,7 +96,7 @@ function getSparkyForwardPrompts(latestAssistantText = "") {
     return [
       "Build the brand identity: name, mission, look, voice, and street signal.",
       "Turn this into a mascot or mark people can remember locally.",
-      "Create a launch pack: lore hook, poster, merch, campaign, and proof loop.",
+      "Create an underground launch pack: lore hook, poster, merch, campaign, and proof loop.",
       "Create the external AI image prompt for the logo, mascot, poster, or mockup.",
       "Turn this brand/project into a 7-day beginner build path.",
     ];
@@ -105,7 +105,7 @@ function getSparkyForwardPrompts(latestAssistantText = "") {
   return [
     "Show me exactly which AnythingLLM button or tool to use next.",
     "Give me 3 stronger directions and pick the best one.",
-    "Turn this into one clear next step I can do today.",
+    "Turn this into one street-to-digital proof step I can do today.",
     "Save this as an idea, approved decision, or proof note.",
     "Create the external AI prompt if this needs an image, logo, poster, or mascot.",
   ];

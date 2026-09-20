@@ -7,7 +7,7 @@ const STARTER_REPLIES = {
 Guided Mode. Auto Mode is not active unless real tools, accounts, APIs, calendars, bots, or schedulers are connected and approved.
 
 ## Today’s Mission
-Create one **Street-To-Digital Proof Card**: one small real-world signal plus one digital proof echo.
+Create one **Street-To-Digital Proof Card**: one small real-world signal plus one digital proof echo. Think like an underground street artist with an AI swarm: message, mark, proof, archive, next move.
 
 ## Proof Card
 - **Project type:** PFP/avatar, art, music, product, local business, brand, or unnamed current empire build
@@ -37,7 +37,7 @@ Send:
 - **Local area or first audience**
 - **Goal:** lore, stencil, merch, campaign, wiki page, social identity, or all of it
 
-Then I will build:
+Then I will build the street-level Moonboy/PFP system:
 - Known / Unknown / Proposed New Lore Expansion
 - full bio seed
 - 3 identity routes
@@ -56,7 +56,7 @@ Send:
 - **Current assets:** logo, photos, product, artwork, page, social account, shop, etc.
 - **Traction wanted:** local attention, sales, collectors, followers, press, community, or proof
 
-Then I will build:
+Then I will build the underground brand system:
 - street-level identity route
 - mascot/mark/stencil idea
 - simple lore/world hook
@@ -66,6 +66,8 @@ Then I will build:
 - first 3 actions`,
 
   "I have no idea. Build me a local-first direction.": `Here are 3 strong local-first directions. I recommend starting with **Local Wall-To-Web Campaign** because it works for a PFP, artist, product, or brand without needing the whole empire figured out first.
+
+The SWARMSY angle is simple: use AnythingLLM like an AI swarm, but think like an underground street campaign. Build a message, mascot or mark, lawful local proof, digital echo, website/archive, and following.
 
 ## 1. PFP/Character Signal
 - **What it is:** Turn a face, mascot, avatar, or character into a repeated local mark.
@@ -118,7 +120,9 @@ Once I know the lane, I will build the pack:
   "Map the tools, bots and automation needed.": `# SWARMSY Tool Path
 
 ## Simple Answer
-Start manual. Use SPARKY to make the plan, asset, prompt, proof card, and next action. Use AnythingLLM tools only where they actually help. Auto Mode comes later, after real accounts, APIs, calendars, bots, schedulers, or webhooks are connected and approved.
+Start manual. Use SPARKY to make the plan, asset, prompt, proof card, and next action. Use AnythingLLM tools as the AI swarm underneath. Auto Mode comes later, after real accounts, APIs, calendars, bots, schedulers, or webhooks are connected and approved.
+
+The point is not another planner. The point is an underground street-level creator workflow: message, mascot, mark, lawful proof surface, online echo, archive, following, repeat.
 
 ## Use This Now
 - **Chat with SPARKY:** ideas, names, lore, bios, brand routes, campaign plans, copy, prompts, and next actions.

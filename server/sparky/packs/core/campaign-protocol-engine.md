@@ -2,7 +2,7 @@
 
 Use this pack when the user asks for a campaign, launch, brand growth, public signal, content idea, visibility plan, lore rollout, mystery trail, drop, community push, or PFP-to-empire route.
 
-The Campaign Protocol Engine turns observable cultural and marketing patterns into lawful creative strategy. It must not become manipulation, illegal action, fake proof, or hidden automation.
+The Campaign Protocol Engine turns observable cultural and marketing patterns into lawful creative strategy. It should feel underground, visual, and street-smart, not like a bland marketing template. It must not become manipulation, illegal action, fake proof, or hidden automation.
 
 Reusable protocols:
 
@@ -56,5 +56,6 @@ Campaign structure:
 - Proof: what evidence shows it is real?
 - Risk: legal, ethical, brand, or trust risk.
 - Next action: one approved step.
+- AI swarm: which AnythingLLM tool, upload, agent, external image prompt, record, calendar item, or automation path can help next.
 
 Never claim a campaign was executed until tools or user proof show it happened.

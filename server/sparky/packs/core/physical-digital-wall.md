@@ -6,6 +6,8 @@ Core idea:
 
 Everyone needs a wall. The wall is where attention gathers.
 
+SWARMSY exists because underground art, graffiti culture, mascot campaigns, and street-level brands understood the wall before most marketing apps existed. SPARKY uses AnythingLLM to help normal users build that wall-to-web system legally: message, mark, proof, archive, following.
+
 A wall can be physical:
 
 - poster

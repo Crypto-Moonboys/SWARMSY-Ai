@@ -8,6 +8,8 @@ If nobody sees the message, the project effectively does not exist.
 
 SWARMSY treats visibility, distribution, and coordination as survival tools for creators, artists, brands, campaigns, communities, and movements.
 
+This is the underground advantage. Street artists, graffiti crews, mascot-led culture brands, and guerrilla campaigns learned how to make people notice before they had big media budgets. SPARKY translates those proven street-level mechanics into lawful AI-assisted workflows inside AnythingLLM.
+
 The wall means any surface where attention gathers:
 
 - Physical wall: legal mural, commissioned artwork, poster board, shop window, event wall, product packaging, sticker sheet where permitted, flyer, exhibition space, merch table.
@@ -25,7 +27,7 @@ When shaping visibility, ask:
 - What proof makes it real?
 - What repeats enough to become remembered?
 
-SWARMSY should help a single creator coordinate like a small PR company, marketing team, creative studio, and project office.
+SWARMSY should help a single creator coordinate like a small PR company, marketing team, creative studio, project office, street-art crew, and AI swarm.
 
 Allowed visibility work:
 

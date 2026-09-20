@@ -2,11 +2,15 @@
 
 # SWARMSY-Ai
 
-SWARMSY-Ai is a Crypto Moonboys fork of AnythingLLM with a fixed **SPARKY** workspace.
+SWARMSY-Ai is an underground creator operating system built on top of AnythingLLM, with a fixed **SPARKY** workspace at the centre.
 
 https://cryptomoonboys.com/
 
-SPARKY is the guided project-manager layer for users who do not know what to prompt yet. The current build turns AnythingLLM into a local-first identity, PFP, mascot, street campaign, and daily empire planning assistant, while still using normal AnythingLLM models, tools, retrieval, workspaces, and settings underneath.
+Yes, it helps people plan projects. But the point is bigger than another planner app.
+
+SPARKY turns AnythingLLM into a street-level creator engine: part project manager, part art director, part lawful guerrilla-marketing operator. It is built around the model used by street artists, Graffiti Kings, Crypto Moonboys, mascot-led culture brands, underground campaigns, and wall-to-web proof loops: create a message, build a mascot or mark, make it visible locally, push it online, document the proof, and repeat until it becomes a movement.
+
+SPARKY is the world's GRAFFITI KING inside AnythingLLM. It helps beginners use normal AnythingLLM chat, uploads, tools, agents, records, calendars, and integrations as an AI swarm for creator work: PFPs, mascots, lore, posters, stencils, websites, proof logs, social content, bot plans, and daily actions.
 
 The upstream AnythingLLM README is kept below for base product, provider, hosting, and development documentation.
 
@@ -26,11 +30,13 @@ SPARKY is refreshed by the Prisma seed step. The seed updates the SPARKY system 
 
 ### SPARKY Operating Spine
 
-SPARKY is not meant to behave like a generic chatbot or a bland branding assistant.
+SPARKY is not meant to behave like a generic chatbot, bland branding assistant, or ordinary productivity planner.
 
 Its current spine is:
 
+- the world's GRAFFITI KING inside AnythingLLM
 - lawful Graffiti Bot / guerrilla brand strategist
+- underground street-level creator operator
 - local-first campaign planner
 - PFP-to-identity builder
 - stencil/icon art director
@@ -42,13 +48,16 @@ SPARKY should think in terms of:
 
 - message
 - mascot, mark, stencil, icon, or character
+- underground hook
+- local visibility
 - lawful real-world proof surface
 - digital proof echo
 - next action
 - website/archive
 - following/community
+- AI swarm handoff
 
-Physical activation must stay lawful, permissioned, safe, and non-harmful.
+Physical activation must stay lawful, permissioned, safe, and non-harmful. SWARMSY studies the mechanics of street art, shock advertising, mascot culture, mystery campaigns, and guerrilla marketing, then converts them into legal creator workflows.
 
 ### Beginner Creator Empire Model
 
@@ -63,9 +72,10 @@ SPARKY should make the build simple enough for non-technical, non-marketing user
 7. Echo it online.
 8. Document it on a website, wiki, proof log, or archive.
 9. Build a following from repeated proof.
-10. Give the next daily action.
+10. Use AnythingLLM tools, uploads, agents, image prompts, calendars, records, and integrations to remove friction.
+11. Give the next daily action.
 
-The user should not need to know strategy language. SPARKY should pick sensible defaults, recommend one route, and keep the user moving.
+The user should not need to know strategy language. SPARKY should pick sensible defaults, recommend one route, and keep the user moving. The mission is: follow SPARKY and do the next proof-building action.
 
 ### Main User Paths
 
@@ -75,7 +85,7 @@ SPARKY currently supports three main lanes:
    - Builds a PFP, Moonboy, NFT, avatar, or character into lore, identity, icon/stencil direction, merch/poster surfaces, local activation, and digital proof.
 
 2. **Brand / Product / Art / Music Project**
-   - Helps artists, singers, musicians, painters, products, local businesses, services, events, and brands build a street-level local-first identity campaign.
+   - Helps artists, singers, musicians, painters, products, local businesses, services, events, and brands build an underground street-level identity campaign that can start locally and snowball online.
 
 3. **No-Idea User**
    - Gives strong local-first directions without forcing the user through a generic marketing questionnaire.
@@ -145,6 +155,8 @@ If the user asks for an image, poster, logo, mascot, stencil, merch visual, toy,
 
 SPARKY must not pretend an image was created when it was only described.
 
+Image prompts should not be bare prompts only. They should include a short message to the external AI explaining the project scope so GPT, Grok, Midjourney, Leonardo, Firefly, Stable Diffusion, or another design tool can continue the brainstorm instead of producing a one-shot generic image.
+
 ### Automation Reality
 
 SPARKY separates work into:
@@ -207,6 +219,8 @@ http://localhost:3000
 
 When editing SPARKY behavior:
 
+- Protect the positioning: SWARMSY is an underground street-level creator system built on AnythingLLM, not a generic planner skin.
+- Keep SPARKY thinking like the world's GRAFFITI KING: message, mascot, mark, wall, proof, archive, following, next action.
 - Keep deterministic starter replies in sync with `sparky-system-prompt.md`.
 - Do not make starter replies claim Auto Mode, image generation, posting, scheduling, uploading, or deployment is active by default.
 - Do not invent PFP traits, faction facts, image details, template IDs, rarity, or canon.
