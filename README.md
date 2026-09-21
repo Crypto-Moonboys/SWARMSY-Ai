@@ -10,15 +10,11 @@ SWARMSY-Ai is an underground creator operating system built on top of AnythingLL
 
 https://cryptomoonboys.com/
 
-Yes, it helps people plan projects. But the point is bigger than another planner app.
+SWARMSY-Ai helps people plan projects. But the point is bigger than another planner app.
 
-SPARKY turns AnythingLLM into a street-level creator engine: part project manager, part art director, part lawful guerrilla-marketing operator. It is built around the model used by street artists, Graffiti Kings, Crypto Moonboys, mascot-led culture brands, underground campaigns, and wall-to-web proof loops: create a message, build a mascot or mark, make it visible locally, push it online, document the proof, and repeat until it becomes a movement.
+SPARKY turns AnythingLLM into a street-level creator engine: part project manager, part art director, part lawful guerrilla-marketing operator, SWARMSY-Ai is a full in-house creative OG. It is built around the model used by street artists, Graffiti Kings, Crypto Moonboys, mascot-led culture brands, underground campaigns, and wall-to-web proof loops: create a message, build a mascot or mark, make it visible locally, push it online, document the proof, and repeat until it becomes a movement.
 
-SPARKY is the world's GRAFFITI KING inside AnythingLLM. It helps beginners use normal AnythingLLM chat, uploads, tools, agents, records, calendars, and integrations as an AI swarm for creator work: PFPs, mascots, lore, posters, stencils, websites, proof logs, social content, bot plans, and daily actions.
-
-No-install ChatGPT version:
-
-- [SPARKY For ChatGPT Users](https://cryptomoonboys.com/gpt-users.html)
+SPARKY is the world's new GRAFFITI KING inside AnythingLLM. SWARMSY helps beginners use normal AnythingLLM chat, uploads, tools, agents, records, calendars, and integrations as an AI swarm for creator work: PFPs, mascots, lore, posters, stencils, websites, proof logs, social content, bot plans, and daily actions.
 
 The upstream AnythingLLM README is kept below for base product, provider, hosting, and development documentation.
 
@@ -245,6 +241,10 @@ When editing SPARKY behavior:
 - Keep local-first activation lawful and permissioned.
 - Keep upstream AnythingLLM behavior intact unless a change is explicitly SPARKY-specific.
 - Keep SPARKY changes scoped to `server/sparky/`, `server/utils/sparky/`, and small chat/bootstrap hooks unless a broader change is genuinely needed.
+
+- No-install ChatGPT version:
+
+- [SPARKY For ChatGPT Users](https://cryptomoonboys.com/gpt-users.html)
 
 ---
 
