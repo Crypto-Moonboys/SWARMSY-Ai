@@ -284,8 +284,13 @@ function isSparkyWorkspaceSlug(slug) {
 }
 
 function isCanonicalSparkyWorkspace(workspace = null) {
-  if (!workspace || workspace.slug !== SPARKY_WORKSPACE_SLUG) return false;
-  return String(workspace.name || "").trim() === SPARKY_WORKSPACE_NAME;
+  // The persisted database flag is the sole ownership marker. A user-created
+  // workspace is never official merely because its name and slug match.
+  return (
+    !!workspace &&
+    workspace.slug === SPARKY_WORKSPACE_SLUG &&
+    workspace.isCanonicalSparky === true
+  );
 }
 
 function suggestedMessagesNeedRefresh(existingMessages = []) {
@@ -381,21 +386,39 @@ async function ensureSparkyWorkspace() {
     };
   }
 
-  // TODO: reserve/protect the SPARKY slug so user-created workspaces cannot
-  // collide with this identity in future releases.
+  // The unique slug is reserved by fresh creation; an existing unmarked row
+  // never receives canonical ownership through name or prompt matching.
   const { workspace, message } = await Workspace.new(template.name, null, {
     chatMode: template.chatMode,
     openAiPrompt: template.openAiPrompt,
   });
 
-  await seedSparkyStarterSuggestedMessages(workspace);
+  // Workspace.new may generate a different slug if another process/user
+  // claimed "sparky" concurrently. Never promote such a workspace.
+  if (!workspace || workspace.slug !== template.slug || !workspace.id) {
+    return {
+      workspace: null,
+      error: message || "SPARKY workspace could not be created with the reserved slug.",
+      collision: true,
+      created: false,
+      message: "SPARKY identity was not claimed; review workspace ownership.",
+    };
+  }
 
+  // The only automatic claim is immediately after a successful fresh creation.
+  // Existing rows (including exact-name collisions) remain untouched until an
+  // administrator explicitly claims the verified workspace ID.
+  const canonicalWorkspace = await prisma.workspaces.update({
+    where: { id: workspace.id },
+    data: { isCanonicalSparky: true },
+  });
+  await seedSparkyStarterSuggestedMessages(canonicalWorkspace);
   return {
-    workspace,
-    error: message,
+    workspace: canonicalWorkspace,
+    error: null,
     collision: false,
-    created: !!workspace,
-    message,
+    created: true,
+    message: "SPARKY canonical workspace created and claimed.",
   };
 }
 
