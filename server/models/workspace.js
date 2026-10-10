@@ -9,7 +9,6 @@ const { PromptHistory } = require("./promptHistory");
 const { SystemSettings } = require("./systemSettings");
 const {
   SPARKY_WORKSPACE_SLUG,
-  getSparkySystemPrompt,
   isCanonicalSparkyWorkspace,
 } = require("../utils/sparky");
 
@@ -352,8 +351,7 @@ const Workspace = {
                 },
                 {
                   slug: SPARKY_WORKSPACE_SLUG,
-                  name: "SPARKY",
-                  openAiPrompt: getSparkySystemPrompt(),
+                  isCanonicalSparky: true,
                 },
               ],
             },
@@ -486,8 +484,7 @@ const Workspace = {
                 },
                 {
                   slug: SPARKY_WORKSPACE_SLUG,
-                  name: "SPARKY",
-                  openAiPrompt: getSparkySystemPrompt(),
+                  isCanonicalSparky: true,
                 },
               ],
             },
