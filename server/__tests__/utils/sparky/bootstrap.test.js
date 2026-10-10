@@ -330,8 +330,9 @@ describe("SPARKY bootstrap foundation", () => {
     expect(Workspace.update).not.toHaveBeenCalled();
     expect(prisma.workspaces.update).not.toHaveBeenCalled();
     expect(WorkspaceSuggestedMessages.saveAll).not.toHaveBeenCalled();
+    // The exact system prompt may match, but this is still NOT canonical.
     expect(promptHasSparkyCoreIdentity(existingWorkspace.openAiPrompt)).toBe(
-      false
+      true
     );
     expect(result.workspace).toBe(existingWorkspace);
     expect(result.collision).toBe(true);
