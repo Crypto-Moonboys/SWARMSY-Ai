@@ -310,7 +310,7 @@ describe("SPARKY v1 normal-user journey sandbox", () => {
     expect(workspaceModel).toContain("workspace_users");
     expect(workspaceModel).toContain(`slug: SPARKY_WORKSPACE_SLUG`);
     expect(workspaceModel).toContain("isCanonicalSparky: true");
-    expect(workspaceModel).toContain("openAiPrompt: getSparkySystemPrompt()");
+    expect(workspaceModel).not.toContain("openAiPrompt: getSparkySystemPrompt()");
     expect(workspacesEndpoint).toContain("flexUserRoleValid([ROLES.all])");
     expect(workspacesEndpoint).toContain(
       '"/workspace/:slug/sparky-truths"'
