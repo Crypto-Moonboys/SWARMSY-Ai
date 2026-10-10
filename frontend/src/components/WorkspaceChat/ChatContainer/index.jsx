@@ -61,7 +61,12 @@ function getSparkyForwardPrompts(latestAssistantText = "") {
     ];
   }
 
-  if (text.includes("automation") || text.includes("bot") || text.includes("api") || text.includes("calendar")) {
+  if (
+    text.includes("automation") ||
+    text.includes("bot") ||
+    text.includes("api") ||
+    text.includes("calendar")
+  ) {
     return [
       "Show me the exact AnythingLLM tool path before any automation setup.",
       "Map this into Manual Now, Agent-Assisted Next, and Auto Mode later.",
@@ -71,7 +76,13 @@ function getSparkyForwardPrompts(latestAssistantText = "") {
     ];
   }
 
-  if (text.includes("pfp") || text.includes("moonboy") || text.includes("avatar") || text.includes("faction") || text.includes("lore")) {
+  if (
+    text.includes("pfp") ||
+    text.includes("moonboy") ||
+    text.includes("avatar") ||
+    text.includes("faction") ||
+    text.includes("lore")
+  ) {
     return [
       "Ask me for the missing PFP character details before inventing traits.",
       "Build the full Moonboy/PFP bio from the known details only.",
@@ -81,7 +92,14 @@ function getSparkyForwardPrompts(latestAssistantText = "") {
     ];
   }
 
-  if (text.includes("image") || text.includes("poster") || text.includes("icon") || text.includes("stencil") || text.includes("logo") || text.includes("mascot")) {
+  if (
+    text.includes("image") ||
+    text.includes("poster") ||
+    text.includes("icon") ||
+    text.includes("stencil") ||
+    text.includes("logo") ||
+    text.includes("mascot")
+  ) {
     return [
       "Create the full GPT/Grok image handoff prompt and tell the new AI the scope.",
       "Make this visual idea work as a stencil, poster, sticker, and merch mark.",
@@ -91,7 +109,12 @@ function getSparkyForwardPrompts(latestAssistantText = "") {
     ];
   }
 
-  if (text.includes("daily") || text.includes("proof") || text.includes("local") || text.includes("campaign")) {
+  if (
+    text.includes("daily") ||
+    text.includes("proof") ||
+    text.includes("local") ||
+    text.includes("campaign")
+  ) {
     return [
       "Turn this into today's Street-To-Digital Proof Card.",
       "Show me exactly what to do, click, upload, save, or post next.",
@@ -101,7 +124,12 @@ function getSparkyForwardPrompts(latestAssistantText = "") {
     ];
   }
 
-  if (text.includes("brand") || text.includes("product") || text.includes("art") || text.includes("music")) {
+  if (
+    text.includes("brand") ||
+    text.includes("product") ||
+    text.includes("art") ||
+    text.includes("music")
+  ) {
     return [
       "Build the brand identity: name, mission, look, voice, and street signal.",
       "Turn this into a mascot or mark people can remember locally.",
@@ -131,7 +159,7 @@ function SparkyFloatingClip({
   const prompts = getSparkyForwardPrompts(latestAssistantText);
   const showRecordsAction = isCanonicalSparkyWorkspace(workspace);
 
-  async function usePrompt(prompt) {
+  async function sendPrompt(prompt) {
     sendCommand?.({ text: prompt, writeMode: "replace" });
     try {
       await navigator.clipboard?.writeText(prompt);
@@ -161,61 +189,61 @@ function SparkyFloatingClip({
         }
       `}</style>
       <div className="absolute bottom-[24px] right-[42px] z-20 hidden select-none xl:block">
-      {open && (
-        <div className="absolute bottom-[118px] right-0 w-[330px] rounded-[18px] border border-white/10 bg-zinc-950/95 p-3 text-white shadow-2xl backdrop-blur-md">
-          <div className="mb-2 px-1 text-[11px] font-bold uppercase tracking-[0.18em] text-yellow-300">
-            SPARKY wider ideas
-          </div>
-          <div className="flex flex-col gap-2">
-            {prompts.map((prompt) => (
+        {open && (
+          <div className="absolute bottom-[118px] right-0 w-[330px] rounded-[18px] border border-white/10 bg-zinc-950/95 p-3 text-white shadow-2xl backdrop-blur-md">
+            <div className="mb-2 px-1 text-[11px] font-bold uppercase tracking-[0.18em] text-yellow-300">
+              SPARKY wider ideas
+            </div>
+            <div className="flex flex-col gap-2">
+              {prompts.map((prompt) => (
+                <button
+                  key={prompt}
+                  type="button"
+                  onClick={() => sendPrompt(prompt)}
+                  className="rounded-[10px] border border-white/10 bg-white/5 px-3 py-2 text-left text-sm leading-snug text-white hover:border-yellow-300/60 hover:bg-yellow-300/10"
+                >
+                  {prompt}
+                </button>
+              ))}
+            </div>
+            {showRecordsAction && (
               <button
-                key={prompt}
                 type="button"
-                onClick={() => usePrompt(prompt)}
-                className="rounded-[10px] border border-white/10 bg-white/5 px-3 py-2 text-left text-sm leading-snug text-white hover:border-yellow-300/60 hover:bg-yellow-300/10"
+                onClick={openCalendar}
+                className="mt-2 w-full rounded-[10px] border border-yellow-300/30 bg-yellow-300/10 px-3 py-2 text-left text-sm font-semibold leading-snug text-yellow-100 hover:border-yellow-300/70 hover:bg-yellow-300/15"
               >
-                {prompt}
+                Open Workflow Calendar
               </button>
-            ))}
+            )}
+            {showRecordsAction && (
+              <button
+                type="button"
+                onClick={openRecords}
+                className="mt-2 w-full rounded-[10px] border border-yellow-300/30 bg-yellow-300/10 px-3 py-2 text-left text-sm font-semibold leading-snug text-yellow-100 hover:border-yellow-300/70 hover:bg-yellow-300/15"
+              >
+                Open SPARKY Records / Proof
+              </button>
+            )}
+            <p className="mt-2 px-1 text-[11px] text-white/45">
+              Click one to load a wider helper prompt into the message box.
+            </p>
           </div>
-          {showRecordsAction && (
-            <button
-              type="button"
-              onClick={openCalendar}
-              className="mt-2 w-full rounded-[10px] border border-yellow-300/30 bg-yellow-300/10 px-3 py-2 text-left text-sm font-semibold leading-snug text-yellow-100 hover:border-yellow-300/70 hover:bg-yellow-300/15"
-            >
-              Open Workflow Calendar
-            </button>
-          )}
-          {showRecordsAction && (
-            <button
-              type="button"
-              onClick={openRecords}
-              className="mt-2 w-full rounded-[10px] border border-yellow-300/30 bg-yellow-300/10 px-3 py-2 text-left text-sm font-semibold leading-snug text-yellow-100 hover:border-yellow-300/70 hover:bg-yellow-300/15"
-            >
-              Open SPARKY Records / Proof
-            </button>
-          )}
-          <p className="mt-2 px-1 text-[11px] text-white/45">
-            Click one to load a wider helper prompt into the message box.
-          </p>
-        </div>
-      )}
+        )}
 
-      <button
-        type="button"
-        onClick={() => setOpen((current) => !current)}
-        aria-label="Open SPARKY next ideas"
-        className="rounded-full border-none bg-transparent p-0 outline-none transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-yellow-300"
-      >
-        <img
-          src={SPARKY_FLOATING_CLIP_URL}
-          alt=""
-          aria-hidden="true"
-          className="pointer-events-none w-[150px] 2xl:w-[170px]"
-          style={{ animation: "sparkyBeeFlight 7.5s ease-in-out infinite" }}
-        />
-      </button>
+        <button
+          type="button"
+          onClick={() => setOpen((current) => !current)}
+          aria-label="Open SPARKY next ideas"
+          className="rounded-full border-none bg-transparent p-0 outline-none transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-yellow-300"
+        >
+          <img
+            src={SPARKY_FLOATING_CLIP_URL}
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none w-[150px] 2xl:w-[170px]"
+            style={{ animation: "sparkyBeeFlight 7.5s ease-in-out infinite" }}
+          />
+        </button>
       </div>
     </>
   );
