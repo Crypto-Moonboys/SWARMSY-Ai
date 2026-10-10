@@ -53,13 +53,11 @@ const SPARKY_STARTER_SUGGESTED_MESSAGES = [
   },
   {
     heading: "",
-    message:
-      "Make a street-level lore, stencil, merch and campaign pack.",
+    message: "Make a street-level lore, stencil, merch and campaign pack.",
   },
   {
     heading: "",
-    message:
-      "Map the tools, bots and automation needed.",
+    message: "Map the tools, bots and automation needed.",
   },
 ];
 
@@ -326,7 +324,8 @@ async function refreshSparkySystemPrompt(Workspace, workspace = null) {
     normalizeSparkySystemPrompt(workspace.openAiPrompt) !==
     normalizeSparkySystemPrompt(template.openAiPrompt);
   const chatModeNeedsRefresh = workspace.chatMode !== template.chatMode;
-  const nameNeedsRefresh = String(workspace.name || "").trim() !== template.name;
+  const nameNeedsRefresh =
+    String(workspace.name || "").trim() !== template.name;
 
   if (!promptNeedsRefresh && !chatModeNeedsRefresh && !nameNeedsRefresh) {
     return workspace;
