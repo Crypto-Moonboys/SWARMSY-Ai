@@ -110,12 +110,21 @@ export default function SparkyRecordsSidebar({ workspace }) {
       : M.create({ title: workspace?.name || "SPARKY project", kind: "creative-project" });
     // Existing server-side SPARKY Records are the source of truth for imported
     // approved decisions. Proof notes are NEVER exported as verified evidence.
-    pack.decisions = recordList.filter(r => r.kind === "decision" && r.status === "approved")
-      .map(r => ({ text: r.truth, approved_at: "", source: "SPARKY Records" }));
-    pack.ideas = recordList.filter(r => r.kind === "idea" && r.status !== "archived")
-      .map(r => ({ text: r.truth, created_at: "" }));
-    pack.proofs = recordList.filter(r => r.kind === "proof" && r.status !== "archived")
-      .map(r => ({ text: r.truth, reference: "", status: "unverified" }));
+    const union = (before, after) => {
+      const seen = new Set();
+      return [...before, ...after].filter(entry => {
+        const key = entry.text.trim();
+        if (!key || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      }).slice(0, 100);
+    };
+    pack.decisions = union(pack.decisions, recordList.filter(r => r.kind === "decision" && r.status === "approved")
+      .map(r => ({ text: r.truth, approved_at: "", source: "SPARKY Records" })));
+    pack.ideas = union(pack.ideas, recordList.filter(r => r.kind === "idea" && r.status !== "archived")
+      .map(r => ({ text: r.truth, created_at: "" })));
+    pack.proofs = union(pack.proofs, recordList.filter(r => r.kind === "proof" && r.status !== "archived")
+      .map(r => ({ text: r.truth, reference: "", status: "unverified" })));
     return pack;
   }
 
