@@ -127,7 +127,7 @@ describe("SPARKY fixed workspace protection", () => {
     const workspaceRow = read(WORKSPACE_ROW_PATH);
     const sparkyHelper = read(SPARKY_HELPER_PATH);
 
-    expect(activeWorkspaces).toContain("Continue with SPARKY");
+    expect(activeWorkspaces).toContain('aria-label="Continue with SWARMSY"');
     expect(activeWorkspaces).toContain("isCanonicalSparkyWorkspace(workspace)");
     expect(activeWorkspaces).toContain("reorderedWorkspaces.map((w) => w.id)");
     expect(homePage).toContain("isCanonicalSparkyWorkspace(workspace)");
