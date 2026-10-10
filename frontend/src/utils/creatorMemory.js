@@ -176,7 +176,9 @@
       seen.add(key);
       result.push(entry);
       if (result.length > MAX_ITEMS) {
-        throw new Error("More than 100 unique project records would be exported. No records were dropped. Archive or split the project before export.");
+        throw new Error(
+          "More than 100 unique project records would be exported. No records were dropped. Archive or split the project before export."
+        );
       }
     }
     return result;
