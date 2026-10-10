@@ -223,6 +223,11 @@
       (x) =>
         "- " + line(x.text) + (x.reference ? " — " + line(x.reference) : "")
     );
+    output += section(
+      "Imported history (user-supplied; not independently verified)",
+      d.history,
+      (x) => "- " + line(x.date || "Undated") + ": " + line(x.event)
+    );
     return output;
   }
   function handoff(data) {
