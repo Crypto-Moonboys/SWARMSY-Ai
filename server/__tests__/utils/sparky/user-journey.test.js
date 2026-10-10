@@ -9,6 +9,10 @@ jest.mock(
   { virtual: true }
 );
 
+jest.mock("../../../utils/prisma", () => ({
+  workspaces: { findUnique: jest.fn() },
+}));
+
 jest.mock("../../../models/workspace", () => ({
   Workspace: {
     get: jest.fn(),
@@ -25,6 +29,8 @@ jest.mock("../../../models/workspacesSuggestedMessages", () => ({
 }));
 
 jest.mock("../../../models/sparkyTruths", () => ({
+  normalizeRecordKind: jest.fn((value = "decision") => ["idea", "decision", "proof"].includes(value) ? value : "decision"),
+  normalizeRecordStatus: jest.fn((value = "approved") => ["draft", "approved", "archived"].includes(value) ? value : "approved"),
   SparkyTruths: {
     create: jest.fn(),
     where: jest.fn(),
@@ -69,6 +75,7 @@ jest.mock("../../../models/systemSettings", () => ({
   },
 }));
 
+const prisma = require("../../../utils/prisma");
 const { Workspace } = require("../../../models/workspace");
 const {
   WorkspaceSuggestedMessages,
@@ -97,13 +104,14 @@ describe("SPARKY v1 normal-user journey sandbox", () => {
     id: 42,
     name: SPARKY_WORKSPACE_NAME,
     slug: SPARKY_WORKSPACE_SLUG,
-    chatMode: "automatic",
+    chatMode: "chat",
     openAiPrompt: getSparkySystemPrompt(),
   };
   const defaultUser = { id: 7, role: "default" };
   const secondDefaultUser = { id: 8, role: "default" };
 
   beforeEach(() => {
+    prisma.workspaces.findUnique.mockResolvedValue(null);
     WorkspaceSuggestedMessages.getMessages.mockResolvedValue([]);
     WorkspaceSuggestedMessages.saveAll.mockResolvedValue();
     SparkyTruths.where.mockResolvedValue([]);
@@ -115,7 +123,7 @@ describe("SPARKY v1 normal-user journey sandbox", () => {
   });
 
   it("fresh install creates and opens the canonical SPARKY workspace for a first-time user with no idea", async () => {
-    Workspace.get.mockResolvedValue(null);
+    prisma.workspaces.findUnique.mockResolvedValue(null);
     Workspace.new.mockResolvedValue({
       workspace: canonicalWorkspace,
       message: null,
@@ -128,7 +136,7 @@ describe("SPARKY v1 normal-user journey sandbox", () => {
       SPARKY_WORKSPACE_NAME,
       null,
       expect.objectContaining({
-        chatMode: "automatic",
+        chatMode: "chat",
         openAiPrompt: getSparkySystemPrompt(),
       })
     );
@@ -144,12 +152,15 @@ describe("SPARKY v1 normal-user journey sandbox", () => {
       })
     );
     expect(starterMessages.map(({ message }) => message)).toEqual([
-      "Help me shape my project idea",
-      "Build my project identity",
-      "Turn this idea into an action plan",
+      "Plan today’s local empire build.",
+      "I have a Moonboy/PFP to build.",
+      "I have a brand, product or art project.",
+      "I have no idea. Build me a local-first direction.",
+      "Make a street-level lore, stencil, merch and campaign pack.",
+      "Map the tools, bots and automation needed.",
     ]);
     expect(getSparkySystemPrompt()).toContain(
-      "When the user does not know what to prompt, offer simple starter directions instead of forcing a project."
+      "Creator Empire For Beginners"
     );
   });
 
@@ -317,7 +328,7 @@ describe("SPARKY v1 normal-user journey sandbox", () => {
     );
     const homePage = read("frontend/src/pages/Main/Home/index.jsx");
 
-    expect(template.chatMode).toBe("automatic");
+    expect(template.chatMode).toBe("chat");
     expect(workspaceModel).toContain(
       'VALID_CHAT_MODES: ["chat", "query", "automatic"]'
     );
@@ -325,7 +336,7 @@ describe("SPARKY v1 normal-user journey sandbox", () => {
     expect(workspaceModel).toContain('"agentProvider"');
     expect(apiWorkspaceEndpoint).toContain('app.post("/v1/workspace/new"');
     expect(apiWorkspaceEndpoint).toContain("additionalFields");
-    expect(activeWorkspaces).toContain("Continue with SPARKY");
+    expect(activeWorkspaces).toContain("Continue with SWARMSY");
     expect(activeWorkspaces).toContain("otherWorkspaces.map");
     expect(homePage).toContain("WorkspaceModelPicker");
     expect(homePage).toContain("QuickActions");
