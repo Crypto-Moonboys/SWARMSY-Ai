@@ -123,6 +123,7 @@ model workspaces {
   id                           Int                            @id @default(autoincrement())
   name                         String
   slug                         String                         @unique
+  isCanonicalSparky            Boolean                        @default(false)
   vectorTag                    String?
   createdAt                    DateTime                       @default(now())
   openAiTemp                   Float?
