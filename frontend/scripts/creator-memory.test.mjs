@@ -63,6 +63,37 @@ test("rejects malformed, oversize and unsupported files without parsing unknown 
   long.ideas = Array.from({ length: 130 }, (_, i) => ({ text: "Proposal " + i }));
   assert.equal(M.parse(M.serialize(long)).ideas.length, 100);
 });
+
+test("untrusted Markdown cannot fetch external images or interpret creator syntax", () => {
+  const M = boot();
+  const pack = M.create({ title: "![tracking pixel](https://attacker.invalid/pixel)" });
+  pack.project.summary = "[a link](https://attacker.invalid/) <img src='https://attacker.invalid/x'> &lt;img&gt;";
+  pack.decisions.push({ text: "![render me](https://attacker.invalid/x)", source: "Creator", approved_at: "" });
+  pack.history.push({ event: "![history](https://attacker.invalid/history)", date: "" });
+  const readable = M.markdown(pack);
+  assert.doesNotMatch(readable, /!\[[^\]]*\]\(https:\/\/attacker\.invalid/);
+  assert.doesNotMatch(readable, /<img/i);
+  assert.match(readable, /\\!\\\[tracking pixel\\\]/);
+  assert.match(readable, /&amp;lt;img/);
+  assert.match(readable, /Imported history/);
+});
+
+test("live server records take priority and over-cap merges abort instead of dropping data", () => {
+  const M = boot();
+  const result = M.mergeTextEntries(
+    [{ text: "same", source: "live" }, { text: "current", source: "live" }],
+    [{ text: "same", source: "imported" }, { text: "old", source: "imported" }]
+  );
+  assert.equal(result.length, 3);
+  assert.equal(result[0].source, "live");
+  assert.equal(result[1].text, "current");
+  assert.equal(result[2].text, "old");
+  const imported = Array.from({ length: 100 }, (_, i) => ({ text: "imported" + i }));
+  const live = [{ text: "new live record" }];
+  assert.throws(() => M.mergeTextEntries(live, imported), /No records were dropped/);
+  assert.equal(imported.length, 100);
+});
+
 test("SWARMSY imports only after approval and shares the public format", () => {
   const page = read("frontend/src/components/WorkspaceChat/ChatContainer/SparkyRecordsSidebar/index.jsx");
   const prompt = read("server/sparky/packs/core/sparky-system-prompt.md");
