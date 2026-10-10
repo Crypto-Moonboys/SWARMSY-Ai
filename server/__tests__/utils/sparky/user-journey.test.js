@@ -296,14 +296,16 @@ describe("SPARKY v1 normal-user journey sandbox", () => {
     };
     const userCreatedCollision = {
       id: 777,
-      name: "sparky",
+      name: SPARKY_WORKSPACE_NAME,
       slug: SPARKY_WORKSPACE_SLUG,
       chatMode: "chat",
-      openAiPrompt: "This is my private workspace.",
+      openAiPrompt: getSparkySystemPrompt(),
+      isCanonicalSparky: false,
     };
 
     expect(isCanonicalSparkyWorkspace(canonicalCollision)).toBe(true);
     expect(isCanonicalSparkyWorkspace(userCreatedCollision)).toBe(false);
+    expect(isCanonicalSparkyWorkspace({ ...userCreatedCollision, name: "SPARKY" })).toBe(false);
     expect(workspaceModel).toContain("whereWithUser");
     expect(workspaceModel).toContain("workspace_users");
     expect(workspaceModel).toContain(`slug: SPARKY_WORKSPACE_SLUG`);
