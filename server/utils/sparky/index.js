@@ -398,7 +398,9 @@ async function ensureSparkyWorkspace() {
   if (!workspace || workspace.slug !== template.slug || !workspace.id) {
     return {
       workspace: null,
-      error: message || "SPARKY workspace could not be created with the reserved slug.",
+      error:
+        message ||
+        "SPARKY workspace could not be created with the reserved slug.",
       collision: true,
       created: false,
       message: "SPARKY identity was not claimed; review workspace ownership.",
