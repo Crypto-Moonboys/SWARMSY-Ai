@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 jest.mock("../../../utils/prisma", () => ({
-  workspaces: { findUnique: jest.fn() },
+  workspaces: { findUnique: jest.fn(), update: jest.fn() },
 }));
 
 jest.mock("../../../models/workspace", () => ({
@@ -178,12 +178,14 @@ describe("SPARKY bootstrap foundation", () => {
       slug: SPARKY_WORKSPACE_SLUG,
       openAiPrompt: getSparkySystemPrompt(),
       chatMode: "chat",
+      isCanonicalSparky: true,
     };
 
     WorkspaceSuggestedMessages.getMessages.mockResolvedValue([]);
     prisma.workspaces.findUnique.mockResolvedValue(null);
+    prisma.workspaces.update.mockResolvedValue(createdWorkspace);
     Workspace.new.mockResolvedValue({
-      workspace: createdWorkspace,
+      workspace: { ...createdWorkspace, isCanonicalSparky: false },
       message: null,
     });
     WorkspaceSuggestedMessages.saveAll.mockResolvedValue();
@@ -202,6 +204,10 @@ describe("SPARKY bootstrap foundation", () => {
       })
     );
     expect(Workspace.update).not.toHaveBeenCalled();
+    expect(prisma.workspaces.update).toHaveBeenCalledWith({
+      where: { id: createdWorkspace.id },
+      data: { isCanonicalSparky: true },
+    });
     expect(WorkspaceSuggestedMessages.saveAll).toHaveBeenCalledWith(
       getSparkyStarterSuggestedMessages(),
       SPARKY_WORKSPACE_SLUG
@@ -218,6 +224,7 @@ describe("SPARKY bootstrap foundation", () => {
       slug: SPARKY_WORKSPACE_SLUG,
       openAiPrompt: PR2_SPARKY_SYSTEM_PROMPT,
       chatMode: "chat",
+      isCanonicalSparky: true,
     };
     const updatedWorkspace = {
       ...existingWorkspace,
@@ -263,6 +270,7 @@ describe("SPARKY bootstrap foundation", () => {
       slug: SPARKY_WORKSPACE_SLUG,
       openAiPrompt: getSparkySystemPrompt(),
       chatMode: "chat",
+      isCanonicalSparky: true,
     };
 
     prisma.workspaces.findUnique.mockResolvedValue(existingWorkspace);
@@ -295,10 +303,11 @@ describe("SPARKY bootstrap foundation", () => {
   it("does not overwrite a user-created SPARKY collision", async () => {
     const existingWorkspace = {
       id: 789,
-      name: "User SPARKY",
+      name: SPARKY_WORKSPACE_NAME,
       slug: SPARKY_WORKSPACE_SLUG,
-      openAiPrompt: "user prompt",
+      openAiPrompt: getSparkySystemPrompt(),
       chatMode: "chat",
+      isCanonicalSparky: false,
     };
 
     prisma.workspaces.findUnique.mockResolvedValue(existingWorkspace);
@@ -319,6 +328,7 @@ describe("SPARKY bootstrap foundation", () => {
     });
     expect(Workspace.new).not.toHaveBeenCalled();
     expect(Workspace.update).not.toHaveBeenCalled();
+    expect(prisma.workspaces.update).not.toHaveBeenCalled();
     expect(WorkspaceSuggestedMessages.saveAll).not.toHaveBeenCalled();
     expect(promptHasSparkyCoreIdentity(existingWorkspace.openAiPrompt)).toBe(
       false
