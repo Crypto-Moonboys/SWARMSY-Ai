@@ -355,10 +355,18 @@ export default function SparkyRecordsSidebar({ workspace }) {
             onClick={copyMemoryHandoff}
           />
           {loadedPack && (
-            <p className="text-xs text-zinc-400 light:text-slate-600">
-              Loaded: {loadedPack.project.title || "Unnamed project"} —
-              identity, assets and sources available in AI handoff.
-            </p>
+            <details className="text-xs text-zinc-400 light:text-slate-600">
+              <summary className="cursor-pointer">
+                Review loaded project before sharing:{" "}
+                {loadedPack.project.title || "Unnamed project"}
+              </summary>
+              <pre className="mt-2 max-h-48 overflow-y-auto whitespace-pre-wrap break-words">
+                {window.SPARKY_CREATOR_MEMORY.markdown(loadedPack)}
+              </pre>
+              <p className="mt-2">
+                Includes personal identity notes, history, sources and file references. Read it before copying a handoff.
+              </p>
+            </details>
           )}
           <p
             role="status"
