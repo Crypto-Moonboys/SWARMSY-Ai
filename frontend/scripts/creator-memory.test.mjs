@@ -47,6 +47,34 @@ test("record text sanitization removes actual NUL without damaging literal backs
   assert.ok(M.markdown(parsed).includes("step" + slash + slash + "0name"));
 });
 
+test("blank and whitespace-only decisions and ideas are omitted without skipping later records", () => {
+  const M = boot();
+  const nul = String.fromCharCode(0);
+  const slash = String.fromCharCode(92);
+  const literalBackslashZero = "literal" + slash + "0";
+  const record = M.create({ title: "Blank records" });
+  record.decisions = [
+    { text: "" },
+    { text: " \t\n " + nul },
+    { text: nul },
+    { text: "  Keep surrounding spaces  " },
+    { text: literalBackslashZero },
+  ];
+  record.ideas = [
+    { text: "   " },
+    { text: nul },
+    { text: "A valid idea after blank entries" },
+  ];
+  const parsed = M.parse(M.serialize(record));
+  assert.deepEqual(Array.from(parsed.decisions, x => x.text), [
+    "  Keep surrounding spaces  ",
+    literalBackslashZero,
+  ]);
+  assert.deepEqual(Array.from(parsed.ideas, x => x.text), [
+    "A valid idea after blank entries",
+  ]);
+});
+
 test("long existing SPARKY records round-trip without 2000-character truncation", () => {
   const M = boot();
   const text = "A".repeat(2400) + " LAST-CHARACTERS-PRESERVED";

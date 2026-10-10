@@ -18,8 +18,8 @@ Worker or D1 change.
 1. Back up the actual AnythingLLM/SWARMSY database before deploying.
 2. Apply migrations and regenerate the Prisma client against the same database:
    `cd server && npx prisma migrate deploy && npx prisma generate`.
-3. An empty/new installation can start the app normally. The bootstrap creates
-   SPARKY with the reserved slug, then marks that newly created row as canonical.
+3. An empty/new installation can start the app normally. The bootstrap atomically
+   creates SPARKY with the reserved slug and canonical ownership marker.
 4. **Existing installs:** the migration deliberately leaves *all* existing
    workspaces unclaimed, even an exact name + slug match. Verify the **actual**
    system-owned workspace ID, not just its name/prompt. Inspect with:

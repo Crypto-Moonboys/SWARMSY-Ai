@@ -9,6 +9,7 @@ jest.mock("../../../models/workspace", () => ({
   Workspace: {
     get: jest.fn(),
     new: jest.fn(),
+    newCanonicalSparky: jest.fn(),
     update: jest.fn(),
   },
 }));
@@ -183,9 +184,8 @@ describe("SPARKY bootstrap foundation", () => {
 
     WorkspaceSuggestedMessages.getMessages.mockResolvedValue([]);
     prisma.workspaces.findUnique.mockResolvedValue(null);
-    prisma.workspaces.update.mockResolvedValue(createdWorkspace);
-    Workspace.new.mockResolvedValue({
-      workspace: { ...createdWorkspace, isCanonicalSparky: false },
+    Workspace.newCanonicalSparky.mockResolvedValue({
+      workspace: createdWorkspace,
       message: null,
     });
     WorkspaceSuggestedMessages.saveAll.mockResolvedValue();
@@ -195,19 +195,16 @@ describe("SPARKY bootstrap foundation", () => {
     expect(prisma.workspaces.findUnique).toHaveBeenCalledWith({
       where: { slug: SPARKY_WORKSPACE_SLUG },
     });
-    expect(Workspace.new).toHaveBeenCalledWith(
+    expect(Workspace.newCanonicalSparky).toHaveBeenCalledWith(
       SPARKY_WORKSPACE_NAME,
-      null,
+      SPARKY_WORKSPACE_SLUG,
       expect.objectContaining({
         chatMode: "chat",
         openAiPrompt: getSparkySystemPrompt(),
       })
     );
     expect(Workspace.update).not.toHaveBeenCalled();
-    expect(prisma.workspaces.update).toHaveBeenCalledWith({
-      where: { id: createdWorkspace.id },
-      data: { isCanonicalSparky: true },
-    });
+    expect(prisma.workspaces.update).not.toHaveBeenCalled();
     expect(WorkspaceSuggestedMessages.saveAll).toHaveBeenCalledWith(
       getSparkyStarterSuggestedMessages(),
       SPARKY_WORKSPACE_SLUG
@@ -215,6 +212,68 @@ describe("SPARKY bootstrap foundation", () => {
     expect(result.workspace).toEqual(createdWorkspace);
     expect(result.collision).toBe(false);
     expect(result.created).toBe(true);
+  });
+
+  it("atomically reserves the SPARKY slug during concurrent bootstraps", async () => {
+    const createdRows = [];
+    prisma.workspaces.findUnique.mockResolvedValue(null);
+    Workspace.newCanonicalSparky.mockImplementation(
+      async (name, slug, additionalFields) => {
+        if (createdRows.some(workspace => workspace.slug === slug)) {
+          return { workspace: null, message: "Unique constraint failed" };
+        }
+        const workspace = {
+          id: 321,
+          name,
+          slug,
+          ...additionalFields,
+          isCanonicalSparky: true,
+        };
+        createdRows.push(workspace);
+        return { workspace, message: null };
+      }
+    );
+
+    const results = await Promise.all([
+      ensureSparkyWorkspace(),
+      ensureSparkyWorkspace(),
+    ]);
+
+    expect(createdRows).toHaveLength(1);
+    expect(createdRows[0].slug).toBe(SPARKY_WORKSPACE_SLUG);
+    expect(createdRows[0].isCanonicalSparky).toBe(true);
+    expect(Workspace.newCanonicalSparky).toHaveBeenCalledTimes(2);
+    expect(prisma.workspaces.update).not.toHaveBeenCalled();
+    expect(results.filter(result => result.created)).toHaveLength(1);
+    expect(results.filter(result => result.collision)).toHaveLength(1);
+  });
+
+  it("does not claim a user workspace created during the reserved-slug race", async () => {
+    const racedWorkspace = {
+      id: 654,
+      name: SPARKY_WORKSPACE_NAME,
+      slug: SPARKY_WORKSPACE_SLUG,
+      openAiPrompt: "User-owned prompt",
+      chatMode: "chat",
+      isCanonicalSparky: false,
+    };
+    const databaseRows = [racedWorkspace];
+    prisma.workspaces.findUnique.mockResolvedValue(null);
+    Workspace.newCanonicalSparky.mockImplementation(async (_name, slug) =>
+      databaseRows.some(workspace => workspace.slug === slug)
+        ? { workspace: null, message: "Unique constraint failed" }
+        : { workspace: racedWorkspace, message: null }
+    );
+
+    const result = await ensureSparkyWorkspace();
+
+    expect(databaseRows).toEqual([racedWorkspace]);
+    expect(racedWorkspace.isCanonicalSparky).toBe(false);
+    expect(prisma.workspaces.update).not.toHaveBeenCalled();
+    expect(Workspace.update).not.toHaveBeenCalled();
+    expect(WorkspaceSuggestedMessages.saveAll).not.toHaveBeenCalled();
+    expect(result.workspace).toBeNull();
+    expect(result.collision).toBe(true);
   });
 
   it("refreshes the PR #2 SPARKY workspace prompt on upgrade", async () => {
@@ -232,7 +291,7 @@ describe("SPARKY bootstrap foundation", () => {
     };
 
     prisma.workspaces.findUnique.mockResolvedValue(existingWorkspace);
-    Workspace.new.mockResolvedValue({
+    Workspace.newCanonicalSparky.mockResolvedValue({
       workspace: null,
       message: "should not be used",
     });
@@ -247,7 +306,7 @@ describe("SPARKY bootstrap foundation", () => {
     expect(prisma.workspaces.findUnique).toHaveBeenCalledWith({
       where: { slug: SPARKY_WORKSPACE_SLUG },
     });
-    expect(Workspace.new).not.toHaveBeenCalled();
+    expect(Workspace.newCanonicalSparky).not.toHaveBeenCalled();
     expect(Workspace.update).toHaveBeenCalledWith(existingWorkspace.id, {
       name: SPARKY_WORKSPACE_NAME,
       chatMode: "chat",
@@ -274,7 +333,7 @@ describe("SPARKY bootstrap foundation", () => {
     };
 
     prisma.workspaces.findUnique.mockResolvedValue(existingWorkspace);
-    Workspace.new.mockResolvedValue({
+    Workspace.newCanonicalSparky.mockResolvedValue({
       workspace: null,
       message: "should not be used",
     });
@@ -285,7 +344,7 @@ describe("SPARKY bootstrap foundation", () => {
     expect(prisma.workspaces.findUnique).toHaveBeenCalledWith({
       where: { slug: SPARKY_WORKSPACE_SLUG },
     });
-    expect(Workspace.new).not.toHaveBeenCalled();
+    expect(Workspace.newCanonicalSparky).not.toHaveBeenCalled();
     expect(Workspace.update).not.toHaveBeenCalled();
     expect(WorkspaceSuggestedMessages.saveAll).toHaveBeenCalledWith(
       getSparkyStarterSuggestedMessages(),
@@ -311,7 +370,7 @@ describe("SPARKY bootstrap foundation", () => {
     };
 
     prisma.workspaces.findUnique.mockResolvedValue(existingWorkspace);
-    Workspace.new.mockResolvedValue({
+    Workspace.newCanonicalSparky.mockResolvedValue({
       workspace: null,
       message: "should not be used",
     });
@@ -326,7 +385,7 @@ describe("SPARKY bootstrap foundation", () => {
     expect(prisma.workspaces.findUnique).toHaveBeenCalledWith({
       where: { slug: SPARKY_WORKSPACE_SLUG },
     });
-    expect(Workspace.new).not.toHaveBeenCalled();
+    expect(Workspace.newCanonicalSparky).not.toHaveBeenCalled();
     expect(Workspace.update).not.toHaveBeenCalled();
     expect(prisma.workspaces.update).not.toHaveBeenCalled();
     expect(WorkspaceSuggestedMessages.saveAll).not.toHaveBeenCalled();

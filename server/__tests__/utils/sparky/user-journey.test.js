@@ -17,6 +17,7 @@ jest.mock("../../../models/workspace", () => ({
   Workspace: {
     get: jest.fn(),
     new: jest.fn(),
+    newCanonicalSparky: jest.fn(),
     update: jest.fn(),
   },
 }));
@@ -125,18 +126,17 @@ describe("SPARKY v1 normal-user journey sandbox", () => {
 
   it("fresh install creates and opens the canonical SPARKY workspace for a first-time user with no idea", async () => {
     prisma.workspaces.findUnique.mockResolvedValue(null);
-    prisma.workspaces.update.mockResolvedValue(canonicalWorkspace);
-    Workspace.new.mockResolvedValue({
-      workspace: { ...canonicalWorkspace, isCanonicalSparky: false },
+    Workspace.newCanonicalSparky.mockResolvedValue({
+      workspace: canonicalWorkspace,
       message: null,
     });
 
     const result = await ensureSparkyWorkspace();
     const starterMessages = getSparkyStarterSuggestedMessages();
 
-    expect(Workspace.new).toHaveBeenCalledWith(
+    expect(Workspace.newCanonicalSparky).toHaveBeenCalledWith(
       SPARKY_WORKSPACE_NAME,
-      null,
+      SPARKY_WORKSPACE_SLUG,
       expect.objectContaining({
         chatMode: "chat",
         openAiPrompt: getSparkySystemPrompt(),

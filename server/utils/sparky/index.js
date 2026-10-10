@@ -386,15 +386,20 @@ async function ensureSparkyWorkspace() {
     };
   }
 
-  // The unique slug is reserved by fresh creation; an existing unmarked row
-  // never receives canonical ownership through name or prompt matching.
-  const { workspace, message } = await Workspace.new(template.name, null, {
-    chatMode: template.chatMode,
-    openAiPrompt: template.openAiPrompt,
-  });
+  // The database's unique slug constraint arbitrates concurrent bootstrap
+  // requests; the canonical marker is written by the same insert, and unlike
+  // Workspace.new, this never falls back to a random slug.
+  const { workspace, message } = await Workspace.newCanonicalSparky(
+    template.name,
+    template.slug,
+    {
+      chatMode: template.chatMode,
+      openAiPrompt: template.openAiPrompt,
+    }
+  );
 
-  // Workspace.new may generate a different slug if another process/user
-  // claimed "sparky" concurrently. Never promote such a workspace.
+  // A failed exact-slug create may mean another process or user won the race.
+  // Never promote or rewrite that row.
   if (!workspace || workspace.slug !== template.slug || !workspace.id) {
     return {
       workspace: null,
@@ -407,16 +412,9 @@ async function ensureSparkyWorkspace() {
     };
   }
 
-  // The only automatic claim is immediately after a successful fresh creation.
-  // Existing rows (including exact-name collisions) remain untouched until an
-  // administrator explicitly claims the verified workspace ID.
-  const canonicalWorkspace = await prisma.workspaces.update({
-    where: { id: workspace.id },
-    data: { isCanonicalSparky: true },
-  });
-  await seedSparkyStarterSuggestedMessages(canonicalWorkspace);
+  await seedSparkyStarterSuggestedMessages(workspace);
   return {
-    workspace: canonicalWorkspace,
+    workspace,
     error: null,
     collision: false,
     created: true,

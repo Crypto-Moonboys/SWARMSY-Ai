@@ -18,7 +18,8 @@
   // Preserve their entire content or fail the final 256 KiB export check.
   function recordText(value) {
     if (typeof value !== "string") return "";
-    return value.replace(/\0/g, "");
+    const text = value.replace(/\0/g, "");
+    return text.trim() ? text : "";
   }
   function timestamp(value) {
     if (typeof value !== "string" || !/^\d{4}-\d\d-\d\dT/.test(value))
