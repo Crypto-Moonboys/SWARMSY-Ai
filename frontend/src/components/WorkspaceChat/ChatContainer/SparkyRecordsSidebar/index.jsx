@@ -33,14 +33,30 @@ export default function SparkyRecordsSidebar({ workspace }) {
     [records]
   );
 
-  async function fetchRecords() {
-    if (!workspace?.slug) return;
+  async function fetchRecords(requireSuccess = false) {
+    if (!workspace?.slug) {
+      if (requireSuccess) throw new Error("No workspace selected.");
+      return [];
+    }
     setLoading(true);
-    const result = await Workspace.sparkyRecords.list(workspace.slug);
-    setRecords(result?.records || []);
-    setError(result?.success === false ? result.error : null);
-    setLoading(false);
-    return result?.records || [];
+    try {
+      const result = await Workspace.sparkyRecords.list(workspace.slug);
+      if (!result || result.success === false) {
+        const message = result?.error || "Could not load SPARKY Records.";
+        setError(message);
+        if (requireSuccess) throw new Error(message);
+        return null;
+      }
+      setRecords(result.records || []);
+      setError(null);
+      return result.records || [];
+    } catch (err) {
+      setError(err.message || "Could not load SPARKY Records.");
+      if (requireSuccess) throw err;
+      return null;
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -116,7 +132,7 @@ export default function SparkyRecordsSidebar({ workspace }) {
       const seen = new Set();
       return [...before, ...after]
         .filter((entry) => {
-          const key = entry.text.trim();
+          const key = String(entry.text || "").trim();
           if (!key || seen.has(key)) return false;
           seen.add(key);
           return true;
@@ -150,7 +166,7 @@ export default function SparkyRecordsSidebar({ workspace }) {
 
   async function exportMemory(asMarkdown = false) {
     try {
-      const latestRecords = await fetchRecords();
+      const latestRecords = await fetchRecords(true);
       const M = window.SPARKY_CREATOR_MEMORY;
       const pack = getPortableRecord(latestRecords);
       const text = asMarkdown ? M.markdown(pack) : M.serialize(pack);
@@ -178,8 +194,9 @@ export default function SparkyRecordsSidebar({ workspace }) {
 
   async function copyMemoryHandoff() {
     try {
+      const latestRecords = await fetchRecords(true);
       await navigator.clipboard.writeText(
-        window.SPARKY_CREATOR_MEMORY.handoff(getPortableRecord())
+        window.SPARKY_CREATOR_MEMORY.handoff(getPortableRecord(latestRecords))
       );
       setMemoryMessage(
         "Handoff copied. Paste it into the chat; it was not submitted automatically."
