@@ -36,13 +36,15 @@ test("creator-memory v1 round-trips non-Moonboy and Moonboy identities", () => {
 
 test("record text sanitization removes actual NUL without damaging literal backslash-zero", () => {
   const M = boot();
-  const literalBackslashZero = String.raw\`step\\0name\`;
+  const slash = String.fromCharCode(92);
+  const nul = String.fromCharCode(0);
+  const literalBackslashZero = "step" + slash + "0name";
   const record = M.create({ title: "NUL example" });
-  record.decisions.push({ text: "front" + "\\0" + "back " + literalBackslashZero });
+  record.decisions.push({ text: "front" + nul + "back " + literalBackslashZero });
   const parsed = M.parse(M.serialize(record));
   assert.equal(parsed.decisions[0].text, "frontback " + literalBackslashZero);
-  assert.equal(parsed.decisions[0].text.includes("\\0"), false);
-  assert.match(M.markdown(parsed), /step\\\\\\\\0name/);
+  assert.equal(parsed.decisions[0].text.includes(nul), false);
+  assert.ok(M.markdown(parsed).includes("step" + slash + slash + "0name"));
 });
 
 test("long existing SPARKY records round-trip without 2000-character truncation", () => {
