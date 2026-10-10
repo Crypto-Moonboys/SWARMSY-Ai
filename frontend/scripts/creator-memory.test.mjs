@@ -70,6 +70,7 @@ test("SWARMSY imports only after approval and shares the public format", () => {
   assert.match(page, /sparkyRecords\.list/);
   assert.match(page, /sparkyRecords\.create/);
   assert.match(page, /window\.confirm/);
+  assert.match(page, /markdown\(loadedPack\)/);
   assert.match(page, /fetchRecords\(true\)/);
   assert.match(page, /if \(!result \|\| result\.success === false\)/);
   assert.match(page, /Portable creator memory/i);
