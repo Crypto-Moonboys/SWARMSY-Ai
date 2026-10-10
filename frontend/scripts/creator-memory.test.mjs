@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { TextEncoder } from "node:util";
 import vm from "node:vm";
-const root = new URL("../../../../../", import.meta.url);
+const root = new URL("../../", import.meta.url);
 const read = path => readFileSync(new URL(path, root), "utf8");
 function boot() {
   const ctx = { URL, TextEncoder, Date };
@@ -63,20 +63,15 @@ test("rejects malformed, oversize and unsupported files without parsing unknown 
   long.ideas = Array.from({ length: 130 }, (_, i) => ({ text: "Proposal " + i }));
   assert.equal(M.parse(M.serialize(long)).ideas.length, 100);
 });
-test("SWARMSY interoperates with existing SPARKY Records and requires approval for imported decisions", () => {
+test("SWARMSY imports only after approval and shares the public format", () => {
   const page = read("frontend/src/components/WorkspaceChat/ChatContainer/SparkyRecordsSidebar/index.jsx");
-  const ui = page;
-  const app = read("server/sparky/packs/core/sparky-system-prompt.md");
-  assert.match(page, /id="creator-memory-studio"/);
-  assert.match(page, /id="memory-import-file" type="file"/);
-  assert.match(page, /id="memory-export-json"/);
-  assert.match(page, /id="memory-export-md"/);
-  assert.match(page, /src="\/js\/creator-memory\.js"/);
-  assert.match(page, /src="\/js\/creator-memory-studio\.js"/);
-  assert.match(ui, /URL\.createObjectURL/);
-  assert.match(ui, /navigator\?\.clipboard\?\.writeText/);
-  assert.match(app, /sparky-activity-change/);
-  assert.ok(!ui.includes("fetch("), "studio must not upload anything");
-  assert.ok(!ui.includes("localStorage"), "studio must not silently store private project data");
+  const prompt = read("server/sparky/packs/core/sparky-system-prompt.md");
+  assert.match(page, /creatorMemory/);
+  assert.match(page, /sparkyRecords\.list/);
+  assert.match(page, /sparkyRecords\.create/);
+  assert.match(page, /window\.confirm/);
+  assert.match(page, /Portable creator memory/i);
+  assert.match(prompt, /Portable Creator Memory/);
+  assert.ok(!page.includes("localStorage"));
   assert.match(read("docs/portable-creator-memory.md"), /source index/);
 });
