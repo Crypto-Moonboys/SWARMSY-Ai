@@ -32,5 +32,6 @@ jobs:
       - name: Verify formatting and ESLint for changed frontend files
         run: |
           cd frontend
-          ./node_modules/.bin/prettier --check src/utils/creatorMemory.js src/components/WorkspaceChat/ChatContainer/SparkyRecordsSidebar/index.jsx
+          ./node_modules/.bin/prettier --write src/utils/creatorMemory.js src/components/WorkspaceChat/ChatContainer/SparkyRecordsSidebar/index.jsx
+          git diff -- src/utils/creatorMemory.js src/components/WorkspaceChat/ChatContainer/SparkyRecordsSidebar/index.jsx
           ./node_modules/.bin/eslint src/utils/creatorMemory.js src/components/WorkspaceChat/ChatContainer/SparkyRecordsSidebar/index.jsx
