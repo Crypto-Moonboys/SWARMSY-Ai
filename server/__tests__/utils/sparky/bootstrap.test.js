@@ -1,6 +1,10 @@
 const fs = require("fs");
 const path = require("path");
 
+jest.mock("../../../utils/prisma", () => ({
+  workspaces: { findUnique: jest.fn() },
+}));
+
 jest.mock("../../../models/workspace", () => ({
   Workspace: {
     get: jest.fn(),
@@ -16,6 +20,7 @@ jest.mock("../../../models/workspacesSuggestedMessages", () => ({
   },
 }));
 
+const prisma = require("../../../utils/prisma");
 const { Workspace } = require("../../../models/workspace");
 const { WorkspaceSuggestedMessages } = require("../../../models/workspacesSuggestedMessages");
 
@@ -51,6 +56,7 @@ const PR2_SPARKY_SYSTEM_PROMPT = [
 ].join("\n");
 
 beforeEach(() => {
+  prisma.workspaces.findUnique.mockResolvedValue(null);
   WorkspaceSuggestedMessages.getMessages.mockResolvedValue([]);
 });
 
@@ -78,23 +84,17 @@ describe("SPARKY bootstrap foundation", () => {
       path.join("server", "sparky", "packs", "core")
     );
     expect(getSparkySystemPrompt()).toContain("You are SPARKY");
-    expect(getSparkySystemPrompt()).toContain(
-      "Use these first-run prompts when they fit:"
-    );
-    expect(getSparkySystemPrompt()).toContain(
-      "Do not force every chat into a project"
-    );
-    expect(getSparkySystemPrompt()).toContain("SPARKY carries the real score");
-    expect(getSparkySystemPrompt()).toContain(
-      "MESSAGE: what people should remember"
-    );
+    expect(getSparkySystemPrompt()).toContain("Creator Empire For Beginners");
+    expect(getSparkySystemPrompt()).toContain("AnythingLLM Tool Workflow For Beginners");
+    expect(getSparkySystemPrompt()).toContain("Portable Creator Memory");
+    expect(getSparkySystemPrompt()).toContain("approved");
   });
 
   it("keeps the core packs on disk and discoverable", () => {
     const packs = getSparkyCorePackCatalog();
-    expect(packs).toHaveLength(8);
+    expect(packs).toHaveLength(21);
     expect(packs.every((pack) => pack.exists)).toBe(true);
-    expect(packs.map((pack) => pack.filename)).toEqual([
+    expect(packs.map((pack) => pack.filename)).toEqual(expect.arrayContaining([
       "og-sparky-contract.md",
       "project-manager-protocol.md",
       "identity-questionnaire.md",
@@ -103,7 +103,7 @@ describe("SPARKY bootstrap foundation", () => {
       "action-confirmation.md",
       "tasks-and-schedule.md",
       "proof-review.md",
-    ]);
+    ]));
     expect(
       fs.readFileSync(
         path.join(
@@ -126,18 +126,21 @@ describe("SPARKY bootstrap foundation", () => {
 
     expect(template.name).toBe(SPARKY_WORKSPACE_NAME);
     expect(template.slug).toBe(SPARKY_WORKSPACE_SLUG);
-    expect(template.chatMode).toBe("automatic");
+    expect(template.chatMode).toBe("chat");
     expect(template.openAiPrompt).toBe(getSparkySystemPrompt());
 
     expect(bootstrap.workspaceTemplate.openAiPrompt).toBe(
       getSparkySystemPrompt()
     );
-    expect(bootstrap.corePacks).toHaveLength(8);
+    expect(bootstrap.corePacks).toHaveLength(21);
     expect(bootstrap.starterSuggestedMessages).toEqual(starterPrompts);
     expect(starterPrompts).toEqual([
-      { heading: "", message: "Help me shape my project idea" },
-      { heading: "", message: "Build my project identity" },
-      { heading: "", message: "Turn this idea into an action plan" },
+      { heading: "", message: "Plan today’s local empire build." },
+      { heading: "", message: "I have a Moonboy/PFP to build." },
+      { heading: "", message: "I have a brand, product or art project." },
+      { heading: "", message: "I have no idea. Build me a local-first direction." },
+      { heading: "", message: "Make a street-level lore, stencil, merch and campaign pack." },
+      { heading: "", message: "Map the tools, bots and automation needed." },
     ]);
   });
 
@@ -174,11 +177,11 @@ describe("SPARKY bootstrap foundation", () => {
       name: SPARKY_WORKSPACE_NAME,
       slug: SPARKY_WORKSPACE_SLUG,
       openAiPrompt: getSparkySystemPrompt(),
-      chatMode: "automatic",
+      chatMode: "chat",
     };
 
     WorkspaceSuggestedMessages.getMessages.mockResolvedValue([]);
-    Workspace.get.mockResolvedValue(null);
+    prisma.workspaces.findUnique.mockResolvedValue(null);
     Workspace.new.mockResolvedValue({
       workspace: createdWorkspace,
       message: null,
@@ -187,12 +190,14 @@ describe("SPARKY bootstrap foundation", () => {
 
     const result = await ensureSparkyWorkspace();
 
-    expect(Workspace.get).toHaveBeenCalledWith({ slug: SPARKY_WORKSPACE_SLUG });
+    expect(prisma.workspaces.findUnique).toHaveBeenCalledWith({
+      where: { slug: SPARKY_WORKSPACE_SLUG },
+    });
     expect(Workspace.new).toHaveBeenCalledWith(
       SPARKY_WORKSPACE_NAME,
       null,
       expect.objectContaining({
-        chatMode: "automatic",
+        chatMode: "chat",
         openAiPrompt: getSparkySystemPrompt(),
       })
     );
@@ -212,14 +217,14 @@ describe("SPARKY bootstrap foundation", () => {
       name: SPARKY_WORKSPACE_NAME,
       slug: SPARKY_WORKSPACE_SLUG,
       openAiPrompt: PR2_SPARKY_SYSTEM_PROMPT,
-      chatMode: "automatic",
+      chatMode: "chat",
     };
     const updatedWorkspace = {
       ...existingWorkspace,
       openAiPrompt: getSparkySystemPrompt(),
     };
 
-    Workspace.get.mockResolvedValue(existingWorkspace);
+    prisma.workspaces.findUnique.mockResolvedValue(existingWorkspace);
     Workspace.new.mockResolvedValue({
       workspace: null,
       message: "should not be used",
@@ -232,9 +237,13 @@ describe("SPARKY bootstrap foundation", () => {
 
     const result = await ensureSparkyWorkspace();
 
-    expect(Workspace.get).toHaveBeenCalledWith({ slug: SPARKY_WORKSPACE_SLUG });
+    expect(prisma.workspaces.findUnique).toHaveBeenCalledWith({
+      where: { slug: SPARKY_WORKSPACE_SLUG },
+    });
     expect(Workspace.new).not.toHaveBeenCalled();
     expect(Workspace.update).toHaveBeenCalledWith(existingWorkspace.id, {
+      name: SPARKY_WORKSPACE_NAME,
+      chatMode: "chat",
       openAiPrompt: getSparkySystemPrompt(),
     });
     expect(WorkspaceSuggestedMessages.saveAll).toHaveBeenCalledWith(
@@ -244,7 +253,7 @@ describe("SPARKY bootstrap foundation", () => {
     expect(result.workspace).toBe(updatedWorkspace);
     expect(result.collision).toBe(false);
     expect(result.created).toBe(false);
-    expect(result.message).toContain("already bootstrapped");
+    expect(result.message).toContain("bootstrapped and refreshed");
   });
 
   it("keeps the current PR #4 SPARKY prompt when already current", async () => {
@@ -253,10 +262,10 @@ describe("SPARKY bootstrap foundation", () => {
       name: SPARKY_WORKSPACE_NAME,
       slug: SPARKY_WORKSPACE_SLUG,
       openAiPrompt: getSparkySystemPrompt(),
-      chatMode: "automatic",
+      chatMode: "chat",
     };
 
-    Workspace.get.mockResolvedValue(existingWorkspace);
+    prisma.workspaces.findUnique.mockResolvedValue(existingWorkspace);
     Workspace.new.mockResolvedValue({
       workspace: null,
       message: "should not be used",
@@ -265,7 +274,9 @@ describe("SPARKY bootstrap foundation", () => {
 
     const result = await ensureSparkyWorkspace();
 
-    expect(Workspace.get).toHaveBeenCalledWith({ slug: SPARKY_WORKSPACE_SLUG });
+    expect(prisma.workspaces.findUnique).toHaveBeenCalledWith({
+      where: { slug: SPARKY_WORKSPACE_SLUG },
+    });
     expect(Workspace.new).not.toHaveBeenCalled();
     expect(Workspace.update).not.toHaveBeenCalled();
     expect(WorkspaceSuggestedMessages.saveAll).toHaveBeenCalledWith(
@@ -278,7 +289,7 @@ describe("SPARKY bootstrap foundation", () => {
     expect(result.workspace).toBe(existingWorkspace);
     expect(result.collision).toBe(false);
     expect(result.created).toBe(false);
-    expect(result.message).toContain("already bootstrapped");
+    expect(result.message).toContain("bootstrapped and refreshed");
   });
 
   it("does not overwrite a user-created SPARKY collision", async () => {
@@ -290,7 +301,7 @@ describe("SPARKY bootstrap foundation", () => {
       chatMode: "chat",
     };
 
-    Workspace.get.mockResolvedValue(existingWorkspace);
+    prisma.workspaces.findUnique.mockResolvedValue(existingWorkspace);
     Workspace.new.mockResolvedValue({
       workspace: null,
       message: "should not be used",
@@ -303,7 +314,9 @@ describe("SPARKY bootstrap foundation", () => {
 
     const result = await ensureSparkyWorkspace();
 
-    expect(Workspace.get).toHaveBeenCalledWith({ slug: SPARKY_WORKSPACE_SLUG });
+    expect(prisma.workspaces.findUnique).toHaveBeenCalledWith({
+      where: { slug: SPARKY_WORKSPACE_SLUG },
+    });
     expect(Workspace.new).not.toHaveBeenCalled();
     expect(Workspace.update).not.toHaveBeenCalled();
     expect(WorkspaceSuggestedMessages.saveAll).not.toHaveBeenCalled();
