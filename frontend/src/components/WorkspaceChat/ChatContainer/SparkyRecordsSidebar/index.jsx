@@ -128,38 +128,27 @@ export default function SparkyRecordsSidebar({ workspace }) {
         });
     // Existing server-side SPARKY Records are the source of truth for imported
     // approved decisions. Proof notes are NEVER exported as verified evidence.
-    const union = (before, after) => {
-      const seen = new Set();
-      return [...before, ...after]
-        .filter((entry) => {
-          const key = String(entry.text || "").trim();
-          if (!key || seen.has(key)) return false;
-          seen.add(key);
-          return true;
-        })
-        .slice(0, 100);
-    };
-    pack.decisions = union(
-      pack.decisions,
+    pack.decisions = M.mergeTextEntries(
       recordList
         .filter((r) => r.kind === "decision" && r.status === "approved")
         .map((r) => ({
           text: r.truth,
           approved_at: "",
           source: "SPARKY Records",
-        }))
+        })),
+      pack.decisions
     );
-    pack.ideas = union(
-      pack.ideas,
+    pack.ideas = M.mergeTextEntries(
       recordList
         .filter((r) => r.kind === "idea" && r.status !== "archived")
-        .map((r) => ({ text: r.truth, created_at: "" }))
+        .map((r) => ({ text: r.truth, created_at: "" })),
+      pack.ideas
     );
-    pack.proofs = union(
-      pack.proofs,
+    pack.proofs = M.mergeTextEntries(
       recordList
         .filter((r) => r.kind === "proof" && r.status !== "archived")
-        .map((r) => ({ text: r.truth, reference: "", status: "unverified" }))
+        .map((r) => ({ text: r.truth, reference: "", status: "unverified" })),
+      pack.proofs
     );
     return pack;
   }
