@@ -33,6 +33,25 @@ test("creator-memory v1 round-trips non-Moonboy and Moonboy identities", () => {
     assert.match(M.filename(parsed, "json"), /razor-creator-memory\.json/);
   }
 });
+test("long existing SPARKY records round-trip without 2000-character truncation", () => {
+  const M = boot();
+  const text = "A".repeat(2400) + " LAST-CHARACTERS-PRESERVED";
+  const record = M.create({ title: "Full history" });
+  record.decisions.push({ text, approved_at: "", source: "SPARKY Records" });
+  record.ideas.push({ text, created_at: "" });
+  record.proofs.push({ text, reference: "", status: "unverified" });
+  const parsed = M.parse(M.serialize(record));
+  assert.equal(parsed.decisions[0].text, text);
+  assert.equal(parsed.ideas[0].text, text);
+  assert.equal(parsed.proofs[0].text, text);
+  assert.match(M.markdown(parsed), /LAST-CHARACTERS-PRESERVED/);
+  const common = "A".repeat(2000);
+  assert.equal(M.mergeTextEntries([{ text: common + "X" }], [{ text: common + "Y" }]).length, 2);
+  parsed.decisions[0].text = "B".repeat(M.MAX_BYTES);
+  assert.throws(() => M.serialize(parsed), /256 KB/);
+  assert.throws(() => M.markdown(parsed), /256 KB/);
+});
+
 test("untrusted data cannot self-promote to verified or official canon", () => {
   const M = boot();
   const malicious = M.create({ title: "<img onerror=alert(1)>", scope: "moonboys" });
