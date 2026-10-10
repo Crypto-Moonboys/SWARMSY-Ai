@@ -49,6 +49,7 @@ describe("SPARKY truths", () => {
     name: SPARKY_WORKSPACE_NAME,
     slug: SPARKY_WORKSPACE_SLUG,
     openAiPrompt: getSparkySystemPrompt(),
+    isCanonicalSparky: true,
   };
 
   const collisionWorkspace = {
