@@ -162,12 +162,36 @@
       throw new Error("Project exceeds the 256 KB export limit.");
     return text;
   }
+  // Server SPARKY Records always have priority; never silently discard records.
+  function mergeTextEntries(currentRecords = [], importedRecords = []) {
+    if (!Array.isArray(currentRecords) || !Array.isArray(importedRecords)) {
+      throw new Error("Creator memory collections must be arrays.");
+    }
+    const result = [];
+    const seen = new Set();
+    for (const entry of [...currentRecords, ...importedRecords]) {
+      if (!object(entry)) continue;
+      const key = string(entry.text);
+      if (!key || seen.has(key)) continue;
+      seen.add(key);
+      result.push(entry);
+      if (result.length > MAX_ITEMS) {
+        throw new Error("More than 100 unique project records would be exported. No records were dropped. Archive or split the project before export.");
+      }
+    }
+    return result;
+  }
   function markdown(data) {
     const d = normalise(data);
-    const line = (s) =>
-      String(s || "")
+    // Treat every creator-supplied field as literal Markdown text, never syntax.
+    // In particular, ![...](https://...) must not load external tracking images.
+    const line = (value) =>
+      String(value || "")
         .replace(/[\r\n]+/g, " ")
-        .replace(/</g, "&lt;");
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/([\\\`*_{}\[\]()#+\-.!|~])/g, "\\$1");
     const section = (title, arr, render) =>
       "\n## " +
       title +
@@ -264,6 +288,7 @@
     normalise,
     parse,
     serialize,
+    mergeTextEntries,
     markdown,
     handoff,
     filename,
