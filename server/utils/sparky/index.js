@@ -363,7 +363,8 @@ async function ensureSparkyWorkspace() {
         error: "SPARKY slug collision",
         collision: true,
         created: false,
-        message: "SPARKY slug is already used; leaving existing workspace untouched.",
+        message:
+          "SPARKY slug is already used; leaving existing workspace untouched.",
       };
     }
     const workspace = await refreshSparkySystemPrompt(
