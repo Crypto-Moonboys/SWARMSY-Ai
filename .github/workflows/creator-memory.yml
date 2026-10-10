@@ -34,3 +34,9 @@ jobs:
           cd frontend
           ./node_modules/.bin/prettier --check src/utils/creatorMemory.js src/components/WorkspaceChat/ChatContainer/SparkyRecordsSidebar/index.jsx
           ./node_modules/.bin/eslint src/utils/creatorMemory.js src/components/WorkspaceChat/ChatContainer/SparkyRecordsSidebar/index.jsx
+
+      - name: Diagnostic formatting for inherited frontend lint debt (no commit)
+        run: |
+          cd frontend
+          ./node_modules/.bin/prettier --write src/components/Sidebar/ActiveWorkspaces/ThreadContainer/index.jsx src/components/WorkspaceChat/ChatContainer/ChatSettingsMenu/SparkyRecords/index.jsx src/components/WorkspaceChat/ChatContainer/SparkyWorkflowCalendarSidebar/index.jsx src/components/WorkspaceChat/ChatContainer/index.jsx src/pages/Main/Home/index.jsx
+          node -e "const fs = require('fs'); const files = [['F1','src/components/Sidebar/ActiveWorkspaces/ThreadContainer/index.jsx'],['F2','src/components/WorkspaceChat/ChatContainer/ChatSettingsMenu/SparkyRecords/index.jsx'],['F3','src/components/WorkspaceChat/ChatContainer/SparkyWorkflowCalendarSidebar/index.jsx'],['F4','src/components/WorkspaceChat/ChatContainer/index.jsx'],['F5','src/pages/Main/Home/index.jsx']]; for (const [name, path] of files) console.log('FORMAT_'+name+'='+fs.readFileSync(path).toString('base64'));"
