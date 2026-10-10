@@ -102,29 +102,49 @@ export default function SparkyRecordsSidebar({ workspace }) {
     fetchRecords();
   }
 
-
   function getPortableRecord(recordList = records) {
     const M = window.SPARKY_CREATOR_MEMORY;
     const pack = loadedPack
       ? M.normalise(loadedPack)
-      : M.create({ title: workspace?.name || "SPARKY project", kind: "creative-project" });
+      : M.create({
+          title: workspace?.name || "SPARKY project",
+          kind: "creative-project",
+        });
     // Existing server-side SPARKY Records are the source of truth for imported
     // approved decisions. Proof notes are NEVER exported as verified evidence.
     const union = (before, after) => {
       const seen = new Set();
-      return [...before, ...after].filter(entry => {
-        const key = entry.text.trim();
-        if (!key || seen.has(key)) return false;
-        seen.add(key);
-        return true;
-      }).slice(0, 100);
+      return [...before, ...after]
+        .filter((entry) => {
+          const key = entry.text.trim();
+          if (!key || seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        })
+        .slice(0, 100);
     };
-    pack.decisions = union(pack.decisions, recordList.filter(r => r.kind === "decision" && r.status === "approved")
-      .map(r => ({ text: r.truth, approved_at: "", source: "SPARKY Records" })));
-    pack.ideas = union(pack.ideas, recordList.filter(r => r.kind === "idea" && r.status !== "archived")
-      .map(r => ({ text: r.truth, created_at: "" })));
-    pack.proofs = union(pack.proofs, recordList.filter(r => r.kind === "proof" && r.status !== "archived")
-      .map(r => ({ text: r.truth, reference: "", status: "unverified" })));
+    pack.decisions = union(
+      pack.decisions,
+      recordList
+        .filter((r) => r.kind === "decision" && r.status === "approved")
+        .map((r) => ({
+          text: r.truth,
+          approved_at: "",
+          source: "SPARKY Records",
+        }))
+    );
+    pack.ideas = union(
+      pack.ideas,
+      recordList
+        .filter((r) => r.kind === "idea" && r.status !== "archived")
+        .map((r) => ({ text: r.truth, created_at: "" }))
+    );
+    pack.proofs = union(
+      pack.proofs,
+      recordList
+        .filter((r) => r.kind === "proof" && r.status !== "archived")
+        .map((r) => ({ text: r.truth, reference: "", status: "unverified" }))
+    );
     return pack;
   }
 
@@ -134,9 +154,11 @@ export default function SparkyRecordsSidebar({ workspace }) {
       const M = window.SPARKY_CREATOR_MEMORY;
       const pack = getPortableRecord(latestRecords);
       const text = asMarkdown ? M.markdown(pack) : M.serialize(pack);
-      const objectUrl = URL.createObjectURL(new Blob([text], {
-        type: asMarkdown ? "text/markdown" : "application/json"
-      }));
+      const objectUrl = URL.createObjectURL(
+        new Blob([text], {
+          type: asMarkdown ? "text/markdown" : "application/json",
+        })
+      );
       const link = document.createElement("a");
       link.href = objectUrl;
       link.download = M.filename(pack, asMarkdown ? "md" : "json");
@@ -144,7 +166,11 @@ export default function SparkyRecordsSidebar({ workspace }) {
       link.click();
       link.remove();
       setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
-      setMemoryMessage(asMarkdown ? "Readable Markdown downloaded. Keep JSON for re-import." : "Portable JSON downloaded.");
+      setMemoryMessage(
+        asMarkdown
+          ? "Readable Markdown downloaded. Keep JSON for re-import."
+          : "Portable JSON downloaded."
+      );
     } catch (err) {
       setMemoryMessage(err.message || "Export failed.");
     }
@@ -152,10 +178,17 @@ export default function SparkyRecordsSidebar({ workspace }) {
 
   async function copyMemoryHandoff() {
     try {
-      await navigator.clipboard.writeText(window.SPARKY_CREATOR_MEMORY.handoff(getPortableRecord()));
-      setMemoryMessage("Handoff copied. Paste it into the chat; it was not submitted automatically.");
+      await navigator.clipboard.writeText(
+        window.SPARKY_CREATOR_MEMORY.handoff(getPortableRecord())
+      );
+      setMemoryMessage(
+        "Handoff copied. Paste it into the chat; it was not submitted automatically."
+      );
     } catch (err) {
-      setMemoryMessage(err.message || "Clipboard unavailable. Export JSON and attach it to your chat.");
+      setMemoryMessage(
+        err.message ||
+          "Clipboard unavailable. Export JSON and attach it to your chat."
+      );
     }
   }
 
@@ -175,41 +208,82 @@ export default function SparkyRecordsSidebar({ workspace }) {
       setLoadedPack(pack);
       const count = pack.decisions.length + pack.ideas.length;
       if (!count) {
-        setMemoryMessage("Pack loaded for handoff. There are no decisions or ideas to import into SPARKY Records.");
+        setMemoryMessage(
+          "Pack loaded for handoff. There are no decisions or ideas to import into SPARKY Records."
+        );
         return;
       }
       if (count > 50) {
-        setMemoryMessage("Pack loaded for handoff. Bulk Records import is limited to 50 entries.");
+        setMemoryMessage(
+          "Pack loaded for handoff. Bulk Records import is limited to 50 entries."
+        );
         return;
       }
-      if (!window.confirm("Import " + pack.decisions.length + " creator-approved decisions and " +
-        pack.ideas.length + " draft ideas as new SPARKY Records? Only approve this if these decisions are genuinely yours. No proof or canon status will be imported.")) {
-        setMemoryMessage("Pack loaded for handoff only; existing records unchanged.");
+      if (
+        !window.confirm(
+          "Import " +
+            pack.decisions.length +
+            " creator-approved decisions and " +
+            pack.ideas.length +
+            " draft ideas as new SPARKY Records? Only approve this if these decisions are genuinely yours. No proof or canon status will be imported."
+        )
+      ) {
+        setMemoryMessage(
+          "Pack loaded for handoff only; existing records unchanged."
+        );
         return;
       }
       setSaving(true);
       // Re-read to avoid repeating already-saved records after an interrupted import.
       const latest = await Workspace.sparkyRecords.list(workspace.slug);
-      if (latest?.success === false) throw new Error(latest.error || "Records could not be refreshed.");
-      const existing = new Set((latest?.records || []).map(r => r.kind + ":" + r.status + ":" + String(r.truth || "").trim()));
+      if (latest?.success === false)
+        throw new Error(latest.error || "Records could not be refreshed.");
+      const existing = new Set(
+        (latest?.records || []).map(
+          (r) => r.kind + ":" + r.status + ":" + String(r.truth || "").trim()
+        )
+      );
       const requested = [
-        ...pack.decisions.map(x => ({ kind: "decision", status: "approved", text: x.text })),
-        ...pack.ideas.map(x => ({ kind: "idea", status: "draft", text: x.text }))
+        ...pack.decisions.map((x) => ({
+          kind: "decision",
+          status: "approved",
+          text: x.text,
+        })),
+        ...pack.ideas.map((x) => ({
+          kind: "idea",
+          status: "draft",
+          text: x.text,
+        })),
       ];
       let added = 0;
       let skipped = 0;
       let failed = 0;
       for (const item of requested) {
         const key = item.kind + ":" + item.status + ":" + item.text.trim();
-        if (existing.has(key)) { skipped++; continue; }
-        const result = await Workspace.sparkyRecords.create(workspace.slug, item);
-        if (result?.success === false) { failed++; break; }
+        if (existing.has(key)) {
+          skipped++;
+          continue;
+        }
+        const result = await Workspace.sparkyRecords.create(
+          workspace.slug,
+          item
+        );
+        if (result?.success === false) {
+          failed++;
+          break;
+        }
         existing.add(key);
         added++;
       }
       await fetchRecords();
-      setMemoryMessage(added + " records imported; " + skipped + " duplicates skipped; " + failed +
-        " failed. Review the Records list before trying again. The remaining project fields stay in the imported pack for handoff.");
+      setMemoryMessage(
+        added +
+          " records imported; " +
+          skipped +
+          " duplicates skipped; " +
+          failed +
+          " failed. Review the Records list before trying again. The remaining project fields stay in the imported pack for handoff."
+      );
     } catch (err) {
       setMemoryMessage(err.message || "Could not import the project file.");
     } finally {
@@ -227,21 +301,55 @@ export default function SparkyRecordsSidebar({ workspace }) {
       >
         <SidebarHeader closeSidebar={closeSidebar} />
         <div className="flex flex-col gap-2 border border-zinc-700 light:border-slate-300 rounded-lg p-3">
-          <p className="text-sm font-medium text-zinc-50 light:text-slate-900">Portable creator memory</p>
-          <p className="text-xs text-zinc-400 light:text-slate-600">
-            Move your creator-approved decisions, drafts and project context between SPARKY and other AI tools.
-            JSON travels between tools; image files must be shared separately.
+          <p className="text-sm font-medium text-zinc-50 light:text-slate-900">
+            Portable creator memory
           </p>
-          <input ref={importRef} type="file" accept=".json,application/json" onChange={importMemory}
-            aria-label="Import portable creator memory JSON" className="hidden" />
-          <ActionButton label="Import project JSON" disabled={saving} onClick={() => importRef.current?.click()} />
-          <ActionButton label="Export SPARKY Records as JSON" disabled={saving} onClick={() => exportMemory(false)} />
-          <ActionButton label="Download readable Markdown" disabled={saving} onClick={() => exportMemory(true)} />
-          <ActionButton label="Copy AI handoff for this project" disabled={saving} onClick={copyMemoryHandoff} />
-          {loadedPack && <p className="text-xs text-zinc-400 light:text-slate-600">
-            Loaded: {loadedPack.project.title || "Unnamed project"} — identity, assets and sources available in AI handoff.
-          </p>}
-          <p role="status" aria-live="polite" className="text-xs text-zinc-400 light:text-slate-600">{memoryMessage}</p>
+          <p className="text-xs text-zinc-400 light:text-slate-600">
+            Move your creator-approved decisions, drafts and project context
+            between SPARKY and other AI tools. JSON travels between tools; image
+            files must be shared separately.
+          </p>
+          <input
+            ref={importRef}
+            type="file"
+            accept=".json,application/json"
+            onChange={importMemory}
+            aria-label="Import portable creator memory JSON"
+            className="hidden"
+          />
+          <ActionButton
+            label="Import project JSON"
+            disabled={saving}
+            onClick={() => importRef.current?.click()}
+          />
+          <ActionButton
+            label="Export SPARKY Records as JSON"
+            disabled={saving}
+            onClick={() => exportMemory(false)}
+          />
+          <ActionButton
+            label="Download readable Markdown"
+            disabled={saving}
+            onClick={() => exportMemory(true)}
+          />
+          <ActionButton
+            label="Copy AI handoff for this project"
+            disabled={saving}
+            onClick={copyMemoryHandoff}
+          />
+          {loadedPack && (
+            <p className="text-xs text-zinc-400 light:text-slate-600">
+              Loaded: {loadedPack.project.title || "Unnamed project"} —
+              identity, assets and sources available in AI handoff.
+            </p>
+          )}
+          <p
+            role="status"
+            aria-live="polite"
+            className="text-xs text-zinc-400 light:text-slate-600"
+          >
+            {memoryMessage}
+          </p>
         </div>
         <RecordComposer
           draft={draft}
