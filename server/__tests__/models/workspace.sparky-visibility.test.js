@@ -30,8 +30,8 @@ describe("SPARKY canonical visibility", () => {
     const collision = {
       id: 21,
       slug: "sparky",
-      name: "Private Sparky",
-      openAiPrompt: "user prompt",
+      name: "SPARKY",
+      openAiPrompt: getSparkySystemPrompt(),
       isCanonicalSparky: false,
     };
 
@@ -50,8 +50,7 @@ describe("SPARKY canonical visibility", () => {
       visibilityClause.some(
         (entry) =>
           entry.slug === "sparky" &&
-          entry.name === "SPARKY" &&
-          entry.openAiPrompt === getSparkySystemPrompt()
+          entry.isCanonicalSparky === true
       )
     ).toBe(true);
     expect(

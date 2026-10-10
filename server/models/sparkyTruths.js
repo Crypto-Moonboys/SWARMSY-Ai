@@ -14,12 +14,16 @@ function normalizeUserId(userId = null) {
 }
 
 function normalizeRecordKind(kind = "decision") {
-  const normalized = String(kind || "decision").trim().toLowerCase();
+  const normalized = String(kind || "decision")
+    .trim()
+    .toLowerCase();
   return SPARKY_RECORD_KINDS.includes(normalized) ? normalized : "decision";
 }
 
 function normalizeRecordStatus(status = "approved") {
-  const normalized = String(status || "approved").trim().toLowerCase();
+  const normalized = String(status || "approved")
+    .trim()
+    .toLowerCase();
   return SPARKY_RECORD_STATUSES.includes(normalized) ? normalized : "approved";
 }
 
@@ -90,7 +94,12 @@ const SparkyTruths = {
     }
   },
 
-  update: async function ({ id = null, workspaceId = null, userId = null, data = {} } = {}) {
+  update: async function ({
+    id = null,
+    workspaceId = null,
+    userId = null,
+    data = {},
+  } = {}) {
     if (!id || !workspaceId) {
       return { truth: null, message: "truth id and workspace id are required" };
     }
@@ -104,16 +113,24 @@ const SparkyTruths = {
     };
 
     const updateData = {
-      ...(data.truth !== undefined ? { truth: normalizeTruthValue(data.truth) } : {}),
-      ...(data.kind !== undefined ? { kind: normalizeRecordKind(data.kind) } : {}),
+      ...(data.truth !== undefined
+        ? { truth: normalizeTruthValue(data.truth) }
+        : {}),
+      ...(data.kind !== undefined
+        ? { kind: normalizeRecordKind(data.kind) }
+        : {}),
       ...(data.status !== undefined
         ? {
             status: normalizeRecordStatus(data.status),
             archived: normalizeRecordStatus(data.status) === "archived",
           }
         : {}),
-      ...(data.source !== undefined ? { source: normalizeOptionalText(data.source) } : {}),
-      ...(data.notes !== undefined ? { notes: normalizeOptionalText(data.notes) } : {}),
+      ...(data.source !== undefined
+        ? { source: normalizeOptionalText(data.source) }
+        : {}),
+      ...(data.notes !== undefined
+        ? { notes: normalizeOptionalText(data.notes) }
+        : {}),
       lastUpdatedAt: new Date(),
     };
 
@@ -132,7 +149,11 @@ const SparkyTruths = {
     }
   },
 
-  archive: async function ({ id = null, workspaceId = null, userId = null } = {}) {
+  archive: async function ({
+    id = null,
+    workspaceId = null,
+    userId = null,
+  } = {}) {
     return this.update({
       id,
       workspaceId,

@@ -46,8 +46,9 @@ describe("SPARKY fixed workspace protection", () => {
 
     expect(workspaceModel).toContain("isCanonicalSparkyWorkspace");
     expect(workspaceModel).toContain("workspace_users");
-    expect(workspaceModel).toContain("name: \"SPARKY\"");
-    expect(workspaceModel).toContain("openAiPrompt: getSparkySystemPrompt()");
+    expect(workspaceModel).toContain("isCanonicalSparky: true");
+    expect(sparkyTruthsSchema).toContain("isCanonicalSparky");
+    expect(workspaceModel).not.toContain("openAiPrompt: getSparkySystemPrompt()");
     expect(workspaceModel).not.toContain("SPARKY_WORKSPACE_METADATA");
     expect(workspaceModel).toContain("OR:");
 
@@ -127,7 +128,7 @@ describe("SPARKY fixed workspace protection", () => {
     const workspaceRow = read(WORKSPACE_ROW_PATH);
     const sparkyHelper = read(SPARKY_HELPER_PATH);
 
-    expect(activeWorkspaces).toContain("Continue with SPARKY");
+    expect(activeWorkspaces).toContain('aria-label="Continue with SWARMSY"');
     expect(activeWorkspaces).toContain("isCanonicalSparkyWorkspace(workspace)");
     expect(activeWorkspaces).toContain("reorderedWorkspaces.map((w) => w.id)");
     expect(homePage).toContain("isCanonicalSparkyWorkspace(workspace)");

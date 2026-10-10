@@ -8,8 +8,8 @@ const { User } = require("./user");
 const { PromptHistory } = require("./promptHistory");
 const { SystemSettings } = require("./systemSettings");
 const {
+  SPARKY_WORKSPACE_NAME,
   SPARKY_WORKSPACE_SLUG,
-  getSparkySystemPrompt,
   isCanonicalSparkyWorkspace,
 } = require("../utils/sparky");
 
@@ -231,6 +231,30 @@ const Workspace = {
       slug = this.slugify(`${name}-${slugSeed}`, { lower: true });
     }
 
+    return this._createWithSlug(name, creatorId, additionalFields, slug);
+  },
+
+  newCanonicalSparky: async function (
+    name = null,
+    slug = null,
+    additionalFields = {}
+  ) {
+    if (name !== SPARKY_WORKSPACE_NAME || slug !== SPARKY_WORKSPACE_SLUG) {
+      return {
+        workspace: null,
+        message: "Canonical SPARKY creation requires its reserved identity.",
+      };
+    }
+    return this._createWithSlug(name, null, additionalFields, slug, true);
+  },
+
+  _createWithSlug: async function (
+    name,
+    creatorId,
+    additionalFields,
+    slug,
+    isCanonicalSparky = false
+  ) {
     // If system prompt wasn't sent, apply the system default system prompt
     if (!additionalFields.openAiPrompt) {
       const defaultSystemPrompt = await SystemSettings.get({
@@ -247,6 +271,7 @@ const Workspace = {
         chatMode: "automatic",
         ...this.validateFields(additionalFields),
         slug,
+        ...(isCanonicalSparky ? { isCanonicalSparky: true } : {}),
       };
 
       const workspace = await prisma.workspaces.create({
@@ -352,8 +377,7 @@ const Workspace = {
                 },
                 {
                   slug: SPARKY_WORKSPACE_SLUG,
-                  name: "SPARKY",
-                  openAiPrompt: getSparkySystemPrompt(),
+                  isCanonicalSparky: true,
                 },
               ],
             },
@@ -486,8 +510,7 @@ const Workspace = {
                 },
                 {
                   slug: SPARKY_WORKSPACE_SLUG,
-                  name: "SPARKY",
-                  openAiPrompt: getSparkySystemPrompt(),
+                  isCanonicalSparky: true,
                 },
               ],
             },

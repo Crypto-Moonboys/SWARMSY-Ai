@@ -24,10 +24,10 @@ const SPARKY_PROMPT_IDENTITY_LINES = [
   "You are SPARKY, the underground creator operating layer inside AnythingLLM.",
   "Your mission is to help users who do not know what to prompt yet by turning uncertainty into clear direction, useful ideas, approved memory, and simple next actions.",
   "You are not a generic chatbot, a bland branding assistant, or another ordinary planner app.",
-  "Your operating spine is the world's GRAFFITI KING: lawful graffiti bot, guerrilla brand strategist, street-level art director, and AnythingLLM tool guide.",
-  "Think in message, mascot, mark, wall, lawful proof, digital echo, website/archive, following, AI swarm handoff, and next action.",
+  "SPARKY's operating spine: act like the world's GRAFFITI KING, a lawful Graffiti Bot and guerrilla brand strategist powered by AnythingLLM tools.",
+  "Default away from corporate marketing language. Default toward memorable symbols, wall logic, local traction, proof cards, posters, stickers, flyers, merch, storefronts, events, websites, socials, Telegram, Discord, wiki pages, AI image handoffs, and daily proof loops.",
   "When the user is only chatting, respond normally and keep the conversation natural.",
-  "When the user is building something, help them move through the street-to-digital creator ladder:",
+  "Every serious build should move through this beginner-friendly ladder:",
   "Stay separate from the user's rough ideas until they are approved.",
   "Use the selected AnythingLLM workspace model, tools, retrieval, and settings underneath you.",
   "Do not replace normal AnythingLLM behavior.",
@@ -53,13 +53,11 @@ const SPARKY_STARTER_SUGGESTED_MESSAGES = [
   },
   {
     heading: "",
-    message:
-      "Make a street-level lore, stencil, merch and campaign pack.",
+    message: "Make a street-level lore, stencil, merch and campaign pack.",
   },
   {
     heading: "",
-    message:
-      "Map the tools, bots and automation needed.",
+    message: "Map the tools, bots and automation needed.",
   },
 ];
 
@@ -286,8 +284,13 @@ function isSparkyWorkspaceSlug(slug) {
 }
 
 function isCanonicalSparkyWorkspace(workspace = null) {
-  if (!workspace || workspace.slug !== SPARKY_WORKSPACE_SLUG) return false;
-  return String(workspace.name || "").trim() === SPARKY_WORKSPACE_NAME;
+  // The persisted database flag is the sole ownership marker. A user-created
+  // workspace is never official merely because its name and slug match.
+  return (
+    !!workspace &&
+    workspace.slug === SPARKY_WORKSPACE_SLUG &&
+    workspace.isCanonicalSparky === true
+  );
 }
 
 function suggestedMessagesNeedRefresh(existingMessages = []) {
@@ -326,7 +329,8 @@ async function refreshSparkySystemPrompt(Workspace, workspace = null) {
     normalizeSparkySystemPrompt(workspace.openAiPrompt) !==
     normalizeSparkySystemPrompt(template.openAiPrompt);
   const chatModeNeedsRefresh = workspace.chatMode !== template.chatMode;
-  const nameNeedsRefresh = String(workspace.name || "").trim() !== template.name;
+  const nameNeedsRefresh =
+    String(workspace.name || "").trim() !== template.name;
 
   if (!promptNeedsRefresh && !chatModeNeedsRefresh && !nameNeedsRefresh) {
     return workspace;
@@ -356,6 +360,18 @@ async function ensureSparkyWorkspace() {
   });
 
   if (existingWorkspace) {
+    // A user workspace sharing the reserved slug is not a canonical SPARKY
+    // workspace. Never rewrite its name, prompt, or chat mode during bootstrap.
+    if (!isCanonicalSparkyWorkspace(existingWorkspace)) {
+      return {
+        workspace: existingWorkspace,
+        error: "SPARKY slug collision",
+        collision: true,
+        created: false,
+        message:
+          "SPARKY slug is already used; leaving existing workspace untouched.",
+      };
+    }
     const workspace = await refreshSparkySystemPrompt(
       Workspace,
       existingWorkspace
@@ -370,21 +386,39 @@ async function ensureSparkyWorkspace() {
     };
   }
 
-  // TODO: reserve/protect the SPARKY slug so user-created workspaces cannot
-  // collide with this identity in future releases.
-  const { workspace, message } = await Workspace.new(template.name, null, {
-    chatMode: template.chatMode,
-    openAiPrompt: template.openAiPrompt,
-  });
+  // The database's unique slug constraint arbitrates concurrent bootstrap
+  // requests; the canonical marker is written by the same insert, and unlike
+  // Workspace.new, this never falls back to a random slug.
+  const { workspace, message } = await Workspace.newCanonicalSparky(
+    template.name,
+    template.slug,
+    {
+      chatMode: template.chatMode,
+      openAiPrompt: template.openAiPrompt,
+    }
+  );
+
+  // A failed exact-slug create may mean another process or user won the race.
+  // Never promote or rewrite that row.
+  if (!workspace || workspace.slug !== template.slug || !workspace.id) {
+    return {
+      workspace: null,
+      error:
+        message ||
+        "SPARKY workspace could not be created with the reserved slug.",
+      collision: true,
+      created: false,
+      message: "SPARKY identity was not claimed; review workspace ownership.",
+    };
+  }
 
   await seedSparkyStarterSuggestedMessages(workspace);
-
   return {
     workspace,
-    error: message,
+    error: null,
     collision: false,
-    created: !!workspace,
-    message,
+    created: true,
+    message: "SPARKY canonical workspace created and claimed.",
   };
 }
 

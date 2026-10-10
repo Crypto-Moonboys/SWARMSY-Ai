@@ -162,12 +162,20 @@ export default function ThreadContainer({
         threads={threads}
         onDelete={handleDeleteAll}
       />
-      <NewThreadButton workspace={workspace} normalWorkspace={normalWorkspace} showNewWsModal={showNewWsModal} />
+      <NewThreadButton
+        workspace={workspace}
+        normalWorkspace={normalWorkspace}
+        showNewWsModal={showNewWsModal}
+      />
     </div>
   );
 }
 
-function NewThreadButton({ workspace, normalWorkspace = null, showNewWsModal = null }) {
+function NewThreadButton({
+  workspace,
+  normalWorkspace = null,
+  showNewWsModal = null,
+}) {
   const [loading, setLoading] = useState(false);
   const isSparkyWorkspace = isCanonicalSparkyWorkspace(workspace);
   const targetWorkspace = isSparkyWorkspace ? normalWorkspace : workspace;

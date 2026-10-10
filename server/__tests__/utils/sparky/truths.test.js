@@ -1,4 +1,11 @@
 jest.mock("../../../models/sparkyTruths", () => ({
+  // The module mock must expose the normalizers used by the real records API.
+  normalizeRecordKind: jest.fn((value = "decision") =>
+    ["idea", "decision", "proof"].includes(value) ? value : "decision"
+  ),
+  normalizeRecordStatus: jest.fn((value = "approved") =>
+    ["draft", "approved", "archived"].includes(value) ? value : "approved"
+  ),
   SparkyTruths: {
     create: jest.fn(),
     get: jest.fn(),
@@ -42,6 +49,7 @@ describe("SPARKY truths", () => {
     name: SPARKY_WORKSPACE_NAME,
     slug: SPARKY_WORKSPACE_SLUG,
     openAiPrompt: getSparkySystemPrompt(),
+    isCanonicalSparky: true,
   };
 
   const collisionWorkspace = {

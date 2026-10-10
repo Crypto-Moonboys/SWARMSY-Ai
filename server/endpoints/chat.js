@@ -19,7 +19,6 @@ const { User } = require("../models/user");
 const { getModelTag } = require("./utils");
 const { getSparkyStarterReply } = require("../utils/sparky/starterReplies");
 
-
 async function maybeHandleSparkyStarterReply({
   response,
   workspace,

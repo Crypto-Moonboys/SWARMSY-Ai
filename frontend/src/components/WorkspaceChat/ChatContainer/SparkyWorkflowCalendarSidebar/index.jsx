@@ -23,8 +23,9 @@ const SCOPE_OPTIONS = [
   { value: "month", label: "Whole month" },
 ];
 
-const HOURS = Array.from({ length: 24 }, (_, hour) =>
-  `${String(hour).padStart(2, "0")}:00`
+const HOURS = Array.from(
+  { length: 24 },
+  (_, hour) => `${String(hour).padStart(2, "0")}:00`
 );
 
 function toISODate(date) {
@@ -94,7 +95,10 @@ function loadEntries(workspaceSlug) {
 
 function saveEntries(workspaceSlug, entries) {
   if (!workspaceSlug) return;
-  window.localStorage.setItem(storageKey(workspaceSlug), JSON.stringify(entries));
+  window.localStorage.setItem(
+    storageKey(workspaceSlug),
+    JSON.stringify(entries)
+  );
 }
 
 function isExactDayEntry(entry, isoDate) {
@@ -504,7 +508,9 @@ function WeekView({
   sendCommand,
 }) {
   const firstDay = startOfWeek(selectedDate);
-  const days = Array.from({ length: 7 }, (_, index) => addDays(firstDay, index));
+  const days = Array.from({ length: 7 }, (_, index) =>
+    addDays(firstDay, index)
+  );
 
   return (
     <div className="flex flex-col gap-2 pb-4">
@@ -620,13 +626,7 @@ function SectionTitle({ title }) {
   );
 }
 
-function EntryStack({
-  title,
-  entries,
-  removeEntry,
-  toggleDone,
-  sendCommand,
-}) {
+function EntryStack({ title, entries, removeEntry, toggleDone, sendCommand }) {
   return (
     <div className="rounded-lg border border-zinc-800 light:border-slate-300 bg-zinc-950/50 light:bg-white p-3">
       <p className="mb-2 text-xs font-semibold text-zinc-400 light:text-slate-500">

@@ -1,0 +1,36 @@
+name: Portable Creator Memory
+
+on:
+  pull_request:
+    paths:
+      - 'frontend/src/utils/creatorMemory.js'
+      - 'frontend/src/components/WorkspaceChat/ChatContainer/SparkyRecordsSidebar/index.jsx'
+      - 'frontend/scripts/creator-memory.test.mjs'
+      - 'server/sparky/packs/core/sparky-system-prompt.md'
+      - 'docs/portable-creator-memory.md'
+      - '.github/workflows/creator-memory.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate memory source syntax
+        run: node --check frontend/src/utils/creatorMemory.js
+      - name: Roundtrip, tampering and integration checks
+        run: node --test frontend/scripts/creator-memory.test.mjs
+
+      - name: Install frontend tooling for targeted format and lint checks
+        run: cd frontend && yarn install --frozen-lockfile --ignore-scripts
+      - name: Verify formatting and ESLint for changed frontend files
+        run: |
+          cd frontend
+          ./node_modules/.bin/prettier --check src/utils/creatorMemory.js src/components/WorkspaceChat/ChatContainer/SparkyRecordsSidebar/index.jsx
+          ./node_modules/.bin/eslint src/utils/creatorMemory.js src/components/WorkspaceChat/ChatContainer/SparkyRecordsSidebar/index.jsx
