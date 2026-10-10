@@ -29,9 +29,8 @@ jobs:
 
       - name: Install frontend tooling for targeted format and lint checks
         run: cd frontend && yarn install --frozen-lockfile --ignore-scripts
-      - name: Produce canonical formatting for changed frontend files
+      - name: Verify formatting and ESLint for changed frontend files
         run: |
           cd frontend
-          ./node_modules/.bin/prettier --write src/utils/creatorMemory.js src/components/WorkspaceChat/ChatContainer/SparkyRecordsSidebar/index.jsx
-          node -e "const fs=require('fs'); for(const [mark,path] of [['LIB','src/utils/creatorMemory.js'],['SIDEBAR','src/components/WorkspaceChat/ChatContainer/SparkyRecordsSidebar/index.jsx']]) console.log('FORMAT_RESULT_'+mark+'='+Buffer.from(fs.readFileSync(path)).toString('base64'));"
+          ./node_modules/.bin/prettier --check src/utils/creatorMemory.js src/components/WorkspaceChat/ChatContainer/SparkyRecordsSidebar/index.jsx
           ./node_modules/.bin/eslint src/utils/creatorMemory.js src/components/WorkspaceChat/ChatContainer/SparkyRecordsSidebar/index.jsx
