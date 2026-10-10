@@ -40,6 +40,7 @@ export default function SparkyRecordsSidebar({ workspace }) {
     setRecords(result?.records || []);
     setError(result?.success === false ? result.error : null);
     setLoading(false);
+    return result?.records || [];
   }
 
   useEffect(() => {
@@ -102,29 +103,27 @@ export default function SparkyRecordsSidebar({ workspace }) {
   }
 
 
-  function getPortableRecord() {
+  function getPortableRecord(recordList = records) {
     const M = window.SPARKY_CREATOR_MEMORY;
     const pack = loadedPack
       ? M.normalise(loadedPack)
       : M.create({ title: workspace?.name || "SPARKY project", kind: "creative-project" });
     // Existing server-side SPARKY Records are the source of truth for imported
     // approved decisions. Proof notes are NEVER exported as verified evidence.
-    pack.decisions = records.filter(r => r.kind === "decision" && r.status === "approved")
+    pack.decisions = recordList.filter(r => r.kind === "decision" && r.status === "approved")
       .map(r => ({ text: r.truth, approved_at: "", source: "SPARKY Records" }));
-    pack.ideas = records.filter(r => r.kind === "idea" && r.status !== "archived")
+    pack.ideas = recordList.filter(r => r.kind === "idea" && r.status !== "archived")
       .map(r => ({ text: r.truth, created_at: "" }));
-    pack.proofs = records.filter(r => r.kind === "proof" && r.status !== "archived")
+    pack.proofs = recordList.filter(r => r.kind === "proof" && r.status !== "archived")
       .map(r => ({ text: r.truth, reference: "", status: "unverified" }));
     return pack;
   }
 
   async function exportMemory(asMarkdown = false) {
     try {
-      await fetchRecords();
-      // The current render's records might be stale after fetch; users can
-      // export the records displayed in the sidebar, without any hidden fetch.
+      const latestRecords = await fetchRecords();
       const M = window.SPARKY_CREATOR_MEMORY;
-      const pack = getPortableRecord();
+      const pack = getPortableRecord(latestRecords);
       const text = asMarkdown ? M.markdown(pack) : M.serialize(pack);
       const objectUrl = URL.createObjectURL(new Blob([text], {
         type: asMarkdown ? "text/markdown" : "application/json"
