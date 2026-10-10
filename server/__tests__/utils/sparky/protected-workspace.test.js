@@ -46,7 +46,8 @@ describe("SPARKY fixed workspace protection", () => {
 
     expect(workspaceModel).toContain("isCanonicalSparkyWorkspace");
     expect(workspaceModel).toContain("workspace_users");
-    expect(workspaceModel).toContain("name: \"SPARKY\"");
+    expect(workspaceModel).toContain("isCanonicalSparky: true");
+    expect(sparkyTruthsSchema).toContain("isCanonicalSparky");
     expect(workspaceModel).toContain("openAiPrompt: getSparkySystemPrompt()");
     expect(workspaceModel).not.toContain("SPARKY_WORKSPACE_METADATA");
     expect(workspaceModel).toContain("OR:");
