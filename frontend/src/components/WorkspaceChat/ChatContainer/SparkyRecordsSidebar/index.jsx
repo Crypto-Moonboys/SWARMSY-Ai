@@ -364,7 +364,8 @@ export default function SparkyRecordsSidebar({ workspace }) {
                 {window.SPARKY_CREATOR_MEMORY.markdown(loadedPack)}
               </pre>
               <p className="mt-2">
-                Includes personal identity notes, history, sources and file references. Read it before copying a handoff.
+                Includes personal identity notes, history, sources and file
+                references. Read it before copying a handoff.
               </p>
             </details>
           )}
