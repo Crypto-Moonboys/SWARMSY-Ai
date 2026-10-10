@@ -1,8 +1,5 @@
 import { isCanonicalSparkyWorkspace } from "@/utils/sparky";
-import {
-  useSparkyRecordsSidebar,
-  useSourcesSidebar,
-} from "../../ChatSidebar";
+import { useSparkyRecordsSidebar, useSourcesSidebar } from "../../ChatSidebar";
 
 export default function SparkyRecordsRow({ workspace, onClose }) {
   const { toggleSidebar } = useSparkyRecordsSidebar();
