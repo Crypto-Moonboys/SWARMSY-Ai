@@ -33,6 +33,18 @@ test("creator-memory v1 round-trips non-Moonboy and Moonboy identities", () => {
     assert.match(M.filename(parsed, "json"), /razor-creator-memory\.json/);
   }
 });
+
+test("record text sanitization removes actual NUL without damaging literal backslash-zero", () => {
+  const M = boot();
+  const literalBackslashZero = String.raw\`step\\0name\`;
+  const record = M.create({ title: "NUL example" });
+  record.decisions.push({ text: "front" + "\\0" + "back " + literalBackslashZero });
+  const parsed = M.parse(M.serialize(record));
+  assert.equal(parsed.decisions[0].text, "frontback " + literalBackslashZero);
+  assert.equal(parsed.decisions[0].text.includes("\\0"), false);
+  assert.match(M.markdown(parsed), /step\\\\\\\\0name/);
+});
+
 test("long existing SPARKY records round-trip without 2000-character truncation", () => {
   const M = boot();
   const text = "A".repeat(2400) + " LAST-CHARACTERS-PRESERVED";
