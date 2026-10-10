@@ -14,6 +14,12 @@
     if (typeof value !== "string") return "";
     return value.replace(/\0/g, "").slice(0, max).trim();
   }
+  // Records can predate this portable format and exceed 2,000 characters.
+  // Preserve their entire content or fail the final 256 KiB export check.
+  function recordText(value) {
+    if (typeof value !== "string") return "";
+    return value.replace(/\\0/g, "");
+  }
   function timestamp(value) {
     if (typeof value !== "string" || !/^\d{4}-\d\d-\d\dT/.test(value))
       return "";
@@ -94,7 +100,7 @@
     // Imported project files can NEVER self-declare official canon approval.
     result.canon.notes = string(c.notes, 2000);
     result.decisions = items(raw.decisions, (x) => {
-      const text = string(x.text);
+      const text = recordText(x.text);
       return text
         ? {
             text,
@@ -104,7 +110,7 @@
         : null;
     });
     result.ideas = items(raw.ideas, (x) => {
-      const text = string(x.text);
+      const text = recordText(x.text);
       return text ? { text, created_at: timestamp(x.created_at) } : null;
     });
     result.sources = items(raw.sources, (x) => {
@@ -128,7 +134,7 @@
         : null;
     });
     result.proofs = items(raw.proofs, (x) => {
-      const text = string(x.text);
+      const text = recordText(x.text);
       return text
         ? { text, reference: string(x.reference, 1000), status: "unverified" }
         : null;
@@ -171,7 +177,7 @@
     const seen = new Set();
     for (const entry of [...currentRecords, ...importedRecords]) {
       if (!object(entry)) continue;
-      const key = string(entry.text);
+      const key = recordText(entry.text).trim();
       if (!key || seen.has(key)) continue;
       seen.add(key);
       result.push(entry);
@@ -184,6 +190,8 @@
     return result;
   }
   function markdown(data) {
+    // Markdown exports obey the same size/integrity bounds as JSON exports.
+    serialize(data);
     const d = normalise(data);
     // Treat every creator-supplied field as literal Markdown text, never syntax.
     // In particular, ![...](https://...) must not load external tracking images.
