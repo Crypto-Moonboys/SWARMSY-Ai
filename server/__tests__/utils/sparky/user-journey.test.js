@@ -10,7 +10,7 @@ jest.mock(
 );
 
 jest.mock("../../../utils/prisma", () => ({
-  workspaces: { findUnique: jest.fn() },
+  workspaces: { findUnique: jest.fn(), update: jest.fn() },
 }));
 
 jest.mock("../../../models/workspace", () => ({
@@ -106,6 +106,7 @@ describe("SPARKY v1 normal-user journey sandbox", () => {
     slug: SPARKY_WORKSPACE_SLUG,
     chatMode: "chat",
     openAiPrompt: getSparkySystemPrompt(),
+    isCanonicalSparky: true,
   };
   const defaultUser = { id: 7, role: "default" };
   const secondDefaultUser = { id: 8, role: "default" };
@@ -124,8 +125,9 @@ describe("SPARKY v1 normal-user journey sandbox", () => {
 
   it("fresh install creates and opens the canonical SPARKY workspace for a first-time user with no idea", async () => {
     prisma.workspaces.findUnique.mockResolvedValue(null);
+    prisma.workspaces.update.mockResolvedValue(canonicalWorkspace);
     Workspace.new.mockResolvedValue({
-      workspace: canonicalWorkspace,
+      workspace: { ...canonicalWorkspace, isCanonicalSparky: false },
       message: null,
     });
 
@@ -305,7 +307,7 @@ describe("SPARKY v1 normal-user journey sandbox", () => {
     expect(workspaceModel).toContain("whereWithUser");
     expect(workspaceModel).toContain("workspace_users");
     expect(workspaceModel).toContain(`slug: SPARKY_WORKSPACE_SLUG`);
-    expect(workspaceModel).toContain(`name: "SPARKY"`);
+    expect(workspaceModel).toContain("isCanonicalSparky: true");
     expect(workspaceModel).toContain("openAiPrompt: getSparkySystemPrompt()");
     expect(workspacesEndpoint).toContain("flexUserRoleValid([ROLES.all])");
     expect(workspacesEndpoint).toContain(
