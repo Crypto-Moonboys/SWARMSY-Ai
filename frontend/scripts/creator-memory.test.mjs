@@ -44,7 +44,7 @@ test("long existing SPARKY records round-trip without 2000-character truncation"
   assert.equal(parsed.decisions[0].text, text);
   assert.equal(parsed.ideas[0].text, text);
   assert.equal(parsed.proofs[0].text, text);
-  assert.match(M.markdown(parsed), /LAST-CHARACTERS-PRESERVED/);
+  assert.ok(M.markdown(parsed).includes("LAST\\-CHARACTERS\\-PRESERVED"));
   const common = "A".repeat(2000);
   assert.equal(M.mergeTextEntries([{ text: common + "X" }], [{ text: common + "Y" }]).length, 2);
   parsed.decisions[0].text = "B".repeat(M.MAX_BYTES);
