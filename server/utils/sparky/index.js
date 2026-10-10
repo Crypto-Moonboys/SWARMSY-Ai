@@ -355,6 +355,17 @@ async function ensureSparkyWorkspace() {
   });
 
   if (existingWorkspace) {
+    // A user workspace sharing the reserved slug is not a canonical SPARKY
+    // workspace. Never rewrite its name, prompt, or chat mode during bootstrap.
+    if (!isCanonicalSparkyWorkspace(existingWorkspace)) {
+      return {
+        workspace: existingWorkspace,
+        error: "SPARKY slug collision",
+        collision: true,
+        created: false,
+        message: "SPARKY slug is already used; leaving existing workspace untouched.",
+      };
+    }
     const workspace = await refreshSparkySystemPrompt(
       Workspace,
       existingWorkspace
