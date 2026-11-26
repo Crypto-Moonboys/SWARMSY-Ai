@@ -16,6 +16,33 @@ Review the exported text and import it to the shared canon workspace in the dedi
 
 ## Website release boundary
 
-Use the SWARMSY/AnythingLLM UI on swarmsy.cryptomoonboys.com after hosting is confirmed. Telegram website login must be verified server-side and mapped to an individual AnythingLLM user/session. Gate the origin and all chat APIs, including streaming and direct access. A frontend-only sign-in check or a shared master API key in the browser cannot provide this separation. Keep user conversations separate and grant shared canon as the first permission. Faction-specific private materials require independently verified membership and a separate access design.
+The public UI is at `https://cryptomoonboys.com/swarmsy.html`. The Moonboys
+API verifies a Telegram credential and derives an opaque conversation key
+from the verified Telegram ID and a browser UUID. The dedicated faction
+AnythingLLM runtime hosts the canonical SPARKY workspace and
+`POST /api/sparky-web/chat`. This endpoint uses the shipped SPARKY prompt,
+the requesting conversation and vetted published canon excerpts. The native
+AnythingLLM user interface and developer APIs remain restricted to operators
+on this deployment.
 
-For canon questions, cite the source and identify genuine gaps. Evaluate answers against approved material, including a question that confuses a market faction with an army. Check that signed-out requests are denied and two Telegram accounts cannot see each other's conversations before release.
+## Release
+
+1. Run this revision on the dedicated faction instance with its own storage
+   and model credentials. Complete the native SPARKY bootstrap and check
+   that the canonical workspace is present. Keep the private Brand Brain
+   skill, credentials and data off this instance.
+2. Expose the exact SPARKY web route at
+   `https://swarmsy.cryptomoonboys.com/api/sparky-web/chat`. Keep the
+   AnythingLLM UI, generic APIs and administration behind operator access.
+   Set `SWARMSY_WEB_TOKEN` on the faction server and Moonboys API Worker to
+   the same newly generated secret (for example, 32 random bytes encoded
+   in hex). Set a different random secret as `SWARMSY_WEB_SESSION_KEY` only
+   on the Worker. The session key can stay stable across API token rotation.
+3. Deploy the Moonboys API and website once the upstream route is verified.
+   The Worker rate limits are per Cloudflare location. Configure a provider
+   budget appropriate for the community release.
+4. Verify that signed-out requests are refused, a completed chat stays
+   scoped to one Telegram account and a new chat starts clean. Ask who
+   the Bitcoin Kid Army answers to and check the public source links.
+   Verify a regular creator prompt works without a canon fetch and that
+   a direct upstream request without the bridge token is refused.
