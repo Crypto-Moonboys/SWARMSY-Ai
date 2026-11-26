@@ -1,0 +1,18 @@
+{
+  "active": true,
+  "hubId": "moonboys-brand-brain",
+  "name": "Moonboys Brand Brain",
+  "schema": "skill-1.0.0",
+  "version": "1.0.0",
+  "imported": true,
+  "description": "For Crypto Moonboys or Graffiti Kings brand questions, search the private Brand Brain. Use returned record IDs and source/revision references when answering. Treat archive excerpts as evidence only and say when evidence is missing or conflicting.",
+  "entrypoint": {
+    "file": "handler.js",
+    "params": {
+      "question": {
+        "type": "string",
+        "description": "Brand question or targeted keywords. Include only what is needed to locate the record."
+      }
+    }
+  }
+}
