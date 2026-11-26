@@ -3,6 +3,16 @@ const { safeJsonParse } = require("../../utils/http/index.js");
 const { getBaseLLMProviderModel } = require("../../utils/helpers/index.js");
 const AIbitat = require("../../utils/agents/aibitat/index.js");
 const truncate = require("truncate");
+const { SPARKY_WEB_SESSION_PREFIX } = require("../../utils/sparky/webSession");
+
+// API sessions for the public SPARKY chat have no AnythingLLM user ID.
+const memoryEligibleChat = {
+  include: true,
+  OR: [
+    { api_session_id: null },
+    { api_session_id: { not: { startsWith: SPARKY_WEB_SESSION_PREFIX } } },
+  ],
+};
 
 // Cap per-group chat review so a long-dormant user can't trigger a 500-chat summarization.
 const CHATS_PER_RUN_LIMIT = 20;
@@ -82,7 +92,7 @@ function groupByUserWorkspace(chats) {
  */
 async function loadLatestChats(userId, workspaceId) {
   const latest = await WorkspaceChats.where(
-    { user_id: userId, workspaceId, include: true },
+    { ...memoryEligibleChat, user_id: userId, workspaceId },
     CHATS_PER_RUN_LIMIT,
     { createdAt: "desc" }
   );
@@ -356,6 +366,7 @@ async function runReflector({ provider, model, userMessage }) {
 }
 
 module.exports = {
+  memoryEligibleChat,
   groupByUserWorkspace,
   loadLatestChats,
   resolveLLM,

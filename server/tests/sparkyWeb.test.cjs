@@ -61,9 +61,14 @@ function harness({ secret = token, canonical = true } = {}) {
     },
     "../utils/sparky": {
       SPARKY_WORKSPACE_SLUG: "sparky",
-      getSparkyCanonicalSystemPrompt: () => "Canonical SPARKY prompt",
+      getSparkySystemPrompt: () =>
+        readFileSync(
+          join(__dirname, "../sparky/packs/core/sparky-system-prompt.md"),
+          "utf8"
+        ),
       isCanonicalSparkyWorkspace: (workspace) => workspace.isCanonicalSparky,
     },
+    "../utils/sparky/webSession": require("../utils/sparky/webSession"),
     "../utils/sparky/starterReplies": {
       getSparkyStarterReply: require("../utils/sparky/starterReplies")
         .getSparkyStarterReply,
@@ -158,7 +163,7 @@ test("pins the canonical workspace and retains only scoped conversation history"
   assert.equal(endpoint.state.completions[0].userPrompt, "@agent /reset");
   assert.match(
     endpoint.state.completions[0].systemPrompt,
-    /Canonical SPARKY prompt/
+    /## Creator Empire Blueprint[\s\S]+website's manual SPARKY workflow/
   );
   assert.equal(endpoint.state.writes[0].apiSessionId, `sparky-web:${session}`);
   assert.equal(
