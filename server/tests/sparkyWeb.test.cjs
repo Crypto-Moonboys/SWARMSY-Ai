@@ -195,7 +195,18 @@ test("uses the existing starter workflow and supplies only approved public canon
     (await endpoint.send(request({ sources: [publicSource] }))).status,
     400
   );
-  await endpoint.send(request({ searchCanon: true, sources: [publicSource] }));
+  const nftSource = {
+    ...publicSource,
+    url: "https://cryptomoonboys.com/data/nft-collections/gkniftyheads/templates.json",
+  };
+  const nft = await endpoint.send(
+    request({ searchCanon: true, sources: [publicSource, nftSource] })
+  );
+  assert.equal(nft.status, 200);
+  assert.equal(
+    endpoint.state.completions[0].contextTexts[1],
+    JSON.stringify(nftSource)
+  );
   assert.equal(
     endpoint.state.completions[0].contextTexts[0],
     JSON.stringify(publicSource)
