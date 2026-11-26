@@ -10,8 +10,13 @@ module.exports.runtime = {
           !secret || secret.length < 32 || !clientId || !clientSecret) {
         return "Brand Brain is unavailable. The owner-only connection has not been configured.";
       }
-      const settings = require.main?.require("./models/systemSettings").SystemSettings;
-      if (!settings || await settings.isMultiUserMode()) {
+      const prisma = require.main?.require("./utils/prisma");
+      // Query directly so an unavailable database cannot look like a missing setting.
+      const setting = await prisma.system_settings.findUnique({
+        where: { label: "multi_user_mode" },
+        select: { value: true },
+      });
+      if (setting !== null && setting.value !== "false") {
         return "Brand Brain requires a private, single-user SWARMSY server.";
       }
       if (typeof question !== "string" || !question.trim() || question.length > 1200) {

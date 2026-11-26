@@ -3,10 +3,10 @@ const assert = require("node:assert/strict");
 const { runtime } = require("./handler");
 
 test("the skill fails closed on shared servers and only calls the approved Brain context route", async (t) => {
-  const settings = { isMultiUserMode: async () => true };
+  const settings = { findUnique: async () => ({ value: "true" }) };
   const mainRequire = require.main.require;
-  t.mock.method(require.main, "require", (name) => name === "./models/systemSettings"
-    ? { SystemSettings: settings } : mainRequire.call(require.main, name));
+  t.mock.method(require.main, "require", (name) => name === "./utils/prisma"
+    ? { system_settings: settings } : mainRequire.call(require.main, name));
   const names = ["BRAIN_SWARMSY_OWNER_INSTANCE", "BRAIN_CONTEXT_TOKEN", "BRAIN_ACCESS_CLIENT_ID", "BRAIN_ACCESS_CLIENT_SECRET"];
   const before = names.map((name) => process.env[name]);
   t.after(() => names.forEach((name, index) => before[index] === undefined ? delete process.env[name] : process.env[name] = before[index]));
@@ -22,7 +22,13 @@ test("the skill fails closed on shared servers and only calls the approved Brain
   process.env.BRAIN_ACCESS_CLIENT_SECRET = "secret";
   assert.match(await runtime.handler({ question: "test" }), /single-user/);
   assert.equal(fetch.mock.callCount(), 0);
-  settings.isMultiUserMode = async () => false;
+  settings.findUnique = async () => { throw Error("Database unavailable"); };
+  assert.match(await runtime.handler({ question: "test" }), /unavailable/);
+  assert.equal(fetch.mock.callCount(), 0);
+  settings.findUnique = async () => ({ value: "invalid" });
+  assert.match(await runtime.handler({ question: "test" }), /single-user/);
+  assert.equal(fetch.mock.callCount(), 0);
+  settings.findUnique = async () => null;
   assert.match(await runtime.handler({ question: "  When was the canon approved?  " }), /Canon decision/);
   assert.equal(fetch.mock.callCount(), 1);
 });
