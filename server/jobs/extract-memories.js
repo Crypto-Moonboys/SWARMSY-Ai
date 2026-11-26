@@ -5,6 +5,7 @@ const { WorkspaceChats } = require("../models/workspaceChats.js");
 const { Workspace } = require("../models/workspace.js");
 const truncate = require("truncate");
 const {
+  memoryEligibleChat,
   groupByUserWorkspace,
   loadLatestChats,
   resolveLLM,
@@ -30,9 +31,9 @@ const MIN_CHATS_TO_PROCESS = 5;
     }
 
     // Discover (user, workspace) groups with unprocessed visible chats.
-    // include:true filters out chats deleted via /reset — they must never be summarized.
+    // The shared filter excludes deleted chats and public SPARKY sessions.
     const allUnprocessed = await WorkspaceChats.where(
-      { memoryProcessed: null, include: true },
+      { ...memoryEligibleChat, memoryProcessed: null },
       null,
       { createdAt: "asc" }
     );

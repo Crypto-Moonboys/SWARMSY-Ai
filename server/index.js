@@ -12,6 +12,7 @@ const { reqBody } = require("./utils/http");
 const { systemEndpoints } = require("./endpoints/system");
 const { workspaceEndpoints } = require("./endpoints/workspaces");
 const { chatEndpoints } = require("./endpoints/chat");
+const { sparkyWebEndpoints } = require("./endpoints/sparkyWeb");
 const { embeddedEndpoints } = require("./endpoints/embed");
 const { embedManagementEndpoints } = require("./endpoints/embedManagement");
 const { getVectorDbClass } = require("./utils/helpers");
@@ -62,6 +63,7 @@ if (
   );
 }
 app.use(cors({ origin: true }));
+sparkyWebEndpoints(app, express);
 app.use(bodyParser.text({ limit: FILE_LIMIT }));
 app.use(bodyParser.json({ limit: FILE_LIMIT }));
 app.use(
