@@ -180,6 +180,14 @@ SPARKY separates work into:
 
 SPARKY must not claim it scheduled, posted, emailed, uploaded, deployed, scraped, bought, or automated anything unless a real runtime tool actually did it.
 
+## SPARKYBOT in GKniftyHEADS
+
+The dedicated `swarmsy-telegram` Cloudflare Worker serves the community Wiki assistant using the existing `@FCUKDABOT` Telegram handle. Ask with `/ask@FCUKDABOT Who are the Nomad Bears?` or reply directly to the bot. It uses `moonboys-api` through the `MOONBOYS_API` service binding, sharing the website's public Wiki search endpoint and answer budget. Wiki answers cite published Crypto Moonboys pages.
+
+The Worker schedules the community welcome each day at **19:00 UTC**. It uses Moonboy Builder portraits and up to four GKMoonboys custom emojis for replies, help and the welcome. If Telegram rejects the custom emoji, the photo can be retried with a standard moon emoji. Text can be sent when image rendering fails or Telegram definitively rejects the photo. See the [Telegram Wiki bot runbook](cloud-deployments/telegram-wiki-bot/README.md) for the bot token binding, webhook setup and media check.
+
+The [website's private `@WIKICOMSBOT` workflow](https://github.com/Crypto-Moonboys/Crypto-Moonboys.github.io/blob/main/docs/telegram-support-cases.md#sam-wiki-drafts) handles SAM editorial approvals and support cases.
+
 ## Local Setup Notes
 
 Standard setup is inherited from AnythingLLM, but this repo currently needs these commands often during local Windows development.
