@@ -180,6 +180,12 @@ SPARKY separates work into:
 
 SPARKY must not claim it scheduled, posted, emailed, uploaded, deployed, scraped, bought, or automated anything unless a real runtime tool actually did it.
 
+## Website SPARKY chat and canon
+
+The Telegram-authenticated [faction website chat](https://cryptomoonboys.com/swarmsy.html) uses the SPARKY workflow via the website Worker. Current published canon and NFT metadata come from the official website, including the [public Brain feed](https://cryptomoonboys.com/brain-feed/index.json) used by the Worker. For faction chat, current source excerpts take precedence over older bundled examples and earlier conversation turns. [Website chat integration](https://github.com/Crypto-Moonboys/SWARMSY-Ai/pull/25) · [Published canon and NFT references](https://github.com/Crypto-Moonboys/SWARMSY-Ai/pull/26)
+
+The website also operates a [public Wiki search page](https://cryptomoonboys.com/search.html) and a [private SAM editorial queue](https://github.com/Crypto-Moonboys/Crypto-Moonboys.github.io/blob/main/docs/telegram-support-cases.md#sam-wiki-drafts). SAM draft approval and publication tracking run through the Brain bridge.
+
 ## SPARKYBOT in GKniftyHEADS
 
 The dedicated `swarmsy-telegram` Cloudflare Worker serves the community Wiki assistant using the existing `@FCUKDABOT` Telegram handle. Ask with `/ask@FCUKDABOT Who are the Nomad Bears?` or reply directly to the bot. It uses `moonboys-api` through the `MOONBOYS_API` service binding, sharing the website's public Wiki search endpoint and answer budget. Wiki answers cite published Crypto Moonboys pages.
