@@ -5,7 +5,9 @@ const COMMUNITY_USERNAME = 'gkniftyheads';
 const WIKI_ORIGIN = 'https://cryptomoonboys.com';
 const WIKI_SEARCH = 'https://api.cryptomoonboys.com/swarmsy/wiki-search';
 const ASK = new RegExp(`^/ask(?:@${BOT_USERNAME})?(?=\\s|$)`, 'i');
-const HELP = 'Ask me about the Crypto Moonboys Wiki with /ask@FCUKDABOT followed by your question. You can also reply directly to one of my answers.';
+const HELP = 'SPARKY here. Hit me with /ask@FCUKDABOT and a question about the Moonboys, or reply straight to me.';
+const COMMUNITY_INTRO = 'You’re in GKniftyHEADS. This is my patch. I’m SPARKY, the community fixer.\n\nBring a Moonboy, bring your own character, or bring half an idea. I’ll help you find your crew, get into the Arcade or turn that idea into something worth showing the room.\n\nFirst move: drop one thing you’re making, even if it’s rough. I’ll help you figure out what to do with it.';
+const COMMUNITY_QUESTION = /^(?:(?:what|where) is this (?:place|group|chat|community)|what is (?:this|gkniftyheads)|what (?:can|do) (?:i|we) do here|why (?:am i|are we) here|why (?:should i|would i) (?:join|stick around|stay)(?: here)?)(?: and why)?$/i;
 const WELCOME_CRON = '0 19 * * *';
 const WELCOME = 'Welcome to the GKniftyHEADS Telegram channel powering the MIGHTY CRYPTO MOONBOYS MULTIVERSE!\n\nAsk me anything Moonboy related and let’s get you building…\n\nUse /ask@FCUKDABOT followed by your question, or reply right here.';
 const encoder = new TextEncoder();
@@ -49,7 +51,7 @@ async function askWiki(env, question) {
   const response = await env.MOONBOYS_API.fetch(WIKI_SEARCH, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ question }),
+    body: JSON.stringify({ question, surface: 'sparky_telegram' }),
     signal: AbortSignal.timeout(21_000),
   });
   const data = await response.json();
@@ -59,11 +61,11 @@ async function askWiki(env, question) {
   }
   if (response.status === 429) {
     const text = data?.error === 'daily_limit'
-      ? 'SWARMSY has reached its daily Wiki answer limit. Try again after midnight UTC.'
-      : 'SWARMSY is getting too many questions. Try again in a minute.';
+      ? 'I’m out of Wiki answers for today. Catch me after midnight UTC.'
+      : 'The chat’s moving fast. Hit me again in a minute.';
     return { text, links };
   }
-  return { text: 'SWARMSY Wiki search is temporarily unavailable.', links };
+  return { text: 'I can’t reach the Wiki right now. Give me a minute and ask again.', links };
 }
 
 async function telegram(env, method, body = {}) {
@@ -84,14 +86,22 @@ async function telegram(env, method, body = {}) {
 
 async function replyContent(env, question) {
   if (question.length === 1 || question.length > 600) {
-    return { text: 'Send a Wiki question between 2 and 600 characters.' };
+    return { text: 'Give me a question between 2 and 600 characters.' };
   }
   if (!question) return { text: HELP };
+  const clauses = question.toLowerCase()
+    .replace(/\b(what|where)['’]s\b/g, '$1 is')
+    .split(/[.!?]+\s*/)
+    .map(clause => clause.trim())
+    .filter(Boolean);
+  if (clauses.length && clauses.every(clause => COMMUNITY_QUESTION.test(clause))) {
+    return { text: COMMUNITY_INTRO };
+  }
   try {
     return await askWiki(env, question);
   } catch {
     return {
-      text: 'SWARMSY Wiki search is temporarily unavailable. You can still browse the Wiki.',
+      text: 'I can’t reach the Wiki right now. You can still dig through it here.',
       links: [WIKI_ORIGIN + '/search.html'],
     };
   }
