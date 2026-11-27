@@ -1,9 +1,9 @@
-const BOT_USERNAME = 'swarmsybot';
+const BOT_USERNAME = 'fcukdabot';
 const COMMUNITY_USERNAME = 'gkniftyheads';
 const WIKI_ORIGIN = 'https://cryptomoonboys.com';
 const WIKI_SEARCH = 'https://api.cryptomoonboys.com/swarmsy/wiki-search';
 const ASK = new RegExp(`^/ask(?:@${BOT_USERNAME})?(?=\\s|$)`, 'i');
-const HELP = 'Ask me about the Crypto Moonboys Wiki with /ask@SWARMSYBOT followed by your question. You can also reply directly to one of my answers.';
+const HELP = 'Ask me about the Crypto Moonboys Wiki with /ask@FCUKDABOT followed by your question. You can also reply directly to one of my answers.';
 const encoder = new TextEncoder();
 
 async function authenticated(actual, expected) {
@@ -65,7 +65,7 @@ async function askWiki(env, question) {
 
 async function telegram(env, method, body = {}) {
   try {
-    const response = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/${method}`, {
+    const response = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_COMMUNITY_BOT_TOKEN}/${method}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
@@ -100,7 +100,7 @@ async function reply(env, message, question) {
 }
 
 async function setup(env, register) {
-  if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_WEBHOOK_SECRET) {
+  if (!env.TELEGRAM_COMMUNITY_BOT_TOKEN || !env.TELEGRAM_WEBHOOK_SECRET) {
     return Response.json({ error: 'telegram_secrets_missing' }, { status: 503 });
   }
   try {
@@ -129,6 +129,7 @@ async function setup(env, register) {
       group: group.username || group.title,
       membership: member.status,
       webhook_registered: webhook.url === env.TELEGRAM_WEBHOOK_URL,
+      webhook_host: webhook.url ? URL.parse(webhook.url)?.hostname ?? null : null,
       pending_updates: webhook.pending_update_count,
       last_error_date: webhook.last_error_date ?? null,
     });
@@ -141,7 +142,7 @@ export default {
   async fetch(request, env, ctx) {
     const path = new URL(request.url).pathname;
     if (path === '/health' && request.method === 'GET') {
-      const ready = Boolean(env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_WEBHOOK_SECRET);
+      const ready = Boolean(env.TELEGRAM_COMMUNITY_BOT_TOKEN && env.TELEGRAM_WEBHOOK_SECRET);
       return Response.json({ ready }, { status: ready ? 200 : 503 });
     }
     if (path === '/setup' && ['GET', 'POST'].includes(request.method)) {
@@ -156,7 +157,7 @@ export default {
     if (!await authenticated(request.headers.get('X-Telegram-Bot-Api-Secret-Token'), env.TELEGRAM_WEBHOOK_SECRET)) {
       return new Response(null, { status: 401 });
     }
-    if (!env.TELEGRAM_BOT_TOKEN) return new Response(null, { status: 503 });
+    if (!env.TELEGRAM_COMMUNITY_BOT_TOKEN) return new Response(null, { status: 503 });
     const update = await request.json().catch(() => null);
     if (!update) return new Response(null, { status: 400 });
     const message = update.message;
