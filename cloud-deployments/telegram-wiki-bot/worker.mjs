@@ -1,9 +1,13 @@
+import { checkMedia, renderPortrait, sendBrandedMessage } from './branded-message.mjs';
+
 const BOT_USERNAME = 'fcukdabot';
 const COMMUNITY_USERNAME = 'gkniftyheads';
 const WIKI_ORIGIN = 'https://cryptomoonboys.com';
 const WIKI_SEARCH = 'https://api.cryptomoonboys.com/swarmsy/wiki-search';
 const ASK = new RegExp(`^/ask(?:@${BOT_USERNAME})?(?=\\s|$)`, 'i');
 const HELP = 'Ask me about the Crypto Moonboys Wiki with /ask@FCUKDABOT followed by your question. You can also reply directly to one of my answers.';
+const WELCOME_CRON = '0 19 * * *';
+const WELCOME = 'Welcome to the GKniftyHEADS Telegram channel powering the MIGHTY CRYPTO MOONBOYS MULTIVERSE!\n\nAsk me anything Moonboy related and let’s get you building…\n\nUse /ask@FCUKDABOT followed by your question, or reply right here.';
 const encoder = new TextEncoder();
 
 async function authenticated(actual, expected) {
@@ -30,7 +34,7 @@ function questionFrom(message) {
 }
 
 function wikiLinks(sources) {
-  if (!Array.isArray(sources)) return '';
+  if (!Array.isArray(sources)) return [];
   const links = [];
   for (const source of sources) {
     const url = typeof source?.url === 'string' ? URL.parse(source.url) : null;
@@ -38,7 +42,7 @@ function wikiLinks(sources) {
     if (!links.includes(url.href)) links.push(url.href);
     if (links.length === 3) break;
   }
-  return links.length ? '\n\nWiki sources\n' + links.join('\n') : '';
+  return links;
 }
 
 async function askWiki(env, question) {
@@ -51,16 +55,15 @@ async function askWiki(env, question) {
   const data = await response.json();
   const links = wikiLinks(data?.wiki_sources);
   if (response.ok && typeof data?.answer === 'string' && data.answer.trim()) {
-    const answer = data.answer.trim();
-    return (answer.length <= 3000 ? answer : answer.slice(0, 2999) + '…') + links;
+    return { text: data.answer.trim(), links };
   }
   if (response.status === 429) {
-    const message = data?.error === 'daily_limit'
+    const text = data?.error === 'daily_limit'
       ? 'SWARMSY has reached its daily Wiki answer limit. Try again after midnight UTC.'
       : 'SWARMSY is getting too many questions. Try again in a minute.';
-    return message + links;
+    return { text, links };
   }
-  return 'SWARMSY Wiki search is temporarily unavailable.' + links;
+  return { text: 'SWARMSY Wiki search is temporarily unavailable.', links };
 }
 
 async function telegram(env, method, body = {}) {
@@ -79,24 +82,41 @@ async function telegram(env, method, body = {}) {
   throw new Error(`Telegram ${method} failed`);
 }
 
-async function reply(env, message, question) {
-  let text = HELP;
+async function replyContent(env, question) {
   if (question.length === 1 || question.length > 600) {
-    text = 'Send a Wiki question between 2 and 600 characters.';
-  } else if (question) {
-    try {
-      text = await askWiki(env, question);
-    } catch {
-      text = 'SWARMSY Wiki search is temporarily unavailable. Browse ' + WIKI_ORIGIN + '/search.html.';
-    }
+    return { text: 'Send a Wiki question between 2 and 600 characters.' };
   }
-  await telegram(env, 'sendMessage', {
+  if (!question) return { text: HELP };
+  try {
+    return await askWiki(env, question);
+  } catch {
+    return {
+      text: 'SWARMSY Wiki search is temporarily unavailable. You can still browse the Wiki.',
+      links: [WIKI_ORIGIN + '/search.html'],
+    };
+  }
+}
+
+async function reply(env, message, question) {
+  const [content, portrait] = await Promise.all([
+    replyContent(env, question),
+    renderPortrait(env, `sparky:reply:${message.chat.id}:${message.message_id}`),
+  ]);
+  await sendBrandedMessage(env, {
     chat_id: message.chat.id,
-    text,
     reply_parameters: { message_id: message.message_id },
     ...(message.is_topic_message ? { message_thread_id: message.message_thread_id } : {}),
-    link_preview_options: { is_disabled: true },
+  }, content, portrait);
+}
+
+async function dailyWelcome(env, scheduledTime) {
+  const group = await telegram(env, 'getChat', {
+    chat_id: env.TELEGRAM_GROUP_CHAT_ID || '@' + COMMUNITY_USERNAME,
   });
+  if (!isCommunity(group, env)) throw new Error('Daily welcome community mismatch');
+  const date = new Date(scheduledTime).toISOString().slice(0, 10);
+  const portrait = await renderPortrait(env, `sparky:welcome:${group.id}:${date}`);
+  await sendBrandedMessage(env, { chat_id: group.id }, { text: WELCOME }, portrait);
 }
 
 async function setup(env, register) {
@@ -139,8 +159,12 @@ async function setup(env, register) {
 }
 
 export default {
+  async scheduled(event, env) {
+    if (event.cron === WELCOME_CRON) await dailyWelcome(env, event.scheduledTime);
+  },
+
   async fetch(request, env, ctx) {
-    const path = new URL(request.url).pathname;
+    const { pathname: path, searchParams } = new URL(request.url);
     if (path === '/health' && request.method === 'GET') {
       const ready = Boolean(env.TELEGRAM_COMMUNITY_BOT_TOKEN && env.TELEGRAM_WEBHOOK_SECRET);
       return Response.json({ ready }, { status: ready ? 200 : 503 });
@@ -149,6 +173,7 @@ export default {
       if (!await authenticated(request.headers.get('X-Swarmsy-Setup-Secret'), env.SETUP_SECRET)) {
         return new Response(null, { status: 404 });
       }
+      if (request.method === 'GET' && searchParams.get('check') === 'media') return checkMedia(env);
       return setup(env, request.method === 'POST');
     }
     if (path !== '/telegram/webhook' || request.method !== 'POST') {
